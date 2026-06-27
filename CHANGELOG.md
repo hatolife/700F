@@ -5,6 +5,7 @@
 - Add Linux-required and Windows-optional GitHub Actions CI documentation for ISSUE-0005.
 - Document project/module governance, reporting, issue, and version policies for ISSUE-0006.
 - Define the common Mode interface and source-level data protocol for ISSUE-0008.
+- Define metrics/result artifact JSON and CSV format with stable required columns and optional extension points (ISSUE-0014).
 - Document the future C ABI plugin protocol relationship without implementing plugin loading.
 - Add focused Mode interface contract tests and update module 02/03 version metadata.
 - Pin Codec2/FreeDV as `external/codec2` submodule and document 700D/700E verification anchors for ISSUE-0007.
