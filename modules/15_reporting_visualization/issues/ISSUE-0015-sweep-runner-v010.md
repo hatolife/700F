@@ -1,7 +1,7 @@
 # ISSUE-0015: Sweep runner v0.1.0
 
 ## Status
-open
+done
 
 ## Scope
 module:15_reporting_visualization
@@ -30,12 +30,13 @@ P0
 Module-local planning and implementation handoff for root ISSUE-0015: Sweep runner v0.1.0.
 
 ## Acceptance criteria
-- [ ] Root ISSUE-0015 acceptance criteria relevant to this module are satisfied.
-- [ ] Module docs/issues/reports indexes are updated as work proceeds.
-- [ ] Module tests or documented TDD exception are added before implementation handoff closes.
+- [x] Root ISSUE-0015 acceptance criteria relevant to this module are satisfied.
+- [x] Module docs/issues/reports indexes are updated as work proceeds.
+- [x] Module tests or documented TDD exception are added before implementation handoff closes.
 
 ## Test plan
 - ./tools/run_ci_local.sh
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 issue expansion.
+- 2026-06-28 00:00 JST ISSUE-0015 emitted aggregate JSON/CSV in Module 13 while preserving existing Module 15 result-artifact contracts; no Module 15 code edits were required.

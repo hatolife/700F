@@ -28,7 +28,7 @@
 | ISSUE-0012 | open | P0 | module:05,10 | FreeDV 700D 700E official baseline adapter | Module 05 + Module 10 | feature/ISSUE-0012-freedv-official-baseline-adapter | v0.1.0 | M1 | ISSUE-0007, ISSUE-0008 | 2026-06-27 |
 | ISSUE-0013 | closed | P1 | module:07,10 | 700D 700E parameterized emulator skeleton | Module 07 + Module 10 | feature/ISSUE-0013-700d-700e-parameterized-emulator | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0014 | closed | P0 | module:12 | Metrics and result artifact format | Module 12 + Module 15 | feature/ISSUE-0014-metrics-artifact-format | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
-| ISSUE-0015 | open | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-27 |
+| ISSUE-0015 | closed | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-28 |
 | ISSUE-0016 | open | P0 | qa | M1 audit report | Manager + QA | docs/ISSUE-0016-m1-audit-report | v0.1.0 | M1 | ISSUE-0004 through ISSUE-0015 | 2026-06-27 |
 
 ## M1-A integration status

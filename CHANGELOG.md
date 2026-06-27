@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Add ISSUE-0015 initial sweep runner with stable mode/channel/seed expansion,
+  skipped-mode records, failed-run continuation, aggregate JSON/CSV output, and
+  M1 baseline smoke schema.
 - Integrate M1-B: metrics schema, channel models, parameterized emulator skeletons, and deterministic simulation pipeline.
 - Add ISSUE-0013 descriptor-only FreeDV 700D/700E parameterized emulator skeletons with
   explicit emulator-vs-official baseline flags.
