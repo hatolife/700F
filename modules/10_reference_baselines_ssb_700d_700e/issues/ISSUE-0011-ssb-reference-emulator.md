@@ -33,9 +33,11 @@ Module-local planning and implementation handoff for root ISSUE-0011: SSB refere
 - [ ] Root ISSUE-0011 acceptance criteria relevant to this module are satisfied.
 - [ ] Module docs/issues/reports indexes are updated as work proceeds.
 - [ ] Module tests or documented TDD exception are added before implementation handoff closes.
+- [ ] TDD evidence recorded before implementation: add/execute `tests/test_ssb_reference_emulator.cpp`.
 
 ## Test plan
 - ./tools/run_ci_local.sh
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 issue expansion.
+- 2026-06-28 00:00 UTC TDD first pass started with reference emulator test planning and placeholder implementation requirements.

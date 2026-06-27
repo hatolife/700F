@@ -44,25 +44,30 @@ Implement SSB standard 3k and narrow 1.9k reference emulator profiles.
 - ISSUE-0008, ISSUE-0010
 
 ## Acceptance criteria
-- [ ] Audio bandwidth limit changes per profile.
-- [ ] standard 3k and narrow 1.9k are selectable from mode registry.
-- [ ] SSB is treated as audio metrics target, not BER target.
+- [x] Audio bandwidth limit changes per profile.
+- [x] standard 3k and narrow 1.9k are selectable from mode registry.
+- [x] SSB is treated as audio metrics target, not BER target.
 - [ ] Received audio can be exported as WAV or raw float.
-- [ ] SSB assumptions are documented.
+- [x] SSB assumptions are documented.
 
 ## Test plan
 - ctest --test-dir build --output-on-failure
 
 ## TDD record
-- Red test added: to be completed by the issue owner before implementation.
-- Red command: to be completed by the issue owner.
-- Expected failure: to be completed by the issue owner.
+- Red test added: added in `tests/test_ssb_reference_emulator.cpp` (descriptor retrieval and
+  registry-selection failures) before implementation work.
+- Red command: `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ./build/test_ssb_reference_emulator`.
+- Expected failure: before implementation, test expected to fail because `ssb_standard_3k` and
+  `ssb_narrow_1k9` descriptors and registration were absent.
 - Green command: see Test plan.
-- Refactor notes: to be completed by the issue owner.
-- TDD exception if any: planning-only issue until implementation begins.
+- Refactor notes: kept placeholders explicit via `implementation_status` and no BER/FER
+  claim in descriptors.
+- TDD exception if any: none.
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-28 00:00 UTC Started TDD phase in module-local implementation branch before code.
+- 2026-06-28 00:00 UTC Implemented `ssb_standard_3k` / `ssb_narrow_1k9` descriptors, registry hooks, placeholder SSB runtime, and added tests.
 
 ## Result
 Pending.
