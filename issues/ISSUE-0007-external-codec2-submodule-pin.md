@@ -1,7 +1,7 @@
 # ISSUE-0007: external codec2 submodule pin
 
 ## Status
-open
+closed
 
 ## Scope
 dependency
@@ -18,7 +18,7 @@ P0
 - Work branch: research/ISSUE-0007-codec2-submodule-pin
 - Worktree: ../f700f-wt-issue-0007
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `88793a1`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -73,6 +73,7 @@ Pin Codec2/FreeDV as external/codec2 submodule and document official 700D/700E b
 - 2026-06-27 15:10 UTC Added `F700F_ENABLE_CODEC2` OFF-by-default CMake gate, `tools/check_submodules.py`, dependency notes, and pinned 700D/700E verification anchors without implementing adapter or mode behavior.
 - 2026-06-27 15:20 UTC Verification passed: `python3 tools/check_submodules.py`; `git submodule status --recursive`; `bash -lc "cmake -S . -B build-codec2-on -DCMAKE_BUILD_TYPE=Debug -DF700F_ENABLE_CODEC2=ON"`; `bash ./tools/run_ci_local.sh` with Codec2 disabled by default. CI emitted clock-skew warnings only.
 - 2026-06-27 15:25 UTC Pre-commit `git status --short --branch` recorded: branch `research/ISSUE-0007-codec2-submodule-pin`; added `.gitmodules`, `external/codec2`, docs, and `tools/check_submodules.py`; modified `CMakeLists.txt`, root/module ISSUE-0007 files, and `CHANGELOG.md`.
+- 2026-06-27 14:33 UTC Manager merged branch `research/ISSUE-0007-codec2-submodule-pin` into `develop` as `88793a1`; post-merge `bash ./tools/run_ci_local.sh` passed.
 
 ## Result
-Ready for local commit/handoff. Push is intentionally not attempted for this subagent task.
+Codec2/FreeDV is pinned as `external/codec2` at `310777b1c6f1af0bc7c72f5b32f80f6fd9136962`; verification docs and submodule checks are present. Local CI passes with Codec2 disabled by default, and the branch is merged locally to `develop`.

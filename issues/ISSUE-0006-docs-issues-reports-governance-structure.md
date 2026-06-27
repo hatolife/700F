@@ -1,7 +1,7 @@
 # ISSUE-0006: Docs issues reports governance structure
 
 ## Status
-open
+closed
 
 ## Scope
 docs
@@ -18,7 +18,7 @@ P0
 - Work branch: docs/ISSUE-0006-governance-structure
 - Worktree: ../f700f-wt-issue-0006
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `9a118cc`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -74,7 +74,8 @@ Standardize project/module docs, issues, and reports structure for issue-first o
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-27 14:33 UTC Manager merged branch `docs/ISSUE-0006-governance-structure` into `develop` as `9a118cc`; post-merge `bash ./tools/run_ci_local.sh` passed.
 
 ## Result
-Completed: root and module docs/issues/reports governance indexes updated; CI passed.
+Completed: root and module docs/issues/reports governance indexes updated; CI passed and the branch is merged locally to `develop`.
 

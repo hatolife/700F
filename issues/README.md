@@ -18,10 +18,10 @@
 | ISSUE-0002 | closed | P0 | project | Fast push CI policy and workflows | Manager | work | v0.0.1 | M0 | ISSUE-0001 | 2026-06-27 |
 | ISSUE-0003 | closed | P0 | project | M1 planning issue expansion | Manager | docs/ISSUE-0003-m1-planning | v0.1.0 | M1 | ISSUE-0001, ISSUE-0002 | 2026-06-27 |
 | ISSUE-0004 | closed | P0 | qa | M0 audit and M1 go decision | Manager / QA | docs/ISSUE-0004-m0-audit | v0.1.0 | M1 | ISSUE-0001, ISSUE-0002 | 2026-06-27 |
-| ISSUE-0005 | open | P0 | project | GitHub Actions CI introduction | Module 01 / Manager | docs/ISSUE-0005-github-actions-ci | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
-| ISSUE-0006 | open | P0 | docs | Docs issues reports governance structure | Manager + all modules | docs/ISSUE-0006-governance-structure | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
-| ISSUE-0007 | open | P0 | dependency | external codec2 submodule pin | Manager + Module 05 + Module 10 | research/ISSUE-0007-codec2-submodule-pin | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
-| ISSUE-0008 | open | P0 | protocol | Common Mode interface and data protocol v0.1.0 | Module 02 + Module 03 + Manager | feature/ISSUE-0008-mode-interface-v0-1 | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
+| ISSUE-0005 | closed | P0 | project | GitHub Actions CI introduction | Module 01 / Manager | docs/ISSUE-0005-github-actions-ci | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
+| ISSUE-0006 | closed | P0 | docs | Docs issues reports governance structure | Manager + all modules | docs/ISSUE-0006-governance-structure | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
+| ISSUE-0007 | closed | P0 | dependency | external codec2 submodule pin | Manager + Module 05 + Module 10 | research/ISSUE-0007-codec2-submodule-pin | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
+| ISSUE-0008 | closed | P0 | protocol | Common Mode interface and data protocol v0.1.0 | Module 02 + Module 03 + Manager | feature/ISSUE-0008-mode-interface-v0-1 | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
 | ISSUE-0009 | open | P0 | simulation | Deterministic simulation core | Module 11 + Module 02 + Module 12 | feature/ISSUE-0009-deterministic-simulation-core | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0010 | open | P0 | module:08 | Channel model v0.1.0 | Module 08 | feature/ISSUE-0010-channel-model-v0-1 | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0011 | open | P0 | module:10 | SSB reference emulator | Module 10 + Module 04 | feature/ISSUE-0011-ssb-reference-emulator | v0.1.0 | M1 | ISSUE-0008, ISSUE-0010 | 2026-06-27 |
@@ -31,11 +31,11 @@
 | ISSUE-0015 | open | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-27 |
 | ISSUE-0016 | open | P0 | qa | M1 audit report | Manager + QA | docs/ISSUE-0016-m1-audit-report | v0.1.0 | M1 | ISSUE-0004 through ISSUE-0015 | 2026-06-27 |
 
-## M1-A dispatch status
+## M1-A integration status
 
 - ISSUE-0003 is integrated into local `develop` through `eba941a`.
 - ISSUE-0004 M0 audit passed; reports exist under root `reports/` and Module 16 QA `reports/`.
-- ISSUE-0005, ISSUE-0006, ISSUE-0007, and ISSUE-0008 are ready for local parallel dispatch from `develop`.
-- ISSUE-0009 and later should wait until ISSUE-0008 lands the minimal Mode interface/data protocol baseline.
-- ISSUE-0010 may begin after ISSUE-0008 provides the minimal protocol needed by the channel model.
+- ISSUE-0005, ISSUE-0006, ISSUE-0007, and ISSUE-0008 are integrated locally into `develop`.
+- ISSUE-0009, ISSUE-0010, ISSUE-0012, and ISSUE-0013 are startable from local `develop`.
+- ISSUE-0011 remains held until ISSUE-0010 is complete.
 - Remote `origin` is configured, but prior push was blocked by GitHub permission. Remote `develop` is not published.

@@ -1,7 +1,7 @@
 # ISSUE-0005: GitHub Actions CI introduction
 
 ## Status
-open
+closed
 
 ## Scope
 project
@@ -18,7 +18,7 @@ P0
 - Work branch: docs/ISSUE-0005-github-actions-ci
 - Worktree: ../f700f-wt-issue-0005
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `daeffff`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -77,6 +77,7 @@ Ensure GitHub Actions automatically runs configure/build/test/governance checks 
 - 2026-06-27 15:24 UTC Green TDD checks pass:
   - `rg` confirms presence of Linux-required/Windows-optional jobs and explicit `F700F_ENABLE_CODEC2=OFF`.
   - Local CI wrapper passes with repository settings currently configured.
+- 2026-06-27 14:33 UTC Manager merged branch `docs/ISSUE-0005-github-actions-ci` into `develop` as `daeffff`; post-merge `bash ./tools/run_ci_local.sh` passed.
 
 ## Result
-Added `.github/workflows/ci.yml` Linux-required + optional Windows job wiring, added codec2-off defaulting in CMake configure, added explicit submodule initialization guard, and documented CI mapping in `docs/ci.md`. Local CI passes in this worktree.
+Added `.github/workflows/ci.yml` Linux-required + optional Windows job wiring, added codec2-off defaulting in CMake configure, added explicit submodule initialization guard, and documented CI mapping in `docs/ci.md`. Local CI passes and the branch is merged locally to `develop`.

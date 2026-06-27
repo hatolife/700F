@@ -1,7 +1,7 @@
 # ISSUE-0008: Common Mode interface and data protocol v0.1.0
 
 ## Status
-completed-local
+closed
 
 ## Scope
 protocol
@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0008-mode-interface-v0-1
 - Worktree: ../f700f-wt-issue-0008
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `67c6327`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -71,6 +71,7 @@ Define the shared Mode interface and data protocol for SSB, 700D, 700E, and futu
 - 2026-06-27 23:40 JST Subagent C started local worktree implementation on `feature/ISSUE-0008-mode-interface-v0-1`; push remains blocked by task instruction, so handoff will be local commit only.
 - 2026-06-28 00:05 JST Added failing Mode interface contract tests, implemented minimal public C++20 interface, documented mode/data/plugin protocols, updated module 02/03 versions, and passed local CI.
 - 2026-06-28 00:05 JST Git status before commit: `## feature/ISSUE-0008-mode-interface-v0-1` with modified tracked files and new `docs/specs/`, `tests/`.
+- 2026-06-27 14:33 UTC Manager merged branch `feature/ISSUE-0008-mode-interface-v0-1` into `develop` as `67c6327`; post-merge `bash ./tools/run_ci_local.sh` passed.
 
 ## Result
-Local implementation complete. Push/PR intentionally not performed per task instruction.
+Local implementation complete and merged locally to `develop`. Push/PR intentionally not performed per task instruction.
