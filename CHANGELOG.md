@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Record M1 baseline smoke output: one completed dummy-mode identity run and skipped official FreeDV 700D/700E entries under Codec2-disabled/default registration.
 - Integrate M1-C: SSB reference modes, guarded official FreeDV descriptors, and initial sweep runner.
 - Add ISSUE-0012 official FreeDV 700D/700E descriptors and guarded Codec2 availability
   adapter with default OFF unavailable status.

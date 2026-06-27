@@ -66,6 +66,7 @@ Create config-driven sweep runner for modes, channel conditions, and seeds.
 - 2026-06-28 00:00 JST M1-C subagent C started implementation in `../f700f-wt-issue-0015`; recorded red-test plan before code changes.
 - 2026-06-28 00:00 JST Added Module 13 sweep runner, contract tests, aggregate JSON/CSV output, smoke TOML schema, and sweep runner spec.
 - 2026-06-28 JST Merged to local `develop` as `1710785`; CMake and changelog conflicts were resolved by retaining all M1-C targets/tests and changelog entries. Post-merge local CI passed with 9 CTest tests.
+- 2026-06-28 JST Ran M1 baseline smoke through `./build/test_sweep_runner`; artifacts were generated under `build/test-artifacts/m1-baseline-smoke/` with one completed dummy-mode run and two skipped official FreeDV runs.
 
 ## Result
 Implemented initial sweep runner. Missing/unmerged modes are skipped; attempted failed runs are recorded and do not stop later runs. TOML parsing, official Codec2 adapter behavior, and real SSB/FreeDV waveform fidelity remain outside ISSUE-0015.
