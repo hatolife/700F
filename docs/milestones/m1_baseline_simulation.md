@@ -43,6 +43,14 @@ Parameterized 700D/700E emulators are explicitly not official baselines. Their g
 
 Each implementation issue must create its own branch from `develop` and use a matching worktree when run in parallel. The required order is issue creation, branch creation, docs/spec update, failing test, minimal implementation, passing tests, edge-case tests, docs update, local CI, handoff, commit, and merge request or direct branch push depending on current repository policy.
 
+## M1-A entry gate
+
+ISSUE-0004 M0 audit passed locally. M1-A may begin with ISSUE-0005, ISSUE-0006, ISSUE-0007, and ISSUE-0008 from local `develop`.
+
+ISSUE-0009 and later simulation core/channel/SSB/700D/700E work should not begin until ISSUE-0008 lands the minimal Mode interface and data/plugin protocol baseline. ISSUE-0010 channel model may begin after that minimal protocol is available.
+
+Remote `origin` is configured, but remote `develop` is not published because prior push was blocked by GitHub permission. Local workers should treat local `develop` as the dispatch source until remote publication is available.
+
 ## Version impact plan
 
 M1 target project version is `v0.1.0`. Interface-bearing or M1-touched modules should move to `v0.1.0` as their implementation issues complete. Untouched modules may remain `v0.0.1` until they join the M1 compatibility line.
