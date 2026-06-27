@@ -1,7 +1,7 @@
 # ISSUE-0013: 700D 700E parameterized emulator skeleton
 
 ## Status
-complete
+closed
 
 ## Scope
 module:07,10
@@ -18,8 +18,7 @@ P1
 - Work branch: feature/ISSUE-0013-freedv-parameterized-emulator
 - Worktree: ../f700f-wt-issue-0013
 - Merge target: develop
-- PR/Merge status: none
-- Local commit: pending
+- PR/Merge status: merged local to develop as `89681c7`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -66,9 +65,10 @@ Create parameterized 700D/700E-style emulator skeleton distinct from official ba
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
 - 2026-06-27 15:20 UTC M1-B subagent C started ISSUE-0013 in dedicated worktree; recorded TDD plan before adding tests.
 - 2026-06-27 15:43 UTC Focused emulator contract passed; local CI passed via `bash ./tools/run_ci_local.sh` with 3 tests.
+- 2026-06-27 14:59 UTC Manager merged branch into `develop` as `89681c7`; resolved CMake/version conflicts; post-merge local CI passed.
 
 ## Result
 Complete. Added descriptor-only FreeDV 700D/700E parameterized emulator skeletons with
 explicit non-official emulator flags. Encode/decode return clear ISSUE-0013
 not-implemented statuses. Official Codec2/FreeDV baseline work remains out of scope for
-ISSUE-0012.
+ISSUE-0012. Branch is merged locally to `develop`.

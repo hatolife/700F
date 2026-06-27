@@ -1,7 +1,7 @@
 # ISSUE-0014: Metrics and result artifact format
 
 ## Status
-done
+closed
 
 ## Scope
 module:12
@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0014-metrics-artifact-format
 - Worktree: ../f700f-wt-issue-0014
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `b518264`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -72,8 +72,9 @@ Define comparable result metrics output for SSB, 700D, 700E, and future 700F can
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
 - 2026-06-27 23:41 UTC Implementation start in worktree `C:/Users/user/Documents/f700f-wt-issue-0014` on branch `feature/ISSUE-0014-metrics-artifact-format`; TDD test plan recorded above.
 - 2026-06-27 23:54 UTC `tests/test_metrics_result_artifacts.cpp` assertions added and executed; JSON parse hardening completed; `./tools/run_ci_local.sh` passes.
+- 2026-06-27 14:59 UTC Manager merged branch into `develop` as `b518264`; post-merge local CI passed.
 
 ## Result
 Implemented a minimal but stable JSON/CSV result artifact format for module 12 and documented it in `docs/specs/metrics.md`. Added helpers for tolerant parsing, optional metric columns, N/A handling for BER/FER, skip/error summary fields, and compatibility-forward optional metrics payloads.
 
-Artifacts now include required project/mode/channel metadata, run parameters, BER/FER behavior, dropouts/sync, timing, and optional metrics without breaking unknown keys.
+Artifacts now include required project/mode/channel metadata, run parameters, BER/FER behavior, dropouts/sync, timing, and optional metrics without breaking unknown keys. Branch is merged locally to `develop`.

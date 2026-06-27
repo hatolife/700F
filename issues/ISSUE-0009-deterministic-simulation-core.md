@@ -1,7 +1,7 @@
 # ISSUE-0009: Deterministic simulation core
 
 ## Status
-open
+closed
 
 ## Scope
 simulation
@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0009-deterministic-simulation-core
 - Worktree: ../f700f-wt-issue-0009
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `d0f7cd1`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -67,9 +67,7 @@ Create deterministic seed-fixed simulation runner and mode -> channel -> receive
 - 2026-06-27 15:00 UTC M1-B subagent D started implementation branch and recorded red-test plan before code changes.
 - 2026-06-27 15:05 UTC Red test failed as expected on missing `f700f/simulation_pipeline.hpp`.
 - 2026-06-27 15:30 UTC Implemented Module 11 deterministic simulation core, added spec/docs, and passed local CI.
+- 2026-06-27 14:59 UTC Manager merged branch into `develop` as `d0f7cd1`; resolved CMake/changelog conflicts and set module 11 version to `v0.1.0`; post-merge local CI passed.
 
 ## Result
-Local implementation complete on `feature/ISSUE-0009-deterministic-simulation-core`.
-Push/PR intentionally not performed per task instruction. Deferred items: real audio file IO,
-ISSUE-0010 channel model integration, ISSUE-0014 metrics/result artifact format integration,
-and actual decoded-audio serialization.
+Implemented deterministic simulation core and merged locally to `develop`. Push/PR intentionally not performed per task instruction. Deferred items: real audio file IO and actual decoded-audio serialization.

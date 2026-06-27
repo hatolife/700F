@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Integrate M1-B: metrics schema, channel models, parameterized emulator skeletons, and deterministic simulation pipeline.
 - Add ISSUE-0013 descriptor-only FreeDV 700D/700E parameterized emulator skeletons with
   explicit emulator-vs-official baseline flags.
 - Add the ISSUE-0009 deterministic simulation core with dummy mode, identity channel, dummy metric, stage statuses, and JSON/CSV summaries.

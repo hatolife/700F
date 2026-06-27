@@ -1,7 +1,7 @@
 # ISSUE-0010: Channel model v0.1.0
 
 ## Status
-done
+closed
 
 ## Scope
 module:08
@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0010-channel-model-v0-1
 - Worktree: ../f700f-wt-issue-0010
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `eb12db2`; push/PR not performed because GitHub permission is blocked
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -78,6 +78,7 @@ Implement minimal AWGN, frequency offset, gain fading, and channel chain models.
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
 - 2026-06-27: Implemented Module 08 channel model primitives and test coverage for AWGN, frequency offset, gain fading, and chain ordering.
 - 2026-06-27: Local CI completed successfully with `bash ./tools/run_ci_local.sh`.
+- 2026-06-27 14:59 UTC Manager merged branch into `develop` as `eb12db2`; resolved CMake target/test conflict; post-merge local CI passed.
 
 ## Result
-pass
+Implemented initial AWGN, frequency offset, simple fading, and channel chain models and merged locally to `develop`.
