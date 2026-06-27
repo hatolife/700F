@@ -1,6 +1,9 @@
 # Codec2 700D/700E Verification Notes
 
-This document records the pinned Codec2/FreeDV source anchors for later official baseline verification. It is source documentation only; ISSUE-0007 does not implement the official adapter, SSB, 700D, 700E, 700F, or later simulation issues.
+This document records the pinned Codec2/FreeDV source anchors for official baseline
+verification. ISSUE-0007 pinned the source, and ISSUE-0012 uses these anchors for the
+700D/700E official descriptor and availability adapter. The v0.1.0 adapter does not
+implement bit-exact waveform encode/decode.
 
 Pinned source:
 
@@ -27,3 +30,6 @@ Verification rule for future issues:
 - Treat the pinned source files above as authoritative for adapter and baseline implementation.
 - Use `README_freedv.md` as upstream documentation, not as the sole source for code constants when a C source or header symbol exists.
 - Do not treat web-derived values as authoritative unless a future issue records the pinned source file, symbol/location, and commit hash that confirm them.
+- ISSUE-0012 compile-checks the 700D/700E API ids when `F700F_ENABLE_CODEC2=ON` and keeps
+  the default `F700F_ENABLE_CODEC2=OFF` path discoverable with an explicit unavailable
+  status.
