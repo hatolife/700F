@@ -1,0 +1,44 @@
+project = "v0.0.1"
+protocol = "f700f-protocol-0.0"
+plugin_abi = "f700f-plugin-abi-0.1"
+compatibility_minor = 0
+
+[modules]
+01_repository_build_ci = "v0.0.1"
+02_core_data_model_protocol = "v0.0.1"
+03_plugin_abi_registry = "v0.0.1"
+04_audio_io_dataset = "v0.0.1"
+05_codec_adapter = "v0.0.1"
+06_fec_uep_engine = "v0.0.1"
+07_ofdm_modem_waveform = "v0.0.1"
+08_hf_channel_simulator = "v0.0.1"
+09_sync_impairment_estimator = "v0.0.1"
+10_reference_baselines_ssb_700d_700e = "v0.0.1"
+11_pipeline_runner = "v0.0.1"
+12_metrics_scoring = "v0.0.1"
+13_sweep_optimization = "v0.0.1"
+14_ai_integration = "v0.0.1"
+15_reporting_visualization = "v0.0.1"
+16_golden_benchmark_integration_qa = "v0.0.1"
+
+[milestones.m1]
+name = "M1 Baseline Simulation"
+target_project = "v0.1.0"
+compatibility_minor = 1
+merge_target = "develop"
+status = "planned"
+issue_range = "ISSUE-0004..ISSUE-0016"
+affected_modules = [
+  "01_repository_build_ci",
+  "02_core_data_model_protocol",
+  "03_plugin_abi_registry",
+  "04_audio_io_dataset",
+  "05_codec_adapter",
+  "07_ofdm_modem_waveform",
+  "08_hf_channel_simulator",
+  "10_reference_baselines_ssb_700d_700e",
+  "11_pipeline_runner",
+  "12_metrics_scoring",
+  "13_sweep_optimization",
+  "15_reporting_visualization",
+]
