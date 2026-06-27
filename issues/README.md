@@ -30,6 +30,13 @@
 | ISSUE-0014 | closed | P0 | module:12 | Metrics and result artifact format | Module 12 + Module 15 | feature/ISSUE-0014-metrics-artifact-format | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0015 | closed | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-28 |
 | ISSUE-0016 | closed | P0 | qa | M1 audit report | Manager + QA | docs/ISSUE-0016-m1-audit-report | v0.1.0 | M1 | ISSUE-0004 through ISSUE-0015 | 2026-06-28 |
+| ISSUE-0017 | closed | P0 | project | M2 planning issue expansion | Manager | docs/ISSUE-0017-m2-planning | v0.2.0 target | M2 | ISSUE-0016 | 2026-06-28 |
+| ISSUE-0018 | open | P0 | architecture | 700F candidate architecture RFC | Module 02 + Manager | docs/ISSUE-0018-700f-candidate-architecture-rfc | v0.2.0 target | M2 | ISSUE-0017 | 2026-06-28 |
+| ISSUE-0019 | open | P0 | module:06 | FEC UEP engine prototype | Module 06 + Module 02 | feature/ISSUE-0019-fec-uep-prototype | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
+| ISSUE-0020 | open | P0 | module:07 | OFDM waveform candidate prototype | Module 07 + Module 09 | feature/ISSUE-0020-ofdm-waveform-candidate | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
+| ISSUE-0021 | open | P0 | module:09 | sync and impairment estimator prototype | Module 09 + Module 07 | feature/ISSUE-0021-sync-impairment-estimator | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0020 | 2026-06-28 |
+| ISSUE-0022 | open | P1 | module:14 | AI-assisted sweep triage | Module 14 + Module 13 | research/ISSUE-0022-ai-sweep-triage | v0.2.0 target | M2 | ISSUE-0015, ISSUE-0018 | 2026-06-28 |
+| ISSUE-0023 | open | P0 | qa | M2 audit and candidate downselect | Manager + QA | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 target | M2 | ISSUE-0018 through ISSUE-0022 | 2026-06-28 |
 
 ## M1-A integration status
 
@@ -61,3 +68,10 @@
 - ISSUE-0016 completed with decision `GO_WITH_LIMITATIONS`.
 - Root project version and M1-touched module versions are recorded as `v0.1.0` where applicable.
 - M2 planning may begin, but official FreeDV waveform execution, SSB audio export, sweep CLI/TOML parsing, and remote publication remain follow-up items.
+
+## M2 planning status
+
+- ISSUE-0017 through ISSUE-0023 define M2 700F candidate exploration.
+- M2-A startable planning/design work: ISSUE-0018 after ISSUE-0017 is merged.
+- M2 implementation issues ISSUE-0019, ISSUE-0020, ISSUE-0021, and ISSUE-0022 must not begin candidate code until ISSUE-0018 defines boundaries and test expectations.
+- ISSUE-0023 remains held until M2 candidate work completes.

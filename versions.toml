@@ -42,3 +42,24 @@ affected_modules = [
   "13_sweep_optimization",
   "15_reporting_visualization",
 ]
+
+[milestones.m2]
+name = "M2 700F Candidate Exploration"
+target_project = "v0.2.0"
+compatibility_minor = 2
+merge_target = "develop"
+status = "planned"
+issue_range = "ISSUE-0017..ISSUE-0023"
+affected_modules = [
+  "02_core_data_model_protocol",
+  "05_codec_adapter",
+  "06_fec_uep_engine",
+  "07_ofdm_modem_waveform",
+  "09_sync_impairment_estimator",
+  "10_reference_baselines_ssb_700d_700e",
+  "11_pipeline_runner",
+  "12_metrics_scoring",
+  "13_sweep_optimization",
+  "14_ai_integration",
+  "16_golden_benchmark_integration_qa",
+]
