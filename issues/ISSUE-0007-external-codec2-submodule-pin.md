@@ -47,11 +47,11 @@ Pin Codec2/FreeDV as external/codec2 submodule and document official 700D/700E b
 - ISSUE-0004
 
 ## Acceptance criteria
-- [ ] Submodule commit hash is documented.
-- [ ] Bootstrap build works with Codec2 disabled.
-- [ ] Codec2-enabled build path exists behind F700F_ENABLE_CODEC2.
-- [ ] 700D/700E constants or mode info are recorded with pinned source file path, symbol, and commit hash.
-- [ ] Web-derived values are not treated as authoritative.
+- [x] Submodule commit hash is documented.
+- [x] Bootstrap build works with Codec2 disabled.
+- [x] Codec2-enabled build path exists behind F700F_ENABLE_CODEC2.
+- [x] 700D/700E constants or mode info are recorded with pinned source file path, symbol, and commit hash.
+- [x] Web-derived values are not treated as authoritative.
 
 ## Test plan
 - git submodule status --recursive
@@ -59,15 +59,20 @@ Pin Codec2/FreeDV as external/codec2 submodule and document official 700D/700E b
 - cmake -S . -B build -DF700F_ENABLE_CODEC2=OFF
 
 ## TDD record
-- Red test added: to be completed by the issue owner before implementation.
-- Red command: to be completed by the issue owner.
-- Expected failure: to be completed by the issue owner.
-- Green command: see Test plan.
-- Refactor notes: to be completed by the issue owner.
-- TDD exception if any: planning-only issue until implementation begins.
+- Red test added: planned `tools/check_submodules.py` repository dependency check for `external/codec2` metadata/pin.
+- Red command: `python3 tools/check_submodules.py`
+- Expected failure: missing check script before implementation: `can't open file ... tools/check_submodules.py: [Errno 2] No such file or directory`.
+- Green command: `python3 tools/check_submodules.py`; `bash ./tools/run_ci_local.sh`; `bash -lc "cmake -S . -B build-codec2-on -DCMAKE_BUILD_TYPE=Debug -DF700F_ENABLE_CODEC2=ON"`.
+- Refactor notes: implementation should keep `F700F_ENABLE_CODEC2=OFF` independent of submodule initialization.
+- TDD exception if any: none.
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-27 14:40 UTC Subagent D started work in `research/ISSUE-0007-codec2-submodule-pin`; pre-implementation evidence: `git submodule status --recursive` had no output, `python3 tools/check_submodules.py` failed because the script was absent, and a direct PowerShell CMake probe was blocked by local PATH before code changes.
+- 2026-06-27 14:55 UTC Added Codec2/FreeDV submodule from `https://github.com/drowe67/codec2.git` at `external/codec2`, pinned to `310777b1c6f1af0bc7c72f5b32f80f6fd9136962` (`1.2.0-108-g310777b`).
+- 2026-06-27 15:10 UTC Added `F700F_ENABLE_CODEC2` OFF-by-default CMake gate, `tools/check_submodules.py`, dependency notes, and pinned 700D/700E verification anchors without implementing adapter or mode behavior.
+- 2026-06-27 15:20 UTC Verification passed: `python3 tools/check_submodules.py`; `git submodule status --recursive`; `bash -lc "cmake -S . -B build-codec2-on -DCMAKE_BUILD_TYPE=Debug -DF700F_ENABLE_CODEC2=ON"`; `bash ./tools/run_ci_local.sh` with Codec2 disabled by default. CI emitted clock-skew warnings only.
+- 2026-06-27 15:25 UTC Pre-commit `git status --short --branch` recorded: branch `research/ISSUE-0007-codec2-submodule-pin`; added `.gitmodules`, `external/codec2`, docs, and `tools/check_submodules.py`; modified `CMakeLists.txt`, root/module ISSUE-0007 files, and `CHANGELOG.md`.
 
 ## Result
-Pending.
+Ready for local commit/handoff. Push is intentionally not attempted for this subagent task.

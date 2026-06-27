@@ -30,12 +30,14 @@ P0
 Module-local planning and implementation handoff for root ISSUE-0007: external codec2 submodule pin.
 
 ## Acceptance criteria
-- [ ] Root ISSUE-0007 acceptance criteria relevant to this module are satisfied.
-- [ ] Module docs/issues/reports indexes are updated as work proceeds.
-- [ ] Module tests or documented TDD exception are added before implementation handoff closes.
+- [x] Root ISSUE-0007 acceptance criteria relevant to this module are satisfied.
+- [x] Module docs/issues/reports indexes are updated as work proceeds.
+- [x] Module tests or documented TDD exception are added before implementation handoff closes.
 
 ## Test plan
 - ./tools/run_ci_local.sh
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 issue expansion.
+- 2026-06-27 14:40 UTC Subagent D recorded root TDD evidence before implementation; Module 05 scope remains dependency adapter preparation only, with official adapter implementation deferred to ISSUE-0012.
+- 2026-06-27 15:20 UTC Root dependency check and local CI passed. Module 05 receives pinned headers/source documentation only; no official adapter was implemented.
