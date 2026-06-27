@@ -5,7 +5,7 @@
 | ISSUE-0001 | closed | P0 | project | Bootstrap repository | Manager | work | v0.0.1 | M0 | - | 2026-06-27 |
 | ISSUE-0002 | closed | P0 | project | Fast push CI policy and workflows | Manager | work | v0.0.1 | M0 | ISSUE-0001 | 2026-06-27 |
 | ISSUE-0003 | closed | P0 | project | M1 planning issue expansion | Manager | docs/ISSUE-0003-m1-planning | v0.1.0 | M1 | ISSUE-0001, ISSUE-0002 | 2026-06-27 |
-| ISSUE-0004 | open | P0 | qa | M0 audit and M1 go decision | Manager / QA | docs/ISSUE-0004-m0-audit | v0.1.0 | M1 | ISSUE-0001, ISSUE-0002 | 2026-06-27 |
+| ISSUE-0004 | closed | P0 | qa | M0 audit and M1 go decision | Manager / QA | docs/ISSUE-0004-m0-audit | v0.1.0 | M1 | ISSUE-0001, ISSUE-0002 | 2026-06-27 |
 | ISSUE-0005 | open | P0 | project | GitHub Actions CI introduction | Module 01 / Manager | docs/ISSUE-0005-github-actions-ci | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
 | ISSUE-0006 | open | P0 | docs | Docs issues reports governance structure | Manager + all modules | docs/ISSUE-0006-governance-structure | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
 | ISSUE-0007 | open | P0 | dependency | external codec2 submodule pin | Manager + Module 05 + Module 10 | research/ISSUE-0007-codec2-submodule-pin | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
