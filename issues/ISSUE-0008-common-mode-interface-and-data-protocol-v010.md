@@ -1,7 +1,7 @@
 # ISSUE-0008: Common Mode interface and data protocol v0.1.0
 
 ## Status
-open
+completed-local
 
 ## Scope
 protocol
@@ -47,27 +47,30 @@ Define the shared Mode interface and data protocol for SSB, 700D, 700E, and futu
 - ISSUE-0004
 
 ## Acceptance criteria
-- [ ] Minimal encode/decode/describe/reset interface is defined.
-- [ ] AudioBlock, ComplexBlock, BitBlock, FrameStatus, and ModeDescriptor responsibilities are documented.
-- [ ] Mode descriptor exposes bandwidth, latency, sample rate, codec name, and FEC name.
-- [ ] C++ interface and C ABI plugin relationship is documented.
-- [ ] Existing smoke test passes.
-- [ ] Affected module versions update to v0.1.0.
+- [x] Minimal encode/decode/describe/reset interface is defined.
+- [x] AudioBlock, ComplexBlock, BitBlock, FrameStatus, and ModeDescriptor responsibilities are documented.
+- [x] Mode descriptor exposes bandwidth, latency, sample rate, codec name, and FEC name.
+- [x] C++ interface and C ABI plugin relationship is documented.
+- [x] Existing smoke test passes.
+- [x] Affected module versions update to v0.1.0.
 
 ## Test plan
 - ctest --test-dir build --output-on-failure
 - python3 tools/check_versions.py
 
 ## TDD record
-- Red test added: to be completed by the issue owner before implementation.
-- Red command: to be completed by the issue owner.
-- Expected failure: to be completed by the issue owner.
-- Green command: see Test plan.
-- Refactor notes: to be completed by the issue owner.
-- TDD exception if any: planning-only issue until implementation begins.
+- Red test added: planned `tests/test_mode_interface.cpp` coverage for dummy descriptor retrieval, encode/decode, reset, invalid config, zero-length block, SSB-like descriptor representation, and FreeDV-like descriptor representation.
+- Red command: `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --test-dir build --output-on-failure`
+- Expected failure: confirmed under bash; `tests/test_mode_interface.cpp` fails to compile because `ModeId`, `ModeCapabilities`, `ModeRuntimeConfig`, `EncodeResult`, `DecodeResult`, `IMode`, `IModeFactory`, and `ModeRegistry` are absent from the public C++20 header.
+- Green command: `bash ./tools/run_ci_local.sh`
+- Refactor notes: Kept implementation header-only and minimal; no concrete mode, Codec2, SSB, 700D/700E, channel model, plugin loader, or ISSUE-0009+ behavior was added.
+- TDD exception if any: none.
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-27 23:40 JST Subagent C started local worktree implementation on `feature/ISSUE-0008-mode-interface-v0-1`; push remains blocked by task instruction, so handoff will be local commit only.
+- 2026-06-28 00:05 JST Added failing Mode interface contract tests, implemented minimal public C++20 interface, documented mode/data/plugin protocols, updated module 02/03 versions, and passed local CI.
+- 2026-06-28 00:05 JST Git status before commit: `## feature/ISSUE-0008-mode-interface-v0-1` with modified tracked files and new `docs/specs/`, `tests/`.
 
 ## Result
-Pending.
+Local implementation complete. Push/PR intentionally not performed per task instruction.
