@@ -1,7 +1,7 @@
 # ISSUE-0004: M0 audit and M1 go decision
 
 ## Status
-open
+closed
 
 ## Scope
 qa
@@ -18,7 +18,7 @@ P0
 - Work branch: docs/ISSUE-0004-m0-audit
 - Worktree: ../f700f-wt-issue-0004
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: local branch ready; remote PR pending
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -57,15 +57,22 @@ Audit ISSUE-0001/M0 artifacts and decide whether the repository is ready to proc
 - python3 tools/check_governance.py
 
 ## TDD record
-- Red test added: to be completed by the issue owner before implementation.
-- Red command: to be completed by the issue owner.
-- Expected failure: to be completed by the issue owner.
+- Red test added: M0 audit expectations were written in this issue before closing the audit.
+- Red command: git status --short; ./tools/run_ci_local.sh; python3 tools/check_versions.py; python3 tools/check_governance.py
+- Expected failure: none for M0 readiness; any failure blocks M1-A start.
 - Green command: see Test plan.
-- Refactor notes: to be completed by the issue owner.
-- TDD exception if any: planning-only issue until implementation begins.
+- Refactor notes: no refactor; audit/reporting only.
+- TDD exception if any: no product implementation in this issue.
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-27 13:36 UTC Started M0 audit on branch `docs/ISSUE-0004-m0-audit` from `develop`.
+- 2026-06-27 13:36 UTC ISSUE-0003 requested source branch was `docs/ISSUE-0003-m1-planning`; remote branch found as `origin/codex` with commit `9df07cc`, not requested commit `2bd1f6b`.
+- 2026-06-27 13:36 UTC Integrated ISSUE-0003 planning into local `develop` as commit `eba941a` by applying the planning diff without using `master` as base or merge target.
+- 2026-06-27 13:36 UTC Ran `./tools/run_ci_local.sh`: pass.
+- 2026-06-27 13:36 UTC Confirmed 16 module skeletons and no missing module `AGENTS.md` files.
+- 2026-06-27 13:36 UTC Ran version and governance checks: pass.
+- 2026-06-27 13:36 UTC Saved audit report `reports/20260627_133600_m0_audit.md`.
 
 ## Result
-Pending.
+M0 audit passed. M1-A entry work may begin for ISSUE-0005 through ISSUE-0008 after local `develop` is pushed. ISSUE-0009 and later simulation core/channel/SSB/700D/700E work remains blocked until M1-A entry issues establish the required base.
