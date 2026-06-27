@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Add ISSUE-0012 official FreeDV 700D/700E descriptors and guarded Codec2 availability
+  adapter with default OFF unavailable status.
 - Integrate M1-B: metrics schema, channel models, parameterized emulator skeletons, and deterministic simulation pipeline.
 - Add ISSUE-0013 descriptor-only FreeDV 700D/700E parameterized emulator skeletons with
   explicit emulator-vs-official baseline flags.
