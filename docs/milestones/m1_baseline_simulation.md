@@ -3,6 +3,7 @@
 ## Target version
 
 - Project target: `v0.1.0`
+- Completion status: `GO_WITH_LIMITATIONS` as of ISSUE-0016 on 2026-06-28
 - Compatibility line: `1`
 - Merge target: `develop`
 - Master branch: not used for M1 day-to-day work.
@@ -53,4 +54,15 @@ Remote `origin` is configured, but remote `develop` is not published because pri
 
 ## Version impact plan
 
-M1 target project version is `v0.1.0`. Interface-bearing or M1-touched modules should move to `v0.1.0` as their implementation issues complete. Untouched modules may remain `v0.0.1` until they join the M1 compatibility line.
+M1 project version is `v0.1.0`. Interface-bearing or M1-touched modules moved to `v0.1.0` where applicable. Untouched modules may remain `v0.0.1` until they join a later compatibility line.
+
+## Audit decision
+
+ISSUE-0016 completed M1 with `GO_WITH_LIMITATIONS`.
+
+Proceed to M2 planning and candidate exploration only with these limitations visible:
+
+- SSB received-audio WAV/raw float export remains follow-up work.
+- Official FreeDV 700D/700E waveform encode/decode and sample-audio round trip validation remain follow-up work.
+- Sweep runner standalone CLI and TOML parsing remain follow-up work.
+- Remote publication is not complete from this workspace because prior push was blocked by GitHub permission.
