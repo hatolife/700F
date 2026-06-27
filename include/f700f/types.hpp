@@ -1,9 +1,19 @@
 #pragma once
 #include <cstdint>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 namespace f700f {
-using SampleRateHz = std::uint32_t; using Hz = double; using Seconds = double; using Decibels = double; using Seed = std::uint64_t;
+
+using SampleRateHz = std::uint32_t;
+using Hz = double;
+using Seconds = double;
+using Decibels = double;
+using Seed = std::uint64_t;
+using ModeId = std::string;
+
 struct Complex32 { float re = 0.0F; float im = 0.0F; };
 struct AudioBlock { SampleRateHz sample_rate_hz = 0; std::vector<float> mono; double start_time_s = 0.0; };
 struct ComplexBlock { SampleRateHz sample_rate_hz = 0; std::vector<Complex32> iq; double center_frequency_hz = 0.0; double start_time_s = 0.0; };
@@ -12,5 +22,112 @@ struct SoftBitBlock { std::vector<float> llr; std::uint64_t frame_index = 0; };
 struct FrameStatus { std::uint64_t frame_index = 0; bool sync = false; bool fec_ok = false; float confidence = 0.0F; std::uint32_t corrected_errors = 0; std::uint32_t erasures = 0; };
 struct Capability { std::string key; std::string value; };
 struct ModuleDescriptor { std::string module_id; std::string module_name; std::string module_version; std::string abi_version; std::vector<Capability> capabilities; };
-struct ModeDescriptor { std::string mode_id; double rf_bandwidth_hz = 0.0; double audio_low_hz = 300.0; double audio_high_hz = 3300.0; double nominal_latency_s = 0.0; double frame_duration_s = 0.0; std::uint32_t raw_bitrate_bps = 0; std::uint32_t voice_bitrate_bps = 0; std::uint32_t text_bitrate_bps = 0; std::string codec_id; std::string fec_id; std::string modem_id; };
+
+struct ModeCapabilities {
+  bool audio_input = false;
+  bool audio_output = false;
+  bool complex_input = false;
+  bool complex_output = false;
+  bool bit_payload = false;
+  bool soft_bits = false;
+  bool variable_frame_size = false;
+};
+
+struct ModeDescriptor {
+  ModeId mode_id;
+  std::string display_name;
+  SampleRateHz sample_rate_hz = 0;
+  double rf_bandwidth_hz = 0.0;
+  double audio_low_hz = 300.0;
+  double audio_high_hz = 3300.0;
+  double nominal_latency_s = 0.0;
+  double frame_duration_s = 0.0;
+  std::uint32_t raw_bitrate_bps = 0;
+  std::uint32_t voice_bitrate_bps = 0;
+  std::uint32_t text_bitrate_bps = 0;
+  std::string codec_id;
+  std::string fec_id;
+  std::string modem_id;
+  ModeCapabilities capabilities;
+};
+
+struct ModeRuntimeConfig {
+  SampleRateHz sample_rate_hz = 0;
+  std::uint32_t max_frame_samples = 0;
+  std::vector<Capability> parameters;
+};
+
+struct EncodeResult {
+  bool ok = false;
+  std::string error;
+  ComplexBlock symbols;
+  BitBlock bits;
+  FrameStatus status;
+};
+
+struct DecodeResult {
+  bool ok = false;
+  std::string error;
+  AudioBlock audio;
+  BitBlock bits;
+  FrameStatus status;
+};
+
+class IMode {
+public:
+  virtual ~IMode() = default;
+  virtual const ModeDescriptor &descriptor() const noexcept = 0;
+  virtual bool configure(const ModeRuntimeConfig &config) = 0;
+  virtual EncodeResult encode(const AudioBlock &audio) = 0;
+  virtual DecodeResult decode(const ComplexBlock &symbols) = 0;
+  virtual void reset() noexcept = 0;
+};
+
+class IModeFactory {
+public:
+  virtual ~IModeFactory() = default;
+  virtual const ModeDescriptor &descriptor() const noexcept = 0;
+  virtual std::unique_ptr<IMode> create() const = 0;
+};
+
+class ModeRegistry {
+public:
+  bool register_factory(std::shared_ptr<IModeFactory> factory) {
+    if (!factory || factory->descriptor().mode_id.empty()) {
+      return false;
+    }
+    const auto mode_id = factory->descriptor().mode_id;
+    return factories_.emplace(mode_id, std::move(factory)).second;
+  }
+
+  const ModeDescriptor *find(const ModeId &mode_id) const noexcept {
+    const auto it = factories_.find(mode_id);
+    if (it == factories_.end()) {
+      return nullptr;
+    }
+    return &it->second->descriptor();
+  }
+
+  std::unique_ptr<IMode> create(const ModeId &mode_id) const {
+    const auto it = factories_.find(mode_id);
+    if (it == factories_.end()) {
+      return nullptr;
+    }
+    return it->second->create();
+  }
+
+  std::vector<ModeDescriptor> descriptors() const {
+    std::vector<ModeDescriptor> result;
+    result.reserve(factories_.size());
+    for (const auto &[mode_id, factory] : factories_) {
+      (void)mode_id;
+      result.push_back(factory->descriptor());
+    }
+    return result;
+  }
+
+private:
+  std::unordered_map<ModeId, std::shared_ptr<IModeFactory>> factories_;
+};
+
 } // namespace f700f
