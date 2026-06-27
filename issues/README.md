@@ -24,8 +24,8 @@
 | ISSUE-0008 | closed | P0 | protocol | Common Mode interface and data protocol v0.1.0 | Module 02 + Module 03 + Manager | feature/ISSUE-0008-mode-interface-v0-1 | v0.1.0 | M1 | ISSUE-0004 | 2026-06-27 |
 | ISSUE-0009 | closed | P0 | simulation | Deterministic simulation core | Module 11 + Module 02 + Module 12 | feature/ISSUE-0009-deterministic-simulation-core | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0010 | closed | P0 | module:08 | Channel model v0.1.0 | Module 08 | feature/ISSUE-0010-channel-model-v0-1 | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
-| ISSUE-0011 | open | P0 | module:10 | SSB reference emulator | Module 10 + Module 04 | feature/ISSUE-0011-ssb-reference-emulator | v0.1.0 | M1 | ISSUE-0008, ISSUE-0010 | 2026-06-28 |
-| ISSUE-0012 | open | P0 | module:05,10 | FreeDV 700D 700E official baseline adapter | Module 05 + Module 10 | feature/ISSUE-0012-freedv-official-baseline-adapter | v0.1.0 | M1 | ISSUE-0007, ISSUE-0008 | 2026-06-28 |
+| ISSUE-0011 | closed | P0 | module:10 | SSB reference emulator | Module 10 + Module 04 | feature/ISSUE-0011-ssb-reference-emulator | v0.1.0 | M1 | ISSUE-0008, ISSUE-0010 | 2026-06-28 |
+| ISSUE-0012 | closed | P0 | module:05,10 | FreeDV 700D 700E official baseline adapter | Module 05 + Module 10 | feature/ISSUE-0012-freedv-official-baseline-adapter | v0.1.0 | M1 | ISSUE-0007, ISSUE-0008 | 2026-06-28 |
 | ISSUE-0013 | closed | P1 | module:07,10 | 700D 700E parameterized emulator skeleton | Module 07 + Module 10 | feature/ISSUE-0013-700d-700e-parameterized-emulator | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0014 | closed | P0 | module:12 | Metrics and result artifact format | Module 12 + Module 15 | feature/ISSUE-0014-metrics-artifact-format | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0015 | closed | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-28 |
@@ -47,3 +47,11 @@
 - ISSUE-0011, ISSUE-0012, and ISSUE-0015 are startable from local `develop`.
 - ISSUE-0012 workers must initialize `external/codec2` before official adapter work.
 - ISSUE-0016 remains held until remaining M1 work completes.
+
+## M1-C integration status
+
+- ISSUE-0011, ISSUE-0012, and ISSUE-0015 are integrated locally into `develop`.
+- Merge commits: ISSUE-0011 `0f09a49`, ISSUE-0012 `5b48e62`, ISSUE-0015 `1710785`.
+- Final M1-C local CI passed with 9 CTest tests.
+- Push/PR not performed from this workspace; prior publication is blocked by GitHub permission.
+- ISSUE-0016 M1 audit is now startable from local `develop`.

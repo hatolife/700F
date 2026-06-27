@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0015-sweep-runner-v0-1
 - Worktree: ../f700f-wt-issue-0015
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `1710785`
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -65,6 +65,7 @@ Create config-driven sweep runner for modes, channel conditions, and seeds.
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
 - 2026-06-28 00:00 JST M1-C subagent C started implementation in `../f700f-wt-issue-0015`; recorded red-test plan before code changes.
 - 2026-06-28 00:00 JST Added Module 13 sweep runner, contract tests, aggregate JSON/CSV output, smoke TOML schema, and sweep runner spec.
+- 2026-06-28 JST Merged to local `develop` as `1710785`; CMake and changelog conflicts were resolved by retaining all M1-C targets/tests and changelog entries. Post-merge local CI passed with 9 CTest tests.
 
 ## Result
 Implemented initial sweep runner. Missing/unmerged modes are skipped; attempted failed runs are recorded and do not stop later runs. TOML parsing, official Codec2 adapter behavior, and real SSB/FreeDV waveform fidelity remain outside ISSUE-0015.

@@ -1,7 +1,7 @@
 # ISSUE-0011: SSB reference emulator
 
 ## Status
-open
+closed
 
 ## Scope
 module:10
@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0011-ssb-reference-emulator
 - Worktree: ../f700f-wt-issue-0011
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `0f09a49`
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -68,6 +68,7 @@ Implement SSB standard 3k and narrow 1.9k reference emulator profiles.
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
 - 2026-06-28 00:00 UTC Started TDD phase in module-local implementation branch before code.
 - 2026-06-28 00:00 UTC Implemented `ssb_standard_3k` / `ssb_narrow_1k9` descriptors, registry hooks, placeholder SSB runtime, and added tests.
+- 2026-06-28 JST Merged to local `develop` as `0f09a49`; post-merge local CI passed with 7 CTest tests.
 
 ## Result
-Pending.
+Implemented and integrated into local `develop`. SSB standard 3k and narrow 1.9k modes are selectable and documented as audio-metrics targets. Known limitation for M1 audit: received audio WAV/raw float export remains a follow-up item.

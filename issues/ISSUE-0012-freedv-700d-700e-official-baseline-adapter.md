@@ -1,7 +1,7 @@
 # ISSUE-0012: FreeDV 700D 700E official baseline adapter
 
 ## Status
-open
+closed
 
 ## Scope
 module:05,10
@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0012-freedv-official-baseline-adapter
 - Worktree: ../f700f-wt-issue-0012
 - Merge target: develop
-- PR/Merge status: none
+- PR/Merge status: merged local to develop as `5b48e62`
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -84,7 +84,7 @@ Create optional Codec2/FreeDV adapter for official 700D and 700E baselines.
 - 2026-06-28 JST Added red test for official descriptors/flags/unavailable behavior,
   implemented guarded Module 05 adapter skeleton, documented official baselines, and
   verified default OFF local CI.
+- 2026-06-28 JST Merged to local `develop` as `5b48e62`; CMake and issue index conflicts were resolved by retaining ISSUE-0011 and ISSUE-0012 targets/tests and issue rows. Post-merge local CI passed with 8 CTest tests.
 
 ## Result
-Ready for integration handoff with one explicit limitation: full Codec2 waveform
-encode/decode and sample-audio round trip validation are deferred to a follow-up issue.
+Implemented and integrated into local `develop` with one explicit limitation: full Codec2 waveform encode/decode and sample-audio round trip validation are deferred to a follow-up issue.

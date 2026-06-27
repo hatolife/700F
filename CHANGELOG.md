@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Integrate M1-C: SSB reference modes, guarded official FreeDV descriptors, and initial sweep runner.
 - Add ISSUE-0012 official FreeDV 700D/700E descriptors and guarded Codec2 availability
   adapter with default OFF unavailable status.
 - Add ISSUE-0015 initial sweep runner with stable mode/channel/seed expansion,
