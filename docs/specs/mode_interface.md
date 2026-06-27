@@ -13,7 +13,9 @@ The v0.1.0 public surface lives in `include/f700f/types.hpp`.
   soft bits, and variable frame sizing.
 - `ModeDescriptor` describes a mode without constructing a runtime instance. It exposes
   bandwidth, latency, sample rate, codec name, FEC name, modem name, audio passband,
-  frame timing, and nominal bit rates.
+  frame timing, CP timing, nominal bit rates, carrier count, modulation family, pilot
+  strategy, implementation status, and flags that distinguish emulator skeletons from
+  official baselines.
 - `ModeRuntimeConfig` carries runtime options needed before encode/decode. v0.1.0 only
   standardizes sample rate, max frame samples, and key/value parameters.
 - `EncodeResult` returns generated complex symbols, optional bits, frame status, and an
@@ -45,9 +47,11 @@ An SSB-like descriptor can set `codec_id = "analog-voice"`, `fec_id = "none"`,
 audio input plus complex output.
 
 A FreeDV-like descriptor can set `codec_id = "codec2"`, a FreeDV-family FEC identifier,
-an OFDM modem identifier, nominal frame duration, bitrate fields, and complex IO or bit
-payload capabilities. This representation does not implement or validate any official
-FreeDV mode.
+an OFDM modem identifier, nominal frame duration, CP duration, bitrate fields, carrier
+count, modulation family, pilot strategy, and complex IO or bit payload capabilities.
+Descriptor-only emulators must set `emulator = true`, `official_baseline = false`, and
+an implementation status that makes unimplemented runtime behavior explicit. This
+representation does not implement or validate any official FreeDV mode.
 
 ## Non-goals
 
