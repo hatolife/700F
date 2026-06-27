@@ -9,6 +9,7 @@ add_library(f700f_metrics OBJECT modules/12_metrics_scoring/src/metrics_artifact
 target_include_directories(f700f_metrics PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include)
+add_subdirectory(modules/08_hf_channel_simulator)
 if(F700F_ENABLE_CODEC2)
   set(F700F_CODEC2_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/codec2)
   if(NOT EXISTS ${F700F_CODEC2_SOURCE_DIR}/src/freedv_api.h)
@@ -28,7 +29,10 @@ target_link_libraries(test_metrics_result_artifacts PRIVATE f700f_core)
 target_include_directories(test_metrics_result_artifacts PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(test_channel_models tests/test_channel_models.cpp)
+target_link_libraries(test_channel_models PRIVATE f700f_core f700f_channel_model)
 enable_testing()
 add_test(NAME f700f_info_version COMMAND f700f-info)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
 add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
+add_test(NAME channel_model_contract COMMAND test_channel_models)

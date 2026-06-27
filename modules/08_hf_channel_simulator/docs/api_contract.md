@@ -1,3 +1,27 @@
-# Api Contract
+# API Contract
 
-Bootstrap placeholder for HF Channel Simulator.
+- `f700f::AwgnChannel`
+  - constructor: `AwgnChannel(double snr_db, Seed seed)`
+  - methods:
+    - `bool apply(f700f::AudioBlock&)`
+    - `bool apply(f700f::ComplexBlock&)`
+    - `void reseed(Seed)`
+    - `void reset()`
+- `f700f::FrequencyOffsetChannel`
+  - constructor: `FrequencyOffsetChannel(double frequency_offset_hz)`
+  - methods:
+    - `bool apply(f700f::AudioBlock&)` (pass-through)
+    - `bool apply(f700f::ComplexBlock&)`
+    - `void set_frequency_offset(double frequency_offset_hz)`
+- `f700f::SimpleGainFadingChannel`
+  - constructor: `SimpleGainFadingChannel(double min_gain_db, double max_gain_db, Seed seed)`
+  - methods:
+    - `bool apply(f700f::AudioBlock&)`
+    - `bool apply(f700f::ComplexBlock&)`
+    - `void reseed(Seed)`
+    - `void reset()`
+- `f700f::ChannelChain`
+  - `add(std::unique_ptr<ChannelEffect>)`
+  - `bool apply(f700f::AudioBlock&)`
+  - `bool apply(f700f::ComplexBlock&)`
+- All effect implementations expose `name()` and `last_error()`.

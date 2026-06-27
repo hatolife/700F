@@ -9,6 +9,7 @@
 - Document the future C ABI plugin protocol relationship without implementing plugin loading.
 - Add focused Mode interface contract tests and update module 02/03 version metadata.
 - Pin Codec2/FreeDV as `external/codec2` submodule and document 700D/700E verification anchors for ISSUE-0007.
+- Implement M1 baseline channel model primitives (AWGN, frequency offset, simple gain fading, chain order) in module 08 for ISSUE-0010.
 
 ## v0.0.1 - 2026-06-27
 - Plan M1 Baseline Simulation with root/module issues and target v0.1.0 manifest entries.
