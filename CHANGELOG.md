@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Add M2 700F candidate exploration planning issues and dispatch plan after M1 GO_WITH_LIMITATIONS.
 - Complete M1 audit with GO_WITH_LIMITATIONS and mark project/M1-touched module manifests as v0.1.0.
 - Record M1 baseline smoke output: one completed dummy-mode identity run and skipped official FreeDV 700D/700E entries under Codec2-disabled/default registration.
 - Integrate M1-C: SSB reference modes, guarded official FreeDV descriptors, and initial sweep runner.
