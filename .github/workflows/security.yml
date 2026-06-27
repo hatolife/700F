@@ -1,0 +1,32 @@
+name: Security
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  baseline-security:
+    name: Baseline security checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Check for oversized generated artifacts
+        run: |
+          set -euo pipefail
+          if find . -path ./.git -prune -o -type f -size +10M -print | grep -q .; then
+            echo 'Unexpected files larger than 10 MiB found in repository.' >&2
+            find . -path ./.git -prune -o -type f -size +10M -print >&2
+            exit 1
+          fi
+      - name: Governance scripts remain runnable
+        run: python3 tools/check_governance.py

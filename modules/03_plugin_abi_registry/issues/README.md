@@ -1,0 +1,7 @@
+# Module Issues
+
+
+| ID | Status | Priority | Title | Owner | Branch | Target version | Last updated |
+|---|---|---|---|---|---|---|---|
+| ISSUE-0006 | open | P0 | docs issues reports governance structure | Module 03 | see root ISSUE-0006 | v0.1.0 target as applicable | 2026-06-27 |
+| ISSUE-0008 | open | P0 | common mode interface and data protocol v010 | Module 03 | see root ISSUE-0008 | v0.1.0 target as applicable | 2026-06-27 |

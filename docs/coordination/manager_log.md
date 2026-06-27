@@ -1,0 +1,3 @@
+# Manager Log
+
+Bootstrap placeholder.
