@@ -1,5 +1,16 @@
-# Module Issues
+# Module 10 reference baselines ssb 700d 700e Issues
 
+## Scope
+
+- Module issue tracker for work owned by Module 10 reference baselines ssb 700d 700e.
+- Project issues remain in root issues/README.md.
+
+## Module issue policy
+
+- Create or update the module issue before implementation starts.
+- Track issue status in the table below.
+- Record issue timing and branch details in each issue document.
+- TDD evidence is mandatory unless planning-only exception applies.
 
 | ID | Status | Priority | Title | Owner | Branch | Target version | Last updated |
 |---|---|---|---|---|---|---|---|
@@ -8,3 +19,4 @@
 | ISSUE-0011 | open | P0 | ssb reference emulator | Module 10 | see root ISSUE-0011 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0012 | open | P0 | freedv 700d 700e official baseline adapter | Module 10 | see root ISSUE-0012 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0013 | open | P0 | 700d 700e parameterized emulator skeleton | Module 10 | see root ISSUE-0013 | v0.1.0 target as applicable | 2026-06-27 |
+
