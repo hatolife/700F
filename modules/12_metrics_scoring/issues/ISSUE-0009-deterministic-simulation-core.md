@@ -39,3 +39,5 @@ Module-local planning and implementation handoff for root ISSUE-0009: Determinis
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 issue expansion.
+- 2026-06-27 15:00 UTC M1-B subagent D reviewed Module 12 scope; metrics remain a Module 11-local dummy adapter until ISSUE-0014 defines result artifact contracts.
+- 2026-06-27 15:30 UTC Confirmed implementation did not change Module 12 code; dummy metric remains local to Module 11 for ISSUE-0009 tests.

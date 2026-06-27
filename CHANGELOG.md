@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Add the ISSUE-0009 deterministic simulation core with dummy mode, identity channel, dummy metric, stage statuses, and JSON/CSV summaries.
 - Integrate M1-A: governance policy, GitHub Actions CI, common Mode interface/protocol, and Codec2 submodule pin.
 - Add Linux-required and Windows-optional GitHub Actions CI documentation for ISSUE-0005.
 - Document project/module governance, reporting, issue, and version policies for ISSUE-0006.

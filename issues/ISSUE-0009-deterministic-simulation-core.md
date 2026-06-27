@@ -44,26 +44,32 @@ Create deterministic seed-fixed simulation runner and mode -> channel -> receive
 - ISSUE-0008
 
 ## Acceptance criteria
-- [ ] Same config and seed produce same result.
-- [ ] Mode can be swapped.
-- [ ] Channel can be swapped.
-- [ ] Metrics can be swapped.
-- [ ] Minimal config can run one simulation.
-- [ ] Result can be emitted as JSON or CSV.
+- [x] Same config and seed produce same result.
+- [x] Mode can be swapped.
+- [x] Channel can be swapped.
+- [x] Metrics can be swapped.
+- [x] Minimal config can run one simulation.
+- [x] Result can be emitted as JSON or CSV.
 
 ## Test plan
 - ctest --test-dir build --output-on-failure
 
 ## TDD record
-- Red test added: to be completed by the issue owner before implementation.
-- Red command: to be completed by the issue owner.
-- Expected failure: to be completed by the issue owner.
-- Green command: see Test plan.
-- Refactor notes: to be completed by the issue owner.
-- TDD exception if any: planning-only issue until implementation begins.
+- Red test added: planned `test_simulation_pipeline` covering dummy mode + identity channel success, deterministic same-seed output, invalid mode id, invalid channel config, zero-length audio, result metadata, and reflected stage failure before implementation.
+- Red command: `bash -lc 'cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --test-dir build --output-on-failure'`.
+- Expected failure: `tests/test_simulation_pipeline.cpp:1:10: fatal error: f700f/simulation_pipeline.hpp: No such file or directory`.
+- Green command: `bash ./tools/run_ci_local.sh` passed with 3/3 CTest tests, version check, and governance check.
+- Refactor notes: keep channel and metrics as Module 11-local minimal abstractions for ISSUE-0009; defer public channel/result artifact contracts to ISSUE-0010/ISSUE-0014 integration.
+- TDD exception if any: none.
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-27 15:00 UTC M1-B subagent D started implementation branch and recorded red-test plan before code changes.
+- 2026-06-27 15:05 UTC Red test failed as expected on missing `f700f/simulation_pipeline.hpp`.
+- 2026-06-27 15:30 UTC Implemented Module 11 deterministic simulation core, added spec/docs, and passed local CI.
 
 ## Result
-Pending.
+Local implementation complete on `feature/ISSUE-0009-deterministic-simulation-core`.
+Push/PR intentionally not performed per task instruction. Deferred items: real audio file IO,
+ISSUE-0010 channel model integration, ISSUE-0014 metrics/result artifact format integration,
+and actual decoded-audio serialization.
