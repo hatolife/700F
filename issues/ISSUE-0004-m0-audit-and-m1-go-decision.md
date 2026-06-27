@@ -18,7 +18,7 @@ P0
 - Work branch: docs/ISSUE-0004-m0-audit
 - Worktree: ../f700f-wt-issue-0004
 - Merge target: develop
-- PR/Merge status: local branch ready; remote PR pending
+- PR/Merge status: local merge complete; remote push/PR blocked by permission
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -73,6 +73,7 @@ Audit ISSUE-0001/M0 artifacts and decide whether the repository is ready to proc
 - 2026-06-27 13:36 UTC Confirmed 16 module skeletons and no missing module `AGENTS.md` files.
 - 2026-06-27 13:36 UTC Ran version and governance checks: pass.
 - 2026-06-27 13:36 UTC Saved audit report `reports/20260627_133600_m0_audit.md`.
+- 2026-06-27 13:37 UTC Attempted `git push origin develop docs/ISSUE-0004-m0-audit docs/ISSUE-0003-m1-planning`; push failed because GitHub denied permission to user `xcd0`.
 
 ## Result
-M0 audit passed. M1-A entry work may begin for ISSUE-0005 through ISSUE-0008 after local `develop` is pushed. ISSUE-0009 and later simulation core/channel/SSB/700D/700E work remains blocked until M1-A entry issues establish the required base.
+M0 audit passed. Local `develop` contains ISSUE-0003 and ISSUE-0004 integration. M1-A entry work may begin locally for ISSUE-0005 through ISSUE-0008 from `develop`; remote parallel work must wait until a user with push permission publishes `develop`. ISSUE-0009 and later simulation core/channel/SSB/700D/700E work remains blocked until M1-A entry issues establish the required base.
