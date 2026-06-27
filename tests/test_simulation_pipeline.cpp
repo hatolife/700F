@@ -1,4 +1,5 @@
 #include <f700f/simulation_pipeline.hpp>
+#include <f700f/reference_baselines/freedv_emulator.hpp>
 
 #include <cassert>
 #include <filesystem>
@@ -93,6 +94,32 @@ void result_contains_identity_metadata() {
   assert(result.channel_ids == std::vector<std::string>({"identity"}));
 }
 
+void ssb_mode_identity_channel_succeeds() {
+  f700f::SimulationRunner runner;
+  runner.register_mode_factory(f700f::make_ssb_standard_3k_mode_factory());
+  runner.register_channel_factory(f700f::make_identity_channel_factory());
+  runner.register_metric(f700f::make_dummy_metric());
+
+  f700f::SimulationConfig config;
+  config.run_id = "run-ssb-001";
+  config.seed = 24680;
+  config.input = f700f::GeneratedToneConfig{
+      .sample_rate_hz = 8000, .sample_count = 20, .frequency_hz = 550.0F, .amplitude = 0.2F};
+  config.mode_id = "ssb_standard_3k";
+  config.channel_chain.push_back({.channel_id = "identity"});
+  config.output_directory = "build/test-artifacts";
+  config.export_audio = false;
+  config.metric_ids = {"dummy.metric"};
+
+  const auto result = runner.run(config);
+  assert(result.ok);
+  assert(result.run_id == "run-ssb-001");
+  assert(result.mode_id == "ssb_standard_3k");
+  assert(result.channel_ids == std::vector<std::string>({"identity"}));
+  assert(result.decoded_audio.sample_rate_hz == 8000);
+  assert(result.decoded_audio.mono.size() == 20);
+}
+
 void pipeline_stage_failure_is_reflected() {
   auto runner = make_runner();
   auto config = make_config();
@@ -112,6 +139,7 @@ int main() {
   invalid_channel_config_fails();
   zero_length_audio_does_not_crash();
   result_contains_identity_metadata();
+  ssb_mode_identity_channel_succeeds();
   pipeline_stage_failure_is_reflected();
   return 0;
 }

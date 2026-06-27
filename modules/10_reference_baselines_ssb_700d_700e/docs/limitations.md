@@ -6,3 +6,6 @@
   official FreeDV modem, FEC, interleaver, synchronization, or validation baseline is
   implemented.
 - ISSUE-0012 remains the owner for any official 700D/700E baseline adapter work.
+- ISSUE-0011 adds `ssb_standard_3k` and `ssb_narrow_1k9` reference placeholders.
+  These modes are audio-only descriptors with simple bandwidth-limited pass-through
+  runtime behavior; they are not high-fidelity SSB emulators.
