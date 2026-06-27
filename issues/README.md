@@ -18,3 +18,12 @@
 | ISSUE-0014 | open | P0 | module:12 | Metrics and result artifact format | Module 12 + Module 15 | feature/ISSUE-0014-metrics-artifact-format | v0.1.0 | M1 | ISSUE-0008 | 2026-06-27 |
 | ISSUE-0015 | open | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-27 |
 | ISSUE-0016 | open | P0 | qa | M1 audit report | Manager + QA | docs/ISSUE-0016-m1-audit-report | v0.1.0 | M1 | ISSUE-0004 through ISSUE-0015 | 2026-06-27 |
+
+## M1-A dispatch status
+
+- ISSUE-0003 is integrated into local `develop` through `eba941a`.
+- ISSUE-0004 M0 audit passed; reports exist under root `reports/` and Module 16 QA `reports/`.
+- ISSUE-0005, ISSUE-0006, ISSUE-0007, and ISSUE-0008 are ready for local parallel dispatch from `develop`.
+- ISSUE-0009 and later should wait until ISSUE-0008 lands the minimal Mode interface/data protocol baseline.
+- ISSUE-0010 may begin after ISSUE-0008 provides the minimal protocol needed by the channel model.
+- Remote `origin` is configured, but prior push was blocked by GitHub permission. Remote `develop` is not published.
