@@ -1,7 +1,7 @@
 # ISSUE-0013: 700D 700E parameterized emulator skeleton
 
 ## Status
-open
+complete
 
 ## Scope
 module:07,10
@@ -19,6 +19,7 @@ P1
 - Worktree: ../f700f-wt-issue-0013
 - Merge target: develop
 - PR/Merge status: none
+- Local commit: pending
 
 ## Target version and milestone
 - Project version: v0.1.0 target for M1 unless noted
@@ -44,25 +45,30 @@ Create parameterized 700D/700E-style emulator skeleton distinct from official ba
 - ISSUE-0008
 
 ## Acceptance criteria
-- [ ] Emulator-only results are not labeled official baseline.
-- [ ] Official-vs-emulator gaps are documented.
-- [ ] Descriptors include carrier count, bandwidth, frame duration, CP duration, raw bitrate, and FEC name.
-- [ ] Simplified implementation explicitly marks unimplemented features.
-- [ ] Boundary supports later high-quality emulator replacement.
+- [x] Emulator-only results are not labeled official baseline.
+- [x] Official-vs-emulator gaps are documented.
+- [x] Descriptors include carrier count, bandwidth, frame duration, CP duration, raw bitrate, and FEC name.
+- [x] Simplified implementation explicitly marks unimplemented features.
+- [x] Boundary supports later high-quality emulator replacement.
 
 ## Test plan
 - ctest --test-dir build --output-on-failure
 
 ## TDD record
-- Red test added: to be completed by the issue owner before implementation.
-- Red command: to be completed by the issue owner.
-- Expected failure: to be completed by the issue owner.
-- Green command: see Test plan.
-- Refactor notes: to be completed by the issue owner.
-- TDD exception if any: planning-only issue until implementation begins.
+- Red test added: `tests/test_freedv_emulator.cpp` covers `freedv700d_emulated` and `freedv700e_emulated` descriptors, registry selection, emulator/official flags, extended parameter fields, and unimplemented encode/decode status.
+- Red command: `bash -lc 'cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build --target test_freedv_emulator && ctest --test-dir build --output-on-failure -R freedv_emulator_contract'`
+- Expected failure: compile failed because `f700f/reference_baselines/freedv_emulator.hpp` did not exist.
+- Green command: same focused command passed after implementation.
+- Refactor notes: added the minimal descriptor fields needed by ISSUE-0013, a Module 10 emulator factory/runtime, docs for placeholder assumptions, and version metadata for modules 07 and 10.
+- TDD exception if any: none.
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 planning expansion.
+- 2026-06-27 15:20 UTC M1-B subagent C started ISSUE-0013 in dedicated worktree; recorded TDD plan before adding tests.
+- 2026-06-27 15:43 UTC Focused emulator contract passed; local CI passed via `bash ./tools/run_ci_local.sh` with 3 tests.
 
 ## Result
-Pending.
+Complete. Added descriptor-only FreeDV 700D/700E parameterized emulator skeletons with
+explicit non-official emulator flags. Encode/decode return clear ISSUE-0013
+not-implemented statuses. Official Codec2/FreeDV baseline work remains out of scope for
+ISSUE-0012.

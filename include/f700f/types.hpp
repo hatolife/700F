@@ -42,12 +42,20 @@ struct ModeDescriptor {
   double audio_high_hz = 3300.0;
   double nominal_latency_s = 0.0;
   double frame_duration_s = 0.0;
+  double cp_duration_s = 0.0;
+  double audio_bandwidth_hz = 0.0;
   std::uint32_t raw_bitrate_bps = 0;
   std::uint32_t voice_bitrate_bps = 0;
   std::uint32_t text_bitrate_bps = 0;
+  std::uint32_t carrier_count = 0;
   std::string codec_id;
   std::string fec_id;
   std::string modem_id;
+  std::string modulation_family;
+  std::string pilot_strategy;
+  bool official_baseline = false;
+  bool emulator = false;
+  std::string implementation_status;
   ModeCapabilities capabilities;
 };
 

@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.1.0 - 2026-06-27
+- Add ISSUE-0013 descriptor-only FreeDV 700D/700E parameterized emulator skeletons with
+  explicit emulator-vs-official baseline flags.
 - Integrate M1-A: governance policy, GitHub Actions CI, common Mode interface/protocol, and Codec2 submodule pin.
 - Add Linux-required and Windows-optional GitHub Actions CI documentation for ISSUE-0005.
 - Document project/module governance, reporting, issue, and version policies for ISSUE-0006.
