@@ -6,6 +6,7 @@
 - api_contract.md
 - testing.md
 - limitations.md
+- ../../docs/specs/metrics.md
 
 ## Governance
 

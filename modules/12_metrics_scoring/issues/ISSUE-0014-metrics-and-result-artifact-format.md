@@ -1,7 +1,7 @@
 # ISSUE-0014: Metrics and result artifact format
 
 ## Status
-open
+done
 
 ## Scope
 module:12_metrics_scoring
@@ -39,3 +39,5 @@ Module-local planning and implementation handoff for root ISSUE-0014: Metrics an
 
 ## Work log
 - 2026-06-27 00:00 UTC Created by Manager Codex during M1 issue expansion.
+- 2026-06-27 23:41 UTC TDD defined in `tests/test_metrics_result_artifacts.cpp` for empty/NA/skipped/serialization behaviors; implementation deferred.
+- 2026-06-27 23:54 UTC Implemented ResultArtifact schema in `modules/12_metrics_scoring` with JSON/CSV round-trip tests and tolerant parsing.

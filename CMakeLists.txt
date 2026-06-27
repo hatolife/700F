@@ -5,6 +5,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(f700f_core INTERFACE)
 target_include_directories(f700f_core INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_library(f700f_metrics OBJECT modules/12_metrics_scoring/src/metrics_artifacts.cpp)
+target_include_directories(f700f_metrics PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include)
 if(F700F_ENABLE_CODEC2)
   set(F700F_CODEC2_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/codec2)
   if(NOT EXISTS ${F700F_CODEC2_SOURCE_DIR}/src/freedv_api.h)
@@ -17,6 +21,14 @@ add_executable(f700f-info src/apps/f700f-info.cpp)
 target_link_libraries(f700f-info PRIVATE f700f_core)
 add_executable(test_mode_interface tests/test_mode_interface.cpp)
 target_link_libraries(test_mode_interface PRIVATE f700f_core)
+add_executable(test_metrics_result_artifacts
+  tests/test_metrics_result_artifacts.cpp
+  $<TARGET_OBJECTS:f700f_metrics>)
+target_link_libraries(test_metrics_result_artifacts PRIVATE f700f_core)
+target_include_directories(test_metrics_result_artifacts PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 enable_testing()
 add_test(NAME f700f_info_version COMMAND f700f-info)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
+add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
