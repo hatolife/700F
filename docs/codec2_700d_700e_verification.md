@@ -5,6 +5,10 @@ verification. ISSUE-0007 pinned the source, and ISSUE-0012 uses these anchors fo
 700D/700E official descriptor and availability adapter. The v0.1.0 adapter does not
 implement bit-exact waveform encode/decode.
 
+ISSUE-0034 adds official waveform roundtrip research. See
+`docs/specs/freedv_official_waveform_roundtrip.md` for the detailed API map, the
+local upstream CLI roundtrip probe, and the remaining F700F runtime blockers.
+
 Pinned source:
 
 - Submodule path: `external/codec2`
@@ -24,6 +28,8 @@ Authoritative anchors:
 | 700D LDPC code | `external/codec2/src/ldpc_codes.c` | `ldpc_codes[]`, `HRA_112_112` | Commented as short rate 1/2 code for FreeDV 700D |
 | 700E LDPC code | `external/codec2/src/ldpc_codes.c` | `ldpc_codes[]`, `HRA_56_56` | Commented as short rate 1/2 code for FreeDV 700E |
 | Upstream summary table | `external/codec2/README_freedv.md` | mode table rows for `700D` and `700E` | 700D: Codec2 700C, 17-carrier coherent OFDM/QPSK, RF BW 1000, raw 1900 bits/s, LDPC (224,112). 700E: Codec2 700C, 21-carrier coherent OFDM/QPSK, RF BW 1500, raw 3000 bits/s, LDPC (112,56). |
+| Roundtrip API entry points | `external/codec2/src/freedv_api.h` | `freedv_open`, `freedv_close`, `freedv_tx`, `freedv_comptx`, `freedv_nin`, `freedv_rx`, `freedv_comprx` | First direct F700F runtime integration should own `struct freedv *`, prefer complex TX/RX for `ComplexBlock`, and buffer RX input according to `freedv_nin()`. |
+| CLI roundtrip reference | `external/codec2/src/freedv_tx.c`, `external/codec2/src/freedv_rx.c` | 700D/700E mode parsing and raw sample loops | Local ISSUE-0034 probe built upstream `freedv_tx`/`freedv_rx` and roundtripped `external/codec2/raw/ve9qrp_10s.raw` for both 700D and 700E. |
 
 Verification rule for future issues:
 
@@ -33,3 +39,8 @@ Verification rule for future issues:
 - ISSUE-0012 compile-checks the 700D/700E API ids when `F700F_ENABLE_CODEC2=ON` and keeps
   the default `F700F_ENABLE_CODEC2=OFF` path discoverable with an explicit unavailable
   status.
+- ISSUE-0034 verified that the upstream pinned Codec2 CLI tools can roundtrip
+  700D and 700E waveforms locally, but F700F still links only Codec2 headers in
+  the optional enabled path. Direct F700F runtime roundtrip remains a follow-up
+  requiring Codec2 library linkage, `freedv_close` ownership, float/short/`COMP`
+  amplitude conversion, and `freedv_nin()`-driven RX buffering.

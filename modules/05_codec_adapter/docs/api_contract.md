@@ -17,4 +17,5 @@ Module 05 exposes `f700f/codec_adapter/freedv_official.hpp`.
 
 With Codec2 disabled, runtime `configure`, `encode`, and `decode` fail gracefully with an
 unavailable reason. With Codec2 enabled, v0.1.0 compile-checks the official API ids but
-still reports guarded runtime failures for waveform encode/decode.
+still reports guarded ISSUE-0034 runtime failures for waveform encode/decode because the
+adapter does not yet link or call the upstream `codec2` library target.

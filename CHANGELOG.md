@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Record ISSUE-0034 official Codec2/FreeDV 700D/700E waveform roundtrip
+  research with pinned source API findings, upstream CLI manual roundtrip
+  evidence, and guarded F700F runtime blockers.
 - Integrate M2-D first-wave work: SSB audio export path propagation,
   `f700f-sweep` CLI/config loading, and `f700f-report` JSON/CSV report loading.
 - Create M2-D follow-up issues and dispatch plan for SSB audio export, sweep CLI,

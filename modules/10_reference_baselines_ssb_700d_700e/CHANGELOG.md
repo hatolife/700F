@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Record ISSUE-0034 source-backed official FreeDV 700D/700E waveform roundtrip
+  research while keeping emulator descriptors distinct from official runtime
+  evidence.
 - Expose direct factory helpers for `freedv700d_emulated` and
   `freedv700e_emulated` so M2 sweep campaigns can register descriptor-only
   emulator rows without routing through a standalone registry.
