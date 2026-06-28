@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.0 - 2026-06-28
+- Add ISSUE-0025 M2 smoke/full channel matrix config helpers.
+- Reject duplicate channel condition ids and malformed channel numeric parameters in
+  sweep orchestration.
+
 ## v0.1.0 - 2026-06-28
 - Add initial sweep runner for stable mode/channel/seed expansion.
 - Record skipped modes and failed runs without stopping later sweep records.

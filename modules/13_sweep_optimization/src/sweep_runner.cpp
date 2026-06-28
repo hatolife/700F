@@ -3,12 +3,17 @@
 #include <f700f/channel_model.hpp>
 
 #include <algorithm>
+#include <array>
+#include <cerrno>
+#include <cmath>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <utility>
 
 namespace f700f {
@@ -108,6 +113,30 @@ double get_double_parameter(const std::vector<Capability> &parameters,
   }
 }
 
+bool parse_double_parameter(const std::vector<Capability> &parameters,
+                            const std::string &key,
+                            double fallback,
+                            double &out,
+                            std::string &error) {
+  const auto value = get_parameter(parameters, key, {});
+  if (value.empty()) {
+    out = fallback;
+    return true;
+  }
+
+  char *end = nullptr;
+  errno = 0;
+  const auto parsed = std::strtod(value.c_str(), &end);
+  if (end == value.c_str() || *end != '\0' || errno == ERANGE ||
+      !std::isfinite(parsed)) {
+    error = "invalid " + key + " parameter: " + value;
+    return false;
+  }
+
+  out = parsed;
+  return true;
+}
+
 bool write_text_file(const std::filesystem::path &path,
                      const std::string &contents,
                      std::string &error) {
@@ -147,7 +176,8 @@ SimulationConfig make_simulation_config(const SweepConfig &config,
 
 class EffectChannel final : public IChannel {
 public:
-  using Maker = std::unique_ptr<ChannelEffect> (*)(const ChannelConfig &, Seed);
+  using Maker = std::unique_ptr<ChannelEffect> (*)(const ChannelConfig &, Seed,
+                                                   std::string &);
 
   EffectChannel(std::string channel_id, Maker maker)
       : channel_id_(std::move(channel_id)), maker_(maker) {}
@@ -159,9 +189,11 @@ public:
       error = channel_id_ + " channel received config for " + config.channel_id;
       return false;
     }
-    effect_ = maker_(config, seed);
+    effect_ = maker_(config, seed, error);
     if (!effect_) {
-      error = "failed to configure channel: " + channel_id_;
+      if (error.empty()) {
+        error = "failed to configure channel: " + channel_id_;
+      }
       return false;
     }
     return true;
@@ -198,22 +230,46 @@ private:
 };
 
 std::unique_ptr<ChannelEffect> make_awgn_effect(const ChannelConfig &config,
-                                                Seed seed) {
-  return std::make_unique<AwgnChannel>(
-      get_double_parameter(config.parameters, "snr_db", 24.0), seed);
+                                                Seed seed,
+                                                std::string &error) {
+  double snr_db = 24.0;
+  if (!parse_double_parameter(config.parameters, "snr_db", snr_db, snr_db,
+                              error)) {
+    return nullptr;
+  }
+  return std::make_unique<AwgnChannel>(snr_db, seed);
 }
 
 std::unique_ptr<ChannelEffect> make_frequency_offset_effect(
-    const ChannelConfig &config, Seed) {
-  return std::make_unique<FrequencyOffsetChannel>(
-      get_double_parameter(config.parameters, "freq_offset_hz", 0.0));
+    const ChannelConfig &config, Seed, std::string &error) {
+  double freq_offset_hz = 0.0;
+  if (!parse_double_parameter(config.parameters, "freq_offset_hz",
+                              freq_offset_hz, freq_offset_hz, error)) {
+    return nullptr;
+  }
+  if (freq_offset_hz < 0.0) {
+    error = "invalid freq_offset_hz parameter: must be non-negative";
+    return nullptr;
+  }
+  return std::make_unique<FrequencyOffsetChannel>(freq_offset_hz);
 }
 
 std::unique_ptr<ChannelEffect> make_simple_gain_fading_effect(
-    const ChannelConfig &config, Seed seed) {
-  return std::make_unique<SimpleGainFadingChannel>(
-      get_double_parameter(config.parameters, "min_gain_db", -2.0),
-      get_double_parameter(config.parameters, "max_gain_db", 2.0), seed);
+    const ChannelConfig &config, Seed seed, std::string &error) {
+  double min_gain_db = -2.0;
+  double max_gain_db = 2.0;
+  if (!parse_double_parameter(config.parameters, "min_gain_db", min_gain_db,
+                              min_gain_db, error) ||
+      !parse_double_parameter(config.parameters, "max_gain_db", max_gain_db,
+                              max_gain_db, error)) {
+    return nullptr;
+  }
+  if (min_gain_db > max_gain_db) {
+    error = "invalid simple_gain_fading parameters: min_gain_db exceeds max_gain_db";
+    return nullptr;
+  }
+  return std::make_unique<SimpleGainFadingChannel>(min_gain_db, max_gain_db,
+                                                   seed);
 }
 
 void emit_aggregate_artifacts(const SweepConfig &config, SweepResult &result) {
@@ -283,6 +339,13 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
   if (config.seeds.empty()) {
     result.error = "sweep config must include at least one seed";
     return result;
+  }
+  std::unordered_set<std::string> condition_ids;
+  for (const auto &condition : config.channel_conditions) {
+    if (!condition_ids.insert(condition.condition_id).second) {
+      result.error = "duplicate channel condition id: " + condition.condition_id;
+      return result;
+    }
   }
 
   std::size_t index = 0;
@@ -435,6 +498,78 @@ SweepConfig make_m1_baseline_smoke_sweep_config(std::string output_directory) {
                           .parameters = {{"min_gain_db", "-1.5"},
                                          {"max_gain_db", "1.5"}}}}}};
   config.seeds = {1};
+  return config;
+}
+
+SweepConfig make_m2_channel_matrix_smoke_sweep_config(
+    std::string output_directory) {
+  SweepConfig config;
+  config.run_id_prefix = "m2-channel-matrix-smoke";
+  config.output_directory = std::move(output_directory);
+  config.input = GeneratedToneConfig{.sample_rate_hz = 8000,
+                                     .sample_count = 32,
+                                     .frequency_hz = 1000.0F,
+                                     .amplitude = 0.25F};
+  config.metric_ids = {"dummy.metric"};
+  config.channel_conditions = {
+      {.condition_id = "identity",
+       .channel_chain = {{.channel_id = "identity"}}},
+      {.condition_id = "awgn-snr-6db",
+       .channel_chain = {{.channel_id = "awgn",
+                          .parameters = {{"snr_db", "6.0"}}}}},
+      {.condition_id = "awgn-snr-0db",
+       .channel_chain = {{.channel_id = "awgn",
+                          .parameters = {{"snr_db", "0.0"}}}}}};
+  config.seeds = {1};
+  return config;
+}
+
+SweepConfig make_m2_channel_matrix_full_sweep_config(
+    std::string output_directory) {
+  SweepConfig config;
+  config.run_id_prefix = "m2-channel-matrix-full";
+  config.output_directory = std::move(output_directory);
+  config.input = GeneratedToneConfig{.sample_rate_hz = 8000,
+                                     .sample_count = 32,
+                                     .frequency_hz = 1000.0F,
+                                     .amplitude = 0.25F};
+  config.metric_ids = {"dummy.metric"};
+
+  constexpr std::array<int, 6> snr_db_values = {-2, 0, 2, 4, 6, 8};
+  constexpr std::array<int, 4> frequency_offsets_hz = {0, 50, 100, 200};
+  constexpr std::array<const char *, 3> fading_profiles = {"none", "weak",
+                                                           "medium"};
+
+  for (const auto snr_db : snr_db_values) {
+    for (const auto freq_offset_hz : frequency_offsets_hz) {
+      for (const auto *fading : fading_profiles) {
+        SweepChannelCondition condition;
+        condition.condition_id = "awgn-snr-" + std::to_string(snr_db) +
+                                 "db-fo-" +
+                                 std::to_string(freq_offset_hz) +
+                                 "hz-fading-" + fading;
+        condition.channel_chain = {
+            {.channel_id = "awgn",
+             .parameters = {{"snr_db", std::to_string(snr_db) + ".0"}}},
+            {.channel_id = "frequency_offset",
+             .parameters = {{"freq_offset_hz",
+                             std::to_string(freq_offset_hz) + ".0"}}}};
+        if (std::string{fading} == "weak") {
+          condition.channel_chain.push_back(
+              {.channel_id = "simple_gain_fading",
+               .parameters = {{"min_gain_db", "-1.5"},
+                              {"max_gain_db", "1.5"}}});
+        } else if (std::string{fading} == "medium") {
+          condition.channel_chain.push_back(
+              {.channel_id = "simple_gain_fading",
+               .parameters = {{"min_gain_db", "-3.0"},
+                              {"max_gain_db", "3.0"}}});
+        }
+        config.channel_conditions.push_back(std::move(condition));
+      }
+    }
+  }
+  config.seeds = {1, 2, 3};
   return config;
 }
 

@@ -1,0 +1,31 @@
+# ISSUE-0025 smoke channel matrix. TOML parsing is deferred; this file records the
+# intended config shape mirrored by make_m2_channel_matrix_smoke_sweep_config().
+
+run_id_prefix = "m2-channel-matrix-smoke"
+output_directory = "reports/sweeps/m2-channel-matrix-smoke"
+export_audio = false
+metric_ids = ["dummy.metric"]
+seeds = [1]
+
+[input.generated_tone]
+sample_rate_hz = 8000
+sample_count = 32
+frequency_hz = 1000.0
+amplitude = 0.25
+
+[[channel_conditions]]
+condition_id = "identity"
+[[channel_conditions.channel_chain]]
+channel_id = "identity"
+
+[[channel_conditions]]
+condition_id = "awgn-snr-6db"
+[[channel_conditions.channel_chain]]
+channel_id = "awgn"
+snr_db = "6.0"
+
+[[channel_conditions]]
+condition_id = "awgn-snr-0db"
+[[channel_conditions.channel_chain]]
+channel_id = "awgn"
+snr_db = "0.0"

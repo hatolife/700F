@@ -1,3 +1,9 @@
 # Module 13: Sweep and Optimization Engine
 
-Bootstrap skeleton for `13_sweep_optimization`.
+Owns sweep orchestration, stable mode/channel/seed expansion, and reusable sweep config
+helpers.
+
+Current helpers include:
+
+- M1 baseline smoke sweep config.
+- ISSUE-0025 M2 smoke/full channel matrix config fragments.

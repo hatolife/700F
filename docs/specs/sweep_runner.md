@@ -77,3 +77,21 @@ and channel conditions:
 Modes that are not present in the current build are recorded as skipped. With
 `F700F_ENABLE_CODEC2=OFF`, official FreeDV modes are expected to skip unless a
 future optional adapter registers them.
+
+## M2 Channel Matrix Helpers
+
+ISSUE-0025 adds channel-matrix config helpers without changing the runner expansion
+contract:
+
+- `make_m2_channel_matrix_smoke_sweep_config()` returns the CI-sized matrix:
+  identity, AWGN 6 dB, AWGN 0 dB, seed 1.
+- `make_m2_channel_matrix_full_sweep_config()` returns 72 channel conditions from
+  AWGN SNR `-2, 0, 2, 4, 6, 8` dB, frequency offsets `0, 50, 100, 200` Hz, and
+  fading profiles `none, weak, medium`, with seeds `1, 2, 3`.
+
+The matrix details are specified in `docs/specs/channel_condition_matrix.md`, with
+TOML-friendly shapes under `configs/channels/`.
+
+The runner rejects duplicate channel condition ids before expansion and rejects empty
+seed lists before starting runs. Channel factory adapters reject malformed numeric
+parameters rather than silently substituting defaults.
