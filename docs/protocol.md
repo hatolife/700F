@@ -23,6 +23,9 @@ work. The normative v0.1.0 details are split by concern:
 - `docs/specs/freedv_official_waveform_roundtrip.md` records the ISSUE-0034
   source-backed Codec2/FreeDV 700D/700E waveform roundtrip research, manual upstream
   CLI probe, plus ISSUE-0036 optional F700F Codec2 runtime smoke coverage.
+- `docs/specs/modem_frame_symbol_protocol.md` defines the ISSUE-0043
+  source-level modem frame, symbol, baseband, status, and placeholder family
+  metadata containers needed before the ISSUE-0042 700F-A modem prototype.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.
@@ -30,3 +33,6 @@ Codec2, SSB, FreeDV 700D/700E, or the channel model.
 ISSUE-0032 marks selectable 700F candidate profiles as surrogate rows with
 `implementation_status = "surrogate"` for sweep/report readiness. They remain
 not-real-modem rows and do not encode or decode a 700F waveform.
+
+ISSUE-0043 adds C++ value types for the real-modem-prototype data boundary while
+leaving the existing Mode interface and runtime behavior unchanged.

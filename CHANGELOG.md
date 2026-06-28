@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0043 modem frame/symbol/baseband source protocol containers,
+  placeholder carrier/sync/FEC/codec statuses, rate validation helpers, and
+  contract tests without changing 700F-A runtime behavior.
 - Record final Manager handoff/report for the ISSUE-0040 M2 audit update and
   ISSUE-0041 real 700F modem RFC pass, including follow-up dispatch and local
   OFF/ON CI evidence.
