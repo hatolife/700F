@@ -37,6 +37,12 @@ Profile-only 700F candidates are represented by snapshots whose
 output without any result records. Such entries have score `0.0` until later
 implementation issues produce completed runs.
 
+ISSUE-0033 `freedv700d_emulated` and `freedv700e_emulated` rows may be operationally
+completed with `implementation_status = emulated_surrogate`. These rows are
+counted as completed run records for sweep health, but `performance_valid=false`
+and `downselect_valid=false` mean they do not contribute completed performance
+evidence to the interim score.
+
 ## Interim Score
 
 The default policy id is `m2-interim-v0`.
@@ -82,6 +88,10 @@ score = clamp_0_100(evidence
 This rewards completed runs, keeps failed attempts distinguishable from unavailable
 records, and prevents skipped/profile-only entries from masquerading as performance
 evidence.
+
+Rows with `implementation_status = emulated_surrogate` or
+`optional_metrics.performance_valid = "false"` are scored with zero completed-run
+evidence even when their sweep status is completed.
 
 ## Comparison Policy
 

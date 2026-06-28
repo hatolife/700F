@@ -1,5 +1,6 @@
 #include <f700f/reference_baselines/freedv_emulator.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <string>
@@ -9,6 +10,13 @@ namespace f700f {
 namespace {
 
 constexpr double kPi = 3.14159265358979323846;
+constexpr const char *kFreedvEmulatorModelName =
+    "f700f-minimal-freedv700d700e-surrogate";
+constexpr const char *kFreedvEmulatorModelVersion = "ISSUE-0033-v1";
+constexpr const char *kFreedvEmulatorLimitations =
+    "not official FreeDV; performance_valid=false; downselect_valid=false; "
+    "deterministic audio-to-IQ/audio surrogate only; no Codec2, FreeDV modem, "
+    "FEC, interleaver, synchronization, or official validation";
 
 ModeDescriptor make_freedv700d_descriptor() {
   ModeDescriptor descriptor;
@@ -32,8 +40,7 @@ ModeDescriptor make_freedv700d_descriptor() {
   descriptor.pilot_strategy = "scattered-pilot-placeholder";
   descriptor.official_baseline = false;
   descriptor.emulator = true;
-  descriptor.implementation_status =
-      "ISSUE-0013 descriptor-only emulator skeleton; encode/decode not implemented";
+  descriptor.implementation_status = "emulated_surrogate";
   descriptor.capabilities.audio_input = true;
   descriptor.capabilities.audio_output = true;
   descriptor.capabilities.complex_input = true;
@@ -53,8 +60,7 @@ ModeDescriptor make_freedv700e_descriptor() {
   descriptor.raw_bitrate_bps = 700;
   descriptor.carrier_count = 17;
   descriptor.pilot_strategy = "700e-style scattered-pilot-placeholder";
-  descriptor.implementation_status =
-      "ISSUE-0013 descriptor-only 700E emulator skeleton; encode/decode not implemented";
+  descriptor.implementation_status = "emulated_surrogate";
   return descriptor;
 }
 
@@ -137,23 +143,27 @@ public:
       result.error = descriptor_.mode_id + " not configured";
       return result;
     }
-    if (is_freedv_mode_) {
-      result.error = descriptor_.mode_id +
-                     " ISSUE-0013 encode not implemented in emulator skeleton";
-      return result;
-    }
     result.ok = true;
     result.status.sync = true;
     result.status.fec_ok = true;
-    result.status.confidence = 1.0F;
+    result.status.confidence = is_freedv_mode_ ? 0.5F : 1.0F;
     result.symbols.sample_rate_hz = descriptor_.sample_rate_hz;
     result.symbols.center_frequency_hz = 0.0;
     result.symbols.start_time_s = audio.start_time_s;
     result.symbols.iq.reserve(audio.mono.size());
+    result.bits.frame_index = result.status.frame_index;
+    if (is_freedv_mode_) {
+      result.bits.bits.reserve(audio.mono.size());
+    }
     for (const float sample : audio.mono) {
       const float limited =
           apply_simple_lowpass(sample, encode_filter_state_, descriptor_.audio_bandwidth_hz / 2.0, descriptor_.sample_rate_hz);
-      result.symbols.iq.push_back({limited, 0.0F});
+      const float clamped = std::clamp(limited, -1.0F, 1.0F);
+      const float quadrature = is_freedv_mode_ ? clamped * 0.25F : 0.0F;
+      result.symbols.iq.push_back({clamped, quadrature});
+      if (is_freedv_mode_) {
+        result.bits.bits.push_back(clamped >= 0.0F ? 1U : 0U);
+      }
     }
     return result;
   }
@@ -167,20 +177,23 @@ public:
       result.error = descriptor_.mode_id + " not configured";
       return result;
     }
-    if (is_freedv_mode_) {
-      result.error = descriptor_.mode_id +
-                     " ISSUE-0013 decode not implemented in emulator skeleton";
-      return result;
-    }
     result.ok = true;
     result.status.sync = true;
     result.status.fec_ok = true;
-    result.status.confidence = 1.0F;
+    result.status.confidence = is_freedv_mode_ ? 0.5F : 1.0F;
     result.audio.mono.reserve(symbols.iq.size());
+    result.bits.frame_index = result.status.frame_index;
+    if (is_freedv_mode_) {
+      result.bits.bits.reserve(symbols.iq.size());
+    }
     for (const auto &sample : symbols.iq) {
       const float limited = apply_simple_lowpass(sample.re, decode_filter_state_, descriptor_.audio_bandwidth_hz / 2.0,
                                                descriptor_.sample_rate_hz);
-      result.audio.mono.push_back(limited);
+      const float clamped = std::clamp(limited, -1.0F, 1.0F);
+      result.audio.mono.push_back(clamped);
+      if (is_freedv_mode_) {
+        result.bits.bits.push_back(sample.re >= 0.0F ? 1U : 0U);
+      }
     }
     return result;
   }
@@ -254,6 +267,18 @@ const ModeDescriptor &ssb_standard_3k_descriptor() noexcept {
 const ModeDescriptor &ssb_narrow_1k9_descriptor() noexcept {
   static const ModeDescriptor descriptor = make_ssb_narrow_1k9_descriptor();
   return descriptor;
+}
+
+const char *freedv_emulator_model_name() noexcept {
+  return kFreedvEmulatorModelName;
+}
+
+const char *freedv_emulator_model_version() noexcept {
+  return kFreedvEmulatorModelVersion;
+}
+
+const char *freedv_emulator_limitations() noexcept {
+  return kFreedvEmulatorLimitations;
 }
 
 void register_freedv_emulator_modes(ModeRegistry &registry) {

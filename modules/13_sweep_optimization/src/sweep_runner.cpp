@@ -187,11 +187,26 @@ bool is_metadata_only_mode(const ModeDescriptor &descriptor) {
          contains_token(descriptor.implementation_status, "descriptor-only");
 }
 
+bool is_emulated_surrogate_mode(const ModeDescriptor &descriptor) {
+  return descriptor.implementation_status == "emulated_surrogate";
+}
+
 std::string metadata_only_note(const ModeDescriptor &descriptor) {
   if (contains_token(descriptor.implementation_status, "profile_only")) {
     return "profile_only_completed: waveform encode/decode not run";
   }
   return "descriptor_only_completed: waveform encode/decode not run";
+}
+
+std::string emulated_surrogate_note() {
+  return std::string("emulated_surrogate_completed: "
+                     "implementation_status=emulated_surrogate; "
+                     "official=false; not_official_freedv=true; "
+                     "downselect_valid=false; performance_valid=false; "
+                     "emulator_model_name=") +
+         freedv_emulator_model_name() + "; emulator_model_version=" +
+         freedv_emulator_model_version() + "; emulator_limitations=" +
+         freedv_emulator_limitations();
 }
 
 bool is_official_freedv_mode(const ModeId &mode_id) {
@@ -687,8 +702,14 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
 
         record.simulation = simulation_runner_.run(simulation_config);
         record.audio_export_path = record.simulation.audio_export_path;
+        if (record.audio_export_path.empty()) {
+          record.audio_export_path = "N/A";
+        }
         if (record.simulation.ok) {
           record.status = SweepRunStatus::Completed;
+          if (is_emulated_surrogate_mode(descriptor_it->second)) {
+            record.error_summary = emulated_surrogate_note();
+          }
         } else {
           record.status = SweepRunStatus::Failed;
           record.error_summary = record.simulation.error;

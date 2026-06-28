@@ -129,6 +129,29 @@ void profile_only_snapshot_is_carried_without_performance_evidence() {
   assert(candidate->profile_snapshot->rf_bandwidth_hz == 1900.0);
 }
 
+void emulated_surrogate_completed_rows_are_not_performance_evidence() {
+  auto surrogate = make_result("freedv700d_emulated");
+  surrogate.mode_descriptor.implementation_status = "emulated_surrogate";
+  surrogate.mode_descriptor.official_baseline = false;
+  surrogate.mode_descriptor.emulator = true;
+  surrogate.optional_metrics["official"] = "false";
+  surrogate.optional_metrics["not_official_freedv"] = "true";
+  surrogate.optional_metrics["downselect_valid"] = "false";
+  surrogate.optional_metrics["performance_valid"] = "false";
+  surrogate.optional_metrics["emulator_limitations"] =
+      "deterministic surrogate only, not official FreeDV performance";
+
+  const auto report = f700f::metrics::score_m2_results(
+      {surrogate}, {}, f700f::metrics::make_m2_score_policy());
+  const auto *score = report.find_mode("freedv700d_emulated");
+  assert(score != nullptr);
+  assert(score->completed_count == 1);
+  assert(score->emulated_surrogate_count == 1);
+  assert(score->performance_invalid_count == 1);
+  assert(score->completed_run_ratio == 0.0);
+  assert(score->score == 0.0);
+}
+
 } // namespace
 
 int main() {
@@ -136,5 +159,6 @@ int main() {
   completed_failed_and_skipped_records_are_counted_and_ordered();
   audio_only_na_and_digital_availability_are_represented();
   profile_only_snapshot_is_carried_without_performance_evidence();
+  emulated_surrogate_completed_rows_are_not_performance_evidence();
   return 0;
 }

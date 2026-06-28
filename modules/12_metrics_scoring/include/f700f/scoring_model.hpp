@@ -31,6 +31,8 @@ struct M2ModeScore {
   std::uint64_t skipped_count = 0;
   std::uint64_t official_unavailable_count = 0;
   std::uint64_t profile_only_count = 0;
+  std::uint64_t emulated_surrogate_count = 0;
+  std::uint64_t performance_invalid_count = 0;
   std::uint64_t audio_only_ber_fer_na_count = 0;
   std::uint64_t ber_available_count = 0;
   std::uint64_t fer_available_count = 0;

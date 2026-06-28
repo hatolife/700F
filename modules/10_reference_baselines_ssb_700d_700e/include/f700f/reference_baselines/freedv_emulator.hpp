@@ -8,6 +8,9 @@ const ModeDescriptor &freedv700d_emulated_descriptor() noexcept;
 const ModeDescriptor &freedv700e_emulated_descriptor() noexcept;
 const ModeDescriptor &ssb_standard_3k_descriptor() noexcept;
 const ModeDescriptor &ssb_narrow_1k9_descriptor() noexcept;
+const char *freedv_emulator_model_name() noexcept;
+const char *freedv_emulator_model_version() noexcept;
+const char *freedv_emulator_limitations() noexcept;
 
 void register_freedv_emulator_modes(ModeRegistry &registry);
 void register_ssb_reference_modes(ModeRegistry &registry);

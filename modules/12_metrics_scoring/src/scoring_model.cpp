@@ -24,8 +24,22 @@ bool is_profile_only(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "profile_only";
 }
 
+bool is_emulated_surrogate(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.implementation_status == "emulated_surrogate";
+}
+
 bool has_optional_slot(const ResultArtifact &result, const std::string &key) {
   return result.optional_metrics.find(key) != result.optional_metrics.end();
+}
+
+bool optional_metric_is_false(const ResultArtifact &result, const std::string &key) {
+  const auto it = result.optional_metrics.find(key);
+  return it != result.optional_metrics.end() && it->second == "false";
+}
+
+bool is_performance_invalid(const ResultArtifact &result) {
+  return is_emulated_surrogate(result.mode_descriptor) ||
+         optional_metric_is_false(result, "performance_valid");
 }
 
 double clamp_score(double score) {
@@ -90,6 +104,12 @@ void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   if (is_profile_only(result.mode_descriptor)) {
     ++score.profile_only_count;
   }
+  if (is_emulated_surrogate(result.mode_descriptor)) {
+    ++score.emulated_surrogate_count;
+  }
+  if (is_performance_invalid(result)) {
+    ++score.performance_invalid_count;
+  }
 
   if (result.ber.has_value()) {
     ++score.ber_available_count;
@@ -128,8 +148,12 @@ void finalize_score(M2ModeScore &score, const M2ScorePolicy &policy) {
   const auto record_count = static_cast<double>(score.record_count);
   score.mean_dropout_rate /= record_count;
   score.mean_latency_s /= record_count;
+  const auto valid_completed_count =
+      score.completed_count > score.performance_invalid_count
+          ? score.completed_count - score.performance_invalid_count
+          : 0;
   score.completed_run_ratio =
-      static_cast<double>(score.completed_count) / record_count;
+      static_cast<double>(valid_completed_count) / record_count;
 
   const double failed_ratio = static_cast<double>(score.failed_count) / record_count;
   const double skipped_ratio =
@@ -228,6 +252,10 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
     out << "\"official_unavailable_count\":"
         << score.official_unavailable_count << ",";
     out << "\"profile_only_count\":" << score.profile_only_count << ",";
+    out << "\"emulated_surrogate_count\":" << score.emulated_surrogate_count
+        << ",";
+    out << "\"performance_invalid_count\":"
+        << score.performance_invalid_count << ",";
     out << "\"audio_only_ber_fer_na_count\":"
         << score.audio_only_ber_fer_na_count << ",";
     out << "\"ber_available_count\":" << score.ber_available_count << ",";

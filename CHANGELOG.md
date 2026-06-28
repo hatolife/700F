@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0033 minimal deterministic 700D/700E emulator surrogate behavior and
+  report/scoring labels that keep those rows non-official, performance-invalid,
+  and downselect-invalid.
 - Integrate M2-D first-wave work: SSB audio export path propagation,
   `f700f-sweep` CLI/config loading, and `f700f-report` JSON/CSV report loading.
 - Create M2-D follow-up issues and dispatch plan for SSB audio export, sweep CLI,

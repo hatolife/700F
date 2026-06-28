@@ -81,6 +81,9 @@ std::string descriptor_status(const f700f::metrics::M2ModeScore &score) {
   if (snapshot.implementation_status == "profile_only") {
     return "profile_only";
   }
+  if (snapshot.implementation_status == "emulated_surrogate") {
+    return "emulated_surrogate";
+  }
   if (!snapshot.implementation_status.empty()) {
     return snapshot.implementation_status;
   }
@@ -106,6 +109,9 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
   if (score.profile_only) {
     return "profile_only";
   }
+  if (score.performance_invalid_count > 0) {
+    return "performance invalid; not_official_freedv=true";
+  }
   if (score.skipped_count > 0) {
     return "skipped";
   }
@@ -118,14 +124,16 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
 void append_mode_rows(std::ostringstream &out,
                       const f700f::metrics::M2ScoreReport &score_report) {
   out << "| Mode | Score | Completed | Failed | Skipped | Official unavailable | "
-         "Profile-only | Status | Notes |\n";
-  out << "|---|---:|---:|---:|---:|---:|---:|---|---|\n";
+         "Profile-only | Surrogate | Performance invalid | Status | Notes |\n";
+  out << "|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|\n";
   for (const auto &score : score_report.mode_scores) {
     out << "| `" << markdown_escape_cell(score.mode_id) << "` | "
         << format_double(score.score) << " | " << score.completed_count << " | "
         << score.failed_count << " | " << score.skipped_count << " | "
         << score.official_unavailable_count << " | " << score.profile_only_count
-        << " | " << descriptor_status(score) << " | "
+        << " | " << score.emulated_surrogate_count << " | "
+        << score.performance_invalid_count << " | "
+        << descriptor_status(score) << " | "
         << markdown_escape_cell(reason_for_mode(score)) << " |\n";
   }
 }

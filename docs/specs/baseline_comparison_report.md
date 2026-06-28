@@ -21,8 +21,8 @@ available or has not produced artifacts.
 
 ISSUE-0031 adds a CLI path that loads sweep aggregate JSON/CSV artifacts, translates
 rows into reporting/scoring artifacts, and renders this same Markdown report. Loaded
-profile-only, descriptor-only, skipped, or failed rows must be labeled as
-non-performance evidence.
+profile-only, descriptor-only, emulated-surrogate, skipped, or failed rows must be
+labeled as non-performance evidence.
 
 ## Required Markdown Sections
 
@@ -68,5 +68,9 @@ such as `2026-06-28T12:34:56Z` becomes `20260628T123456Z`.
 - 700F candidate entries with `implementation_status = "profile_only"` are displayed
   as non-performance evidence with score `0.0` until later implementation issues
   produce completed runs.
-- Descriptor-only emulator rows are displayed as non-performance evidence and prevent
-  real downselect.
+- `freedv700d_emulated` and `freedv700e_emulated` rows with
+  `implementation_status = "emulated_surrogate"` are displayed as non-official
+  FreeDV surrogates with `not_official_freedv=true`, `performance_valid=false`,
+  and `downselect_valid=false`; they prevent real downselect.
+- Descriptor-only emulator rows, when encountered in older artifacts, are displayed
+  as non-performance evidence and prevent real downselect.
