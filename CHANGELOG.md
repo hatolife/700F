@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0038 RFC for a guarded 700F-A waveform-capable prototype path,
+  preserving 700F-B/C surrogate semantics and keeping real 700F downselect
+  prohibited until later performance-valid evidence and audit approval exist.
 - Add ISSUE-0037 Codec2-on CI/regression coverage with a local wrapper and
   separate Linux GitHub Actions job that initializes `external/codec2`, runs
   `F700F_ENABLE_CODEC2=ON` CTest, validates official 700D/700E smoke completion,
