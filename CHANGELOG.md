@@ -3,6 +3,9 @@
 ## v0.2.0 - 2026-06-28
 - Add ISSUE-0026 M2 700F candidate smoke/full sweep campaign configs over the M2
   channel matrices with stable ordering and skip-capable unavailable modes.
+- Add ISSUE-0027 M2 baseline comparison report generation with deterministic Markdown
+  sections, skipped/unavailable baseline status, profile-only 700F candidate display,
+  and timestamped filename support.
 - Add ISSUE-0024 interim M2 scoring model and comparison policy for result artifacts,
   official-unavailable records, audio-only N/A BER/FER, and 700F profile snapshots.
 - Add ISSUE-0025 M2 smoke/full channel condition matrices and sweep-runner validation

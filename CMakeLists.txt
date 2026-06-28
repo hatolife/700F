@@ -13,6 +13,12 @@ add_library(f700f_metrics OBJECT
 target_include_directories(f700f_metrics PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include)
+add_library(f700f_reporting OBJECT
+  modules/15_reporting_visualization/src/baseline_comparison_report.cpp)
+target_include_directories(f700f_reporting PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/15_reporting_visualization/include)
 add_subdirectory(modules/08_hf_channel_simulator)
 add_subdirectory(modules/10_reference_baselines_ssb_700d_700e)
 if(F700F_ENABLE_CODEC2)
@@ -44,6 +50,16 @@ target_link_libraries(test_scoring_model PRIVATE f700f_core f700f_candidate_prof
 target_include_directories(test_scoring_model PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(test_baseline_comparison_report
+  tests/test_baseline_comparison_report.cpp
+  $<TARGET_OBJECTS:f700f_metrics>
+  $<TARGET_OBJECTS:f700f_reporting>)
+target_link_libraries(test_baseline_comparison_report
+  PRIVATE f700f_core f700f_candidate_profiles)
+target_include_directories(test_baseline_comparison_report PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/15_reporting_visualization/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(test_channel_models tests/test_channel_models.cpp)
 target_link_libraries(test_channel_models PRIVATE f700f_core f700f_channel_model)
 add_executable(test_freedv_emulator tests/test_freedv_emulator.cpp)
@@ -72,6 +88,7 @@ add_test(NAME f700f_info_version COMMAND f700f-info)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
 add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
 add_test(NAME scoring_model_contract COMMAND test_scoring_model)
+add_test(NAME baseline_comparison_report_contract COMMAND test_baseline_comparison_report)
 add_test(NAME channel_model_contract COMMAND test_channel_models)
 add_test(NAME freedv_emulator_contract COMMAND test_freedv_emulator)
 add_test(NAME ssb_reference_emulator_contract COMMAND test_ssb_reference_emulator)

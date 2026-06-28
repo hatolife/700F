@@ -16,6 +16,8 @@ work. The normative v0.1.0 details are split by concern:
   policy over result artifacts and profile snapshots.
 - `docs/specs/m2_sweep_campaign.md` defines the ISSUE-0026 M2 700F candidate smoke/full
   sweep campaign composition over the channel matrices.
+- `docs/specs/baseline_comparison_report.md` defines the ISSUE-0027 deterministic M2
+  Markdown report generated from scoring output and report context.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.
