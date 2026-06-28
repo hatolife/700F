@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2h-700f-qpsk-smoke-codec2-on-018-freedv700f-a-balanced-identity-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700f_a_balanced",
+  "deterministic_digest": "e055c20f5afd1d9b",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 8.65012e-06}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

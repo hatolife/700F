@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2h-700f-qpsk-smoke-006-freedv700d-emulated-identity-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700d_emulated",
+  "deterministic_digest": "1ba5ceb6f9917369",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.127583}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

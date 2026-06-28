@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Record M2-H Manager integration after ISSUE-0043, ISSUE-0044, and ISSUE-0042:
+  default Codec2 OFF and optional Codec2 ON local CI passed, M2-H smoke/report
+  artifacts were captured, 700F-A remains limited/downselect-invalid, and
+  ISSUE-0045 is the next planning-only gate.
 - Implement ISSUE-0042 700F-A minimal QPSK-like baseband prototype with
   ISSUE-0043 `SymbolBlock`/`BasebandFrame` helpers, real-modem-prototype
   metadata, limited diagnostics, report warnings, and B/C surrogate

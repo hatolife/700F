@@ -87,8 +87,22 @@ is ISSUE-0043 protocol first, ISSUE-0044 metrics in parallel when decoupled,
 ISSUE-0042 prototype implementation after the protocol boundary, and ISSUE-0045
 planning after the real prototype path is clearer.
 
+ISSUE-0043, ISSUE-0044, and ISSUE-0042 are integrated into `develop`.
+`freedv700f_a_balanced` is now a minimal QPSK-like
+`real_modem_prototype`, but it remains `prototype=true`,
+`not_final_modem=true`, `performance_validity=limited`, and
+`downselect_valid=false`. M2-H default Codec2 OFF smoke completed 21 rows with
+6 official FreeDV skips and 0 failures; optional Codec2 ON smoke completed 27
+rows with 0 failures and validates the 6 official FreeDV rows.
+
+ISSUE-0045 is the next planning-only gate for M3 OFDM/FEC/sync expansion.
+Real downselect and final 700F modem claims remain prohibited until a later
+audit authorizes performance-valid evidence.
+
 The Manager handoff for ISSUE-0040 and ISSUE-0041 is
 `docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.
+The Manager handoff for ISSUE-0042 through ISSUE-0045 is
+`docs/handoff/ISSUE-0042-0045-qpsk-prototype-and-m3-plan.md`.
 
 ## M1 Limitations Carried Into M2
 

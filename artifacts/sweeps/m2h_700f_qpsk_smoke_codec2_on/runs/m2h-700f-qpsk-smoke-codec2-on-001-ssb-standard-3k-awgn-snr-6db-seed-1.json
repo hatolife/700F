@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2h-700f-qpsk-smoke-codec2-on-001-ssb-standard-3k-awgn-snr-6db-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_standard_3k",
+  "deterministic_digest": "f5a61cef017f0bca",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.130273}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

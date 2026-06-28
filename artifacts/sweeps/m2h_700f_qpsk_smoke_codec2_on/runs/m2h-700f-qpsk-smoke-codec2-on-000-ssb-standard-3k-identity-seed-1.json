@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2h-700f-qpsk-smoke-codec2-on-000-ssb-standard-3k-identity-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_standard_3k",
+  "deterministic_digest": "6d020d9dc54960ad",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.120737}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

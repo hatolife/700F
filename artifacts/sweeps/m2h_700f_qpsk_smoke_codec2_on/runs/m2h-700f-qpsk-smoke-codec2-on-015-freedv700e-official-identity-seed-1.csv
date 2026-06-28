@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m2h-700f-qpsk-smoke-codec2-on-015-freedv700e-official-identity-seed-1,1,freedv700e_official,identity,afb2fedb453ce212,N/A,dummy.metric,0.150871,true

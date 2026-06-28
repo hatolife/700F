@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2h-700f-qpsk-smoke-020-freedv700f-a-balanced-awgn-snr-0db-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700f_a_balanced",
+  "deterministic_digest": "81becc4adac840e4",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.18947}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

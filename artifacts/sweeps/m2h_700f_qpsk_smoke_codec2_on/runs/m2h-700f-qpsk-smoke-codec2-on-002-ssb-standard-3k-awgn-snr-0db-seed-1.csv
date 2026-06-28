@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m2h-700f-qpsk-smoke-codec2-on-002-ssb-standard-3k-awgn-snr-0db-seed-1,1,ssb_standard_3k,awgn,e520f1642db5ad0f,N/A,dummy.metric,0.141332,true

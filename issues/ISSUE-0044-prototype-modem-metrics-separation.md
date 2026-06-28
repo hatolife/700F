@@ -1,6 +1,6 @@
 # ISSUE-0044: prototype modem metrics separation
 
-- Status: done
+- Status: complete
 - Priority: P0
 - Scope: module:12,15,13
 - Owner: Module 12 + Module 15 + Module 13

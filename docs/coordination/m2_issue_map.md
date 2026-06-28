@@ -34,9 +34,9 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | complete | Implements a toy waveform-capable 700F-A path with prototype metadata while keeping 700F-B/C surrogate and real downselect prohibited. |
 | ISSUE-0040 | M2 audit update after 700F-A prototype | complete | Audits the post-ISSUE-0039 state, confirms Codec2 OFF/ON local CI, keeps real downselect prohibited, and authorizes a real modem architecture RFC. |
 | ISSUE-0041 | real 700F modem architecture RFC | complete | Defines the real modem prototype boundary and selects Option B then Option C; implementation and downselect remain follow-up-gated. |
-| ISSUE-0042 | 700F-A minimal QPSK baseband prototype | open | First Option B implementation issue; should wait for the ISSUE-0043 protocol boundary where practical. |
-| ISSUE-0043 | modem frame and symbol protocol | open | Source-level protocol boundary for modem input/output frames, symbol blocks, baseband frames, and prototype status. |
-| ISSUE-0044 | prototype modem metrics separation | open | Keeps limited prototype modem diagnostics separate from final performance and downselect scoring. |
+| ISSUE-0042 | 700F-A minimal QPSK baseband prototype | complete | Implements only `freedv700f_a_balanced` as a limited `real_modem_prototype`; 700F-B/C remain surrogate and downselect-invalid. |
+| ISSUE-0043 | modem frame and symbol protocol | complete | Source-level protocol boundary for modem input/output frames, symbol blocks, baseband frames, and prototype status. |
+| ISSUE-0044 | prototype modem metrics separation | complete | Keeps limited prototype modem diagnostics separate from final performance and downselect scoring. |
 | ISSUE-0045 | M3 planning for OFDM/FEC/sync | open | Planning-only bridge toward Option C; no M3 implementation until M2 real prototype boundaries are audited. |
 
 ## Collision Rule
@@ -86,3 +86,11 @@ Dispatch is recorded in `docs/coordination/real_700f_modem_dispatch_plan.md`.
 Real 700F downselect remains prohibited across ISSUE-0042 through ISSUE-0045.
 Manager handoff for ISSUE-0040/0041 is recorded in
 `docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.
+
+ISSUE-0043, ISSUE-0044, and ISSUE-0042 are integrated into `develop`. M2-H
+smoke/report evidence is recorded under
+`artifacts/sweeps/m2h_700f_qpsk_smoke/`,
+`artifacts/sweeps/m2h_700f_qpsk_smoke_codec2_on/`, and
+`reports/20260629_080853_m2h_700f_qpsk_comparison*.md`. ISSUE-0045 is now the
+next startable planning issue. It must not implement OFDM/FEC/sync or authorize
+real downselect.

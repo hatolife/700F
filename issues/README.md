@@ -56,8 +56,8 @@
 | ISSUE-0040 | closed | P0 | qa,project | M2 audit update after 700F-A prototype | Manager + QA | chore/ISSUE-0040-m2-audit-update-after-700f-a-prototype | v0.2.0 target | M2 real modem RFC gate | ISSUE-0037, ISSUE-0038, ISSUE-0039 | 2026-06-29 |
 | ISSUE-0041 | closed | P0 | module:02,07,11,12,13,15 | real 700F modem architecture RFC | Module 02 + Module 07 + Module 13 + Module 15 | docs/ISSUE-0041-real-700f-modem-architecture-rfc | v0.2.0 target | M2 real modem RFC | ISSUE-0040 | 2026-06-29 |
 | ISSUE-0042 | closed | P0 | module:07,02,11,12,13,15 | 700F-A minimal QPSK baseband prototype | Module 07 + Module 02 + Module 13 + Module 15 | feature/ISSUE-0042-700f-a-minimal-qpsk-baseband-prototype | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041, ISSUE-0043 | 2026-06-29 |
-| ISSUE-0043 | open | P0 | module:02,07,11,13 | modem frame and symbol protocol | Module 02 + Module 07 + Module 11 + Module 13 | feature/ISSUE-0043-modem-frame-symbol-protocol | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041 | 2026-06-29 |
-| ISSUE-0044 | open | P0 | module:12,15,13 | prototype modem metrics separation | Module 12 + Module 15 + Module 13 | feature/ISSUE-0044-prototype-modem-metrics-separation | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041, ISSUE-0043 | 2026-06-29 |
+| ISSUE-0043 | closed | P0 | module:02,07,11,13 | modem frame and symbol protocol | Module 02 + Module 07 + Module 11 + Module 13 | feature/ISSUE-0043-modem-frame-symbol-protocol | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041 | 2026-06-29 |
+| ISSUE-0044 | closed | P0 | module:12,15,13 | prototype modem metrics separation | Module 12 + Module 15 + Module 13 | feature/ISSUE-0044-prototype-modem-metrics-separation | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041, ISSUE-0043 | 2026-06-29 |
 | ISSUE-0045 | open | P1 | qa,project,module:06,07,09 | M3 planning for OFDM/FEC/sync | Manager + QA + Module 06 + Module 07 + Module 09 | docs/ISSUE-0045-m3-planning-ofdm-fec-sync | v0.3.0 target | M3 planning | ISSUE-0041, ISSUE-0042, ISSUE-0043, ISSUE-0044 | 2026-06-29 |
 
 ## M1-A integration status
@@ -125,8 +125,13 @@
 - ISSUE-0042 through ISSUE-0045 are the follow-up dispatch set. Start ISSUE-0043
   first when possible; ISSUE-0044 may run in parallel if decoupled from source
   protocol types. ISSUE-0042 should wait for the minimal protocol boundary.
+- ISSUE-0043, ISSUE-0044, and ISSUE-0042 are integrated into `develop`.
+  M2-H smoke/report passed in both default Codec2 OFF and optional Codec2 ON
+  paths. 700F-A is a limited `real_modem_prototype`; 700F-B/C remain surrogate.
 - Final Manager handoff for this audit/RFC pass is
   `docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.
+- Final Manager handoff for the ISSUE-0042 through ISSUE-0044 integration pass
+  is `docs/handoff/ISSUE-0042-0045-qpsk-prototype-and-m3-plan.md`.
 - 700F-B and 700F-C remain ISSUE-0032 surrogate rows until later issues upgrade
   them explicitly.
 - Real 700F candidate downselect remains prohibited after ISSUE-0040 until a
