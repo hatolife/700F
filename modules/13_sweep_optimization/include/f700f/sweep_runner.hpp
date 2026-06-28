@@ -3,6 +3,7 @@
 #include <f700f/simulation_pipeline.hpp>
 
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -71,6 +72,7 @@ public:
 private:
   SimulationRunner simulation_runner_;
   std::unordered_set<ModeId> available_modes_;
+  std::unordered_map<ModeId, ModeDescriptor> available_mode_descriptors_;
 };
 
 std::string sweep_run_status_name(SweepRunStatus status);
@@ -88,5 +90,6 @@ SweepConfig make_m2_700f_candidate_smoke_sweep_config(
     std::string output_directory);
 SweepConfig make_m2_700f_candidate_full_sweep_config(
     std::string output_directory);
+void register_m2_campaign_mode_factories(SweepRunner &runner);
 
 } // namespace f700f
