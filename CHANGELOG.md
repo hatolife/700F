@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Complete ISSUE-0040 M2 audit update after the 700F-A prototype: Codec2 OFF and
+  Codec2 ON local CI are green, official 700D/700E regression smoke remains
+  available, 700F-B/C remain surrogate, and the decision is
+  `M2_GO_TO_REAL_MODEM_RFC` while real downselect remains prohibited.
 - Implement ISSUE-0039 700F-A minimal waveform-capable prototype with
   `waveform_prototype` metadata, synthetic/no-FEC toy audio waveform runtime,
   and report/scoring guardrails that keep prototype rows performance-invalid and

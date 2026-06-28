@@ -32,6 +32,7 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0037 | Codec2-on CI and official regression smoke | complete | Added a local Codec2-on wrapper plus Linux Actions job that initializes the submodule, runs ON CTest, validates official 700D/700E smoke completion, and keeps default OFF CI submodule-independent. |
 | ISSUE-0038 | 700F waveform-capable prototype RFC | complete | Defines the guarded metadata and reporting boundary for upgrading only `freedv700f_a_balanced` to a first waveform-capable prototype while keeping B/C surrogate and downselect prohibited. |
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | complete | Implements a toy waveform-capable 700F-A path with prototype metadata while keeping 700F-B/C surrogate and real downselect prohibited. |
+| ISSUE-0040 | M2 audit update after 700F-A prototype | complete | Audits the post-ISSUE-0039 state, confirms Codec2 OFF/ON local CI, keeps real downselect prohibited, and authorizes a real modem architecture RFC. |
 
 ## Collision Rule
 
@@ -67,3 +68,7 @@ performance-invalid and downselect-invalid.
 
 ISSUE-0039 is that first implementation. It must not upgrade 700F-B/C and must
 not turn prototype rows into real performance or downselect evidence.
+
+ISSUE-0040 records decision `M2_GO_TO_REAL_MODEM_RFC`. The next work should be
+architecture/RFC only; real modem implementation and candidate downselect remain
+blocked until explicit follow-up gates.
