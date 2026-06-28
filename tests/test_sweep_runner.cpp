@@ -241,6 +241,7 @@ void m2_channel_matrix_empty_seed_list_rejected() {
 
 void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   auto runner = make_runner();
+  f700f::register_m2_campaign_mode_factories(runner);
   auto config = f700f::make_m2_700f_candidate_smoke_sweep_config(
       "build/test-artifacts/m2-700f-candidate-smoke");
   config.modes.push_back({.mode_id = "unknown.mode.for-skip-test"});
@@ -260,15 +261,60 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
                                      config.channel_conditions.size() *
                                      config.seeds.size());
   assert(first.records.size() == second.records.size());
+  std::size_t completed = 0;
+  std::size_t skipped = 0;
+  std::size_t failed = 0;
+  std::size_t profile_only_completed = 0;
+  std::size_t descriptor_only_completed = 0;
+  std::size_t official_skipped = 0;
+  std::size_t unknown_skipped = 0;
   for (std::size_t i = 0; i < first.records.size(); ++i) {
     assert(first.records[i].run_id == second.records[i].run_id);
     assert(first.records[i].mode_id == second.records[i].mode_id);
     assert(first.records[i].condition_id == second.records[i].condition_id);
     assert(first.records[i].seed == second.records[i].seed);
-    assert(first.records[i].status == f700f::SweepRunStatus::Skipped);
-    assert(first.records[i].skipped_reason.find(first.records[i].mode_id) !=
-           std::string::npos);
+    if (first.records[i].status == f700f::SweepRunStatus::Completed) {
+      ++completed;
+    } else if (first.records[i].status == f700f::SweepRunStatus::Skipped) {
+      ++skipped;
+    } else {
+      ++failed;
+    }
+    if (first.records[i].mode_id.find("freedv700f_") == 0) {
+      assert(first.records[i].status == f700f::SweepRunStatus::Completed);
+      assert(first.records[i].error_summary.find("profile_only_completed") !=
+             std::string::npos);
+      ++profile_only_completed;
+    }
+    if (first.records[i].mode_id == "freedv700d_emulated" ||
+        first.records[i].mode_id == "freedv700e_emulated") {
+      assert(first.records[i].status == f700f::SweepRunStatus::Completed);
+      assert(first.records[i].error_summary.find("descriptor_only_completed") !=
+             std::string::npos);
+      ++descriptor_only_completed;
+    }
+    if (first.records[i].mode_id == "freedv700d_official" ||
+        first.records[i].mode_id == "freedv700e_official") {
+      assert(first.records[i].status == f700f::SweepRunStatus::Skipped);
+      assert(first.records[i].skipped_reason.find(
+                 "official_waveform_roundtrip_not_implemented") !=
+             std::string::npos);
+      ++official_skipped;
+    }
+    if (first.records[i].mode_id == "unknown.mode.for-skip-test") {
+      assert(first.records[i].status == f700f::SweepRunStatus::Skipped);
+      assert(first.records[i].skipped_reason ==
+             "mode id not registered: unknown.mode.for-skip-test");
+      ++unknown_skipped;
+    }
   }
+  assert(completed > 0);
+  assert(skipped > 0);
+  assert(failed == 0);
+  assert(profile_only_completed == 9);
+  assert(descriptor_only_completed == 6);
+  assert(official_skipped == 6);
+  assert(unknown_skipped == 3);
 
   assert(std::filesystem::exists(
       "build/test-artifacts/m2-700f-candidate-smoke/"
@@ -281,9 +327,20 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
                      "m2-700f-candidate-smoke.json");
   const std::string json_text((std::istreambuf_iterator<char>(json)),
                               std::istreambuf_iterator<char>());
+  assert(json_text.find("profile_only_completed") != std::string::npos);
+  assert(json_text.find("descriptor_only_completed") != std::string::npos);
+  assert(json_text.find("official_waveform_roundtrip_not_implemented") !=
+         std::string::npos);
   assert(json_text.find("unknown.mode.for-skip-test") != std::string::npos);
   assert(json_text.find("mode id not registered: unknown.mode.for-skip-test") !=
          std::string::npos);
+
+  std::ifstream csv("build/test-artifacts/m2-700f-candidate-smoke/"
+                    "m2-700f-candidate-smoke.csv");
+  const std::string csv_text((std::istreambuf_iterator<char>(csv)),
+                             std::istreambuf_iterator<char>());
+  assert(csv_text.find("profile_only_completed") != std::string::npos);
+  assert(csv_text.find("descriptor_only_completed") != std::string::npos);
 }
 
 void m2_700f_candidate_full_campaign_uses_full_matrix() {

@@ -141,7 +141,7 @@ void metrics_snapshot_and_json_report_preserve_profile() {
   assert(json.find("candidate-profile-snapshot") != std::string::npos);
 }
 
-void sweep_runner_reaches_profile_and_reports_failure_not_skip() {
+void sweep_runner_reaches_profile_and_reports_profile_only_completion() {
   f700f::SweepRunner runner;
   runner.register_mode_factory(f700f::make_700f_candidate_profile_factory(
       "freedv700f_b_robust"));
@@ -163,13 +163,15 @@ void sweep_runner_reaches_profile_and_reports_failure_not_skip() {
   const auto result = runner.run(config);
   assert(result.ok);
   assert(result.records.size() == 1);
-  assert(result.records[0].status == f700f::SweepRunStatus::Failed);
+  assert(result.records[0].status == f700f::SweepRunStatus::Completed);
   assert(result.records[0].mode_id == "freedv700f_b_robust");
-  assert(result.records[0].error_summary.find("profile_only") != std::string::npos);
+  assert(result.records[0].error_summary.find("profile_only_completed") !=
+         std::string::npos);
 
   const auto json = f700f::sweep_result_to_json(result);
   assert(json.find("freedv700f_b_robust") != std::string::npos);
-  assert(json.find("failed") != std::string::npos);
+  assert(json.find("completed") != std::string::npos);
+  assert(json.find("profile_only_completed") != std::string::npos);
 }
 
 } // namespace
@@ -180,6 +182,6 @@ int main() {
   registry_selects_candidate_profiles();
   encode_decode_report_profile_only_status();
   metrics_snapshot_and_json_report_preserve_profile();
-  sweep_runner_reaches_profile_and_reports_failure_not_skip();
+  sweep_runner_reaches_profile_and_reports_profile_only_completion();
   return 0;
 }

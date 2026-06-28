@@ -15,12 +15,12 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0020 | OFDM waveform candidate prototype | open | Existing issue file is source of truth; do not redefine as channel matrix work. |
 | ISSUE-0021 | sync and impairment estimator prototype | open | Existing issue file is source of truth; do not redefine as sweep campaign work. |
 | ISSUE-0022 | AI-assisted sweep triage | open | Existing issue file is source of truth; do not redefine as baseline report work. |
-| ISSUE-0023 | M2 audit and candidate downselect | hold | Hold until M2-B work is complete or explicitly marked blocked. |
+| ISSUE-0023 | M2 audit and candidate downselect | limited-start | Limited audit can start after ISSUE-0028 smoke bridge; real candidate downselect remains blocked until waveform-capable 700F and official baselines exist. |
 | ISSUE-0024 | M2 scoring model and comparison policy | complete | Follow-up issue for requested scoring path. |
 | ISSUE-0025 | M2 expanded channel condition matrix | complete | Follow-up issue for requested channel matrix path. |
 | ISSUE-0026 | M2 sweep campaign runner config | complete | Follow-up issue for requested sweep campaign path. |
 | ISSUE-0027 | M2 baseline comparison report generation | complete | Follow-up issue for requested comparison report path. |
-| ISSUE-0028 | M2-C campaign mode registry bridge | open | Follow-up from M2-B smoke: campaign modes are configured but not registered in the smoke runner. |
+| ISSUE-0028 | M2-C campaign mode registry bridge | complete | M2 smoke modes register SSB/emulator/profile factories, produce completed metadata-only/profile-only rows, and keep official FreeDV explicit skips. |
 
 ## Collision Rule
 
@@ -33,4 +33,7 @@ When issue number meaning conflicts:
 
 ## M2-B Dispatch Direction
 
-For the scoring/channel/report path, ISSUE-0024 through ISSUE-0027 are integrated. ISSUE-0028 is the next bridge issue before a useful M2 candidate downselect. ISSUE-0023 remains held unless the project wants an audit of the skipped-only M2-B state.
+For the scoring/channel/report path, ISSUE-0024 through ISSUE-0028 are integrated.
+ISSUE-0023 can start as a limited M2 audit of the current bridge outputs. It must
+not perform a real candidate downselect until waveform-capable 700F rows and
+official baseline roundtrip rows are available.

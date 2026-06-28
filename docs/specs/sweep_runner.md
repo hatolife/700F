@@ -110,3 +110,12 @@ Both helpers use stable mode ordering: SSB standard/narrow, 700D/700E emulated,
 700D/700E official skip-capable entries, and 700F-A/B/C profile-only candidates.
 The campaign details are specified in `docs/specs/m2_sweep_campaign.md`, with
 TOML-friendly shapes under `configs/sweeps/`.
+
+ISSUE-0028 adds `register_m2_campaign_mode_factories()` for the default M2 smoke
+bridge. It registers SSB reference factories, descriptor-only 700D/700E emulator
+factories, and 700F-A/B/C profile-only factories. Descriptor-only and profile-only
+records are marked completed with `descriptor_only_completed` or
+`profile_only_completed` notes in JSON/CSV summaries, but they do not claim waveform
+encode/decode or performance metrics. Official FreeDV 700D/700E entries remain
+skipped in default Codec2-disabled smoke runs with an
+`official_waveform_roundtrip_not_implemented` reason.

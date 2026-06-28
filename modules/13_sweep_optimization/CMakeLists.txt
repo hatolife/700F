@@ -13,4 +13,6 @@ target_link_libraries(f700f_sweep_runner
     f700f_pipeline_runner
   PRIVATE
     f700f_channel_model
+    f700f_candidate_profiles
+    f700f_freedv_emulator
 )

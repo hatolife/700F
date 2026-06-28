@@ -47,7 +47,11 @@ ISSUE-0024 through ISSUE-0027 cover scoring, channel-matrix, sweep-campaign, and
 
 The canonical issue-number mapping is recorded in `docs/coordination/m2_issue_map.md`. If a later instruction collides with an existing issue number, keep the existing issue and create a new follow-up issue for the new work.
 
-M2-B integrated ISSUE-0024 through ISSUE-0027 and produced smoke JSON/CSV artifacts. The smoke campaign currently records all rows as skipped because campaign modes are not registered in the smoke runner. ISSUE-0028 is the bridge from profile/config descriptors to registered mode factories.
+M2-B integrated ISSUE-0024 through ISSUE-0027 and produced smoke JSON/CSV
+artifacts. ISSUE-0028 bridges the campaign modes to registered SSB, emulator, and
+700F profile factories so smoke is no longer all skipped. The resulting
+descriptor/profile-only completed rows are readiness evidence only; they are not
+waveform performance or a candidate downselect.
 
 ## M1 Limitations Carried Into M2
 

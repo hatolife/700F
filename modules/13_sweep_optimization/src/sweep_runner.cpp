@@ -1,10 +1,13 @@
 #include <f700f/sweep_runner.hpp>
 
+#include <f700f/candidate_profiles.hpp>
 #include <f700f/channel_model.hpp>
+#include <f700f/reference_baselines/freedv_emulator.hpp>
 
 #include <algorithm>
 #include <array>
 #include <cerrno>
+#include <cstdint>
 #include <cmath>
 #include <cstdlib>
 #include <filesystem>
@@ -13,6 +16,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 
@@ -174,6 +178,84 @@ SimulationConfig make_simulation_config(const SweepConfig &config,
   return simulation;
 }
 
+bool contains_token(const std::string &value, const std::string &token) {
+  return value.find(token) != std::string::npos;
+}
+
+bool is_metadata_only_mode(const ModeDescriptor &descriptor) {
+  return contains_token(descriptor.implementation_status, "profile_only") ||
+         contains_token(descriptor.implementation_status, "descriptor-only");
+}
+
+std::string metadata_only_note(const ModeDescriptor &descriptor) {
+  if (contains_token(descriptor.implementation_status, "profile_only")) {
+    return "profile_only_completed: waveform encode/decode not run";
+  }
+  return "descriptor_only_completed: waveform encode/decode not run";
+}
+
+bool is_official_freedv_mode(const ModeId &mode_id) {
+  return mode_id == "freedv700d_official" ||
+         mode_id == "freedv700e_official";
+}
+
+std::string unavailable_mode_reason(const ModeId &mode_id) {
+  if (is_official_freedv_mode(mode_id)) {
+    return "official_waveform_roundtrip_not_implemented: default M2 smoke "
+           "keeps official FreeDV skipped until Codec2 official roundtrip is "
+           "wired";
+  }
+  return "mode id not registered: " + mode_id;
+}
+
+std::string hex_digest(std::uint64_t value) {
+  std::ostringstream out;
+  out << std::hex << std::setw(16) << std::setfill('0') << value;
+  return out.str();
+}
+
+std::string metadata_only_digest(const SimulationConfig &config,
+                                 const std::string &note) {
+  constexpr std::uint64_t offset = 14695981039346656037ULL;
+  constexpr std::uint64_t prime = 1099511628211ULL;
+  std::uint64_t hash = offset;
+  const auto mix = [&](const std::string &value) {
+    for (const unsigned char c : value) {
+      hash ^= c;
+      hash *= prime;
+    }
+  };
+  mix(config.run_id);
+  mix(config.mode_id);
+  mix(std::to_string(config.seed));
+  mix(note);
+  for (const auto &channel : config.channel_chain) {
+    mix(channel.channel_id);
+  }
+  return hex_digest(hash);
+}
+
+SimulationResult make_metadata_only_simulation_result(
+    const SimulationConfig &config, const ModeDescriptor &descriptor) {
+  const auto note = metadata_only_note(descriptor);
+  SimulationResult result;
+  result.ok = true;
+  result.run_id = config.run_id;
+  result.seed = config.seed;
+  result.mode_id = config.mode_id;
+  for (const auto &channel : config.channel_chain) {
+    result.channel_ids.push_back(channel.channel_id);
+  }
+  result.deterministic_digest = metadata_only_digest(config, note);
+  result.stage_statuses = {
+      {PipelineStage::Input, true, note + "; input config recorded only"},
+      {PipelineStage::Encode, true, note + "; encode not run"},
+      {PipelineStage::Channel, true, note + "; channel chain recorded only"},
+      {PipelineStage::Decode, true, note + "; decode not run"},
+      {PipelineStage::Metrics, true, note + "; metrics not evaluated"}};
+  return result;
+}
+
 std::vector<SweepModeConfig> make_m2_700f_candidate_modes() {
   return {{.mode_id = "ssb_standard_3k"},
           {.mode_id = "ssb_narrow_1k9"},
@@ -319,11 +401,13 @@ bool SweepRunner::register_mode_factory(std::shared_ptr<IModeFactory> factory) {
   if (!factory || factory->descriptor().mode_id.empty()) {
     return false;
   }
-  const auto mode_id = factory->descriptor().mode_id;
+  const auto descriptor = factory->descriptor();
+  const auto mode_id = descriptor.mode_id;
   if (!simulation_runner_.register_mode_factory(std::move(factory))) {
     return false;
   }
   available_modes_.insert(mode_id);
+  available_mode_descriptors_.emplace(mode_id, descriptor);
   return true;
 }
 
@@ -371,10 +455,13 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
         record.run_id =
             make_run_id(config, index++, mode.mode_id, condition.condition_id, seed);
 
-        if (available_modes_.find(mode.mode_id) == available_modes_.end()) {
+        const auto descriptor_it =
+            available_mode_descriptors_.find(mode.mode_id);
+        if (available_modes_.find(mode.mode_id) == available_modes_.end() ||
+            descriptor_it == available_mode_descriptors_.end()) {
           record.status = mode.skip_if_unavailable ? SweepRunStatus::Skipped
                                                    : SweepRunStatus::Failed;
-          record.skipped_reason = "mode id not registered: " + mode.mode_id;
+          record.skipped_reason = unavailable_mode_reason(mode.mode_id);
           record.error_summary = mode.skip_if_unavailable ? std::string{}
                                                           : record.skipped_reason;
           result.records.push_back(std::move(record));
@@ -383,6 +470,15 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
 
         const auto simulation_config =
             make_simulation_config(config, record, condition);
+        if (is_metadata_only_mode(descriptor_it->second)) {
+          record.simulation = make_metadata_only_simulation_result(
+              simulation_config, descriptor_it->second);
+          record.status = SweepRunStatus::Completed;
+          record.error_summary = metadata_only_note(descriptor_it->second);
+          result.records.push_back(std::move(record));
+          continue;
+        }
+
         record.simulation = simulation_runner_.run(simulation_config);
         if (record.simulation.ok) {
           record.status = SweepRunStatus::Completed;
@@ -601,6 +697,19 @@ SweepConfig make_m2_700f_candidate_full_sweep_config(
   config.run_id_prefix = "m2-700f-candidate-full";
   config.modes = make_m2_700f_candidate_modes();
   return config;
+}
+
+void register_m2_campaign_mode_factories(SweepRunner &runner) {
+  runner.register_mode_factory(make_ssb_standard_3k_mode_factory());
+  runner.register_mode_factory(make_ssb_narrow_1k9_mode_factory());
+  runner.register_mode_factory(make_freedv700d_emulated_mode_factory());
+  runner.register_mode_factory(make_freedv700e_emulated_mode_factory());
+  runner.register_mode_factory(
+      make_700f_candidate_profile_factory("freedv700f_a_balanced"));
+  runner.register_mode_factory(
+      make_700f_candidate_profile_factory("freedv700f_b_robust"));
+  runner.register_mode_factory(
+      make_700f_candidate_profile_factory("freedv700f_c_quality"));
 }
 
 } // namespace f700f

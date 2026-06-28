@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Bridge ISSUE-0028 M2 campaign modes to registered SSB, emulator, and 700F
+  candidate profile factories so smoke campaigns produce completed
+  metadata-only/profile-only rows plus explicit official FreeDV skips.
 - Integrate M2-B scoring/channel/sweep/report path and record smoke/comparison reports
   with all campaign modes skipped pending mode-factory registration.
 - Add ISSUE-0026 M2 700F candidate smoke/full sweep campaign configs over the M2

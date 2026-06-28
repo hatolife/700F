@@ -41,7 +41,7 @@
 | ISSUE-0025 | closed | P0 | module:08 | M2 expanded channel condition matrix | Module 08 + Module 13 | feature/ISSUE-0025-expanded-channel-matrix | v0.2.0 | M2 | ISSUE-0018, ISSUE-0010 | 2026-06-28 |
 | ISSUE-0026 | closed | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
 | ISSUE-0027 | closed | P0 | module:15 | M2 baseline comparison report generation | Module 15 + Module 12 | feature/ISSUE-0027-baseline-comparison-report | v0.2.0 | M2 | ISSUE-0018, ISSUE-0024, ISSUE-0026 | 2026-06-28 |
-| ISSUE-0028 | open | P0 | module:13,10 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | feature/ISSUE-0028-m2-campaign-mode-registry | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0026 | 2026-06-28 |
+| ISSUE-0028 | closed | P0 | module:13,10 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | feature/ISSUE-0028-m2-campaign-mode-registry | v0.2.0 | M2 | ISSUE-0018, ISSUE-0026 | 2026-06-28 |
 
 ## M1-A integration status
 
@@ -102,3 +102,16 @@
 - M2-B smoke produced JSON/CSV artifacts, but all 30 campaign rows were skipped because campaign modes are not registered in the smoke runner.
 - ISSUE-0028 tracks the mode registry bridge needed before M2 audit can make a useful candidate downselect.
 - ISSUE-0023 may start only as a limited audit; candidate downselect should wait for ISSUE-0028 or an explicit decision to audit the skipped-only M2-B state.
+
+## M2-C integration status
+
+- ISSUE-0028 bridges M2 campaign modes to SSB, FreeDV emulator, and 700F
+  candidate profile factories.
+- M2-C smoke is no longer all skipped: default smoke produces completed SSB,
+  descriptor-only emulator, and profile-only 700F rows, while official FreeDV
+  rows remain explicit skips.
+- Completed descriptor/profile-only rows do not claim waveform performance or a
+  real candidate downselect.
+- ISSUE-0023 can start as a limited audit after ISSUE-0028 integration; full
+  downselect remains blocked by waveform-capable 700F candidates and official
+  baseline roundtrip work.

@@ -268,6 +268,14 @@ void register_ssb_reference_modes(ModeRegistry &registry) {
   registry.register_factory(std::make_shared<FreedvEmulatorFactory>("ssb_narrow_1k9"));
 }
 
+std::shared_ptr<IModeFactory> make_freedv700d_emulated_mode_factory() {
+  return std::make_shared<FreedvEmulatorFactory>("freedv700d_emulated");
+}
+
+std::shared_ptr<IModeFactory> make_freedv700e_emulated_mode_factory() {
+  return std::make_shared<FreedvEmulatorFactory>("freedv700e_emulated");
+}
+
 std::shared_ptr<IModeFactory> make_ssb_standard_3k_mode_factory() {
   return std::make_shared<FreedvEmulatorFactory>("ssb_standard_3k");
 }
