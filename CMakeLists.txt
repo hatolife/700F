@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.25)
-project(freedv700f_lab VERSION 0.0.1 LANGUAGES CXX)
+project(freedv700f_lab VERSION 0.2.0 LANGUAGES CXX)
 option(F700F_ENABLE_CODEC2 "Enable integration points that require the external Codec2/FreeDV submodule" OFF)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(f700f_core INTERFACE)
 target_include_directories(f700f_core INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_library(f700f_candidate_profiles src/candidate_profiles.cpp)
+target_link_libraries(f700f_candidate_profiles PUBLIC f700f_core)
 add_library(f700f_metrics OBJECT modules/12_metrics_scoring/src/metrics_artifacts.cpp)
 target_include_directories(f700f_metrics PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -49,6 +51,13 @@ add_executable(test_simulation_pipeline tests/test_simulation_pipeline.cpp)
 target_link_libraries(test_simulation_pipeline PRIVATE f700f_core f700f_pipeline_runner f700f_freedv_emulator)
 add_executable(test_sweep_runner tests/test_sweep_runner.cpp)
 target_link_libraries(test_sweep_runner PRIVATE f700f_core f700f_sweep_runner)
+add_executable(test_700f_candidate_profiles tests/test_700f_candidate_profiles.cpp)
+target_link_libraries(test_700f_candidate_profiles
+  PRIVATE
+    f700f_core
+    f700f_candidate_profiles
+    f700f_metrics
+    f700f_sweep_runner)
 enable_testing()
 add_test(NAME f700f_info_version COMMAND f700f-info)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
@@ -59,3 +68,4 @@ add_test(NAME ssb_reference_emulator_contract COMMAND test_ssb_reference_emulato
 add_test(NAME freedv_official_adapter_contract COMMAND test_freedv_official_adapter)
 add_test(NAME simulation_pipeline_contract COMMAND test_simulation_pipeline)
 add_test(NAME sweep_runner_contract COMMAND test_sweep_runner)
+add_test(NAME candidate_700f_profiles_contract COMMAND test_700f_candidate_profiles)

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.0 - 2026-06-28
+- Define ISSUE-0018 M2-A 700F candidate architecture/profile boundary with
+  descriptor-only profile stubs for balanced, robust, and quality candidates.
+- Add profile registry/factory helpers and contract tests for descriptor retrieval,
+  profile-only encode/decode status, metrics snapshots, and sweep/report visibility.
+
 ## v0.1.0 - 2026-06-27
 - Add M2 700F candidate exploration planning issues and dispatch plan after M1 GO_WITH_LIMITATIONS.
 - Complete M1 audit with GO_WITH_LIMITATIONS and mark project/M1-touched module manifests as v0.1.0.

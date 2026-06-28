@@ -14,3 +14,21 @@ in `docs/specs/plugin_protocol.md`.
 Downstream modules may depend on descriptors, block containers, and interface contracts,
 but ISSUE-0008 does not grant permission to implement specific SSB, FreeDV, Codec2, 700F,
 or channel behavior.
+
+## M2 700F Candidate Profile Boundary
+
+ISSUE-0018 adds manager-owned 700F candidate profile helpers at
+`include/f700f/candidate_profiles.hpp`. The helpers expose descriptor-only factories for
+`freedv700f_a_balanced`, `freedv700f_b_robust`, and `freedv700f_c_quality` so registry,
+metrics, sweep, and reporting code can select and snapshot candidates before modem
+implementation exists.
+
+Module 02 remains owner of the descriptor fields used by the profiles. Module 03 remains
+owner of registry semantics. Modules 06, 07, 09, 11, 12, 13, and 15 may consume the
+profile descriptors, but must treat `implementation_status = "profile_only"` as
+non-performance evidence until their follow-up issues replace the stub runtime with
+tested implementations.
+
+700F candidates must not be labeled as official baselines. A profile with
+`emulator = false` is still experimental unless `official_baseline = true`, which these
+profiles deliberately do not set.

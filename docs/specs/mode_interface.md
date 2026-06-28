@@ -53,6 +53,11 @@ Descriptor-only emulators must set `emulator = true`, `official_baseline = false
 an implementation status that makes unimplemented runtime behavior explicit. This
 representation does not implement or validate any official FreeDV mode.
 
+M2 700F candidate profiles may set `emulator = false`, `official_baseline = false`, and
+`implementation_status = "profile_only"` when they are selectable architecture/profile
+descriptors rather than emulator or official baseline implementations. Their encode and
+decode calls must fail clearly until follow-up implementation issues replace the stub.
+
 ## Non-goals
 
 v0.1.0 does not implement 700F, Codec2 adapters, SSB emulation, FreeDV 700D/700E
