@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0 - 2026-06-29
+- Add ISSUE-0042 real-modem-prototype sweep row metadata for 700F-A minimal
+  QPSK diagnostics while preserving 700F-B/C surrogate rows.
+
 ## v0.2.0 - 2026-06-28
 - Mark 700F A/B/C campaign rows as ISSUE-0032 `surrogate_completed` rows with
   append-only not-real-modem/downselect/performance guardrails.

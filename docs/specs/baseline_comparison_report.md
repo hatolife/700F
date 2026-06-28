@@ -72,8 +72,8 @@ such as `2026-06-28T12:34:56Z` becomes `20260628T123456Z`.
   displayed as not-real-modem, not-downselect-valid, non-performance evidence.
   Their real performance score remains `0.0`; any surrogate readiness score is
   synthetic and displayed separately.
-- 700F-A entries with `implementation_status = "waveform_prototype"` are
-  displayed as waveform-capable but non-final prototype evidence with
+- Historical 700F-A entries with `implementation_status = "waveform_prototype"`
+  are displayed as waveform-capable but non-final prototype evidence with
   `prototype=true`, `not_final_modem=true`, `performance_valid=false`, and
   `downselect_valid=false`. They prevent real downselect.
 - 700F entries with `implementation_status = "real_modem_prototype"` are displayed
@@ -81,7 +81,9 @@ such as `2026-06-28T12:34:56Z` becomes `20260628T123456Z`.
   `performance_validity=limited`, `downselect_valid=false`,
   `downselect_validity=invalid`, and visible prototype diagnostics such as symbol
   error rate, frame status, sync status, baseband sample count, and limitations.
-  They prevent real downselect.
+  ISSUE-0042 700F-A reports additionally show `performance_valid=limited`,
+  `sync_family=none`, and `modem_family=minimal_qpsk`. They prevent real
+  downselect.
 - `freedv700d_emulated` and `freedv700e_emulated` rows with
   `implementation_status = "emulated_surrogate"` are displayed as non-official
   FreeDV surrogates with `not_official_freedv=true`, `performance_valid=false`,

@@ -15,6 +15,10 @@ bool close_to(double lhs, double rhs) {
   return std::fabs(lhs - rhs) < 0.001;
 }
 
+bool contains(const std::string &haystack, const std::string &needle) {
+  return haystack.find(needle) != std::string::npos;
+}
+
 void assert_common_candidate_shape(const f700f::ModeDescriptor &descriptor) {
   assert(!descriptor.mode_id.empty());
   assert(!descriptor.display_name.empty());
@@ -35,7 +39,8 @@ void assert_common_candidate_shape(const f700f::ModeDescriptor &descriptor) {
   assert(!descriptor.official_baseline);
   assert(!descriptor.emulator);
   assert(descriptor.implementation_status == "surrogate" ||
-         descriptor.implementation_status == "waveform_prototype");
+         descriptor.implementation_status == "waveform_prototype" ||
+         descriptor.implementation_status == "real_modem_prototype");
   assert(descriptor.capabilities.audio_input);
   assert(descriptor.capabilities.audio_output);
   assert(descriptor.capabilities.complex_input);
@@ -68,11 +73,11 @@ void profile_targets_are_encoded_in_descriptors() {
 
   assert(close_to(balanced.audio_high_hz, 3300.0));
   assert(close_to(balanced.audio_bandwidth_hz, 3000.0));
-  assert(balanced.implementation_status == "waveform_prototype");
+  assert(balanced.implementation_status == "real_modem_prototype");
   assert(balanced.codec_id == "synthetic-700f-a-prototype");
   assert(balanced.fec_id == "none");
-  assert(balanced.modem_id == "toy_audio_waveform-700f-a");
-  assert(balanced.modulation_family == "toy_audio_waveform");
+  assert(balanced.modem_id == "minimal-qpsk-baseband-700f-a");
+  assert(balanced.modulation_family == "qpsk");
 
   assert(robust.audio_high_hz >= 3000.0);
   assert(robust.audio_high_hz <= 3300.0);
@@ -127,12 +132,88 @@ void encode_decode_report_surrogate_boundary() {
   assert(decoded.error.find("not_real_modem") != std::string::npos);
 }
 
-void balanced_candidate_runs_minimal_waveform_prototype() {
+void balanced_candidate_generates_qpsk_symbol_and_baseband_blocks() {
+  f700f::AudioBlock short_audio;
+  short_audio.sample_rate_hz =
+      f700f::freedv700f_a_balanced_descriptor().sample_rate_hz;
+  short_audio.mono = {0.25F, -0.125F, 0.0F, 0.5F};
+
+  const auto input =
+      f700f::make_700f_a_minimal_qpsk_input_frame(short_audio, 42, 99);
+  assert(input.mode_id == "freedv700f_a_balanced");
+  assert(input.frame_index == 42);
+  assert(input.seed == 99);
+  assert(input.descriptor.valid_rates());
+  assert(input.descriptor.modem_family == "minimal_qpsk");
+  assert(input.requested_fec_family == "none");
+  assert(input.requested_sync_family == "none");
+  assert(input.requested_codec_family == "synthetic");
+  assert(input.payload_bytes.size() == short_audio.mono.size() * 2);
+
+  const auto symbols = f700f::encode_700f_a_minimal_qpsk_symbols(input);
+  assert(symbols.modem_family == "minimal_qpsk");
+  assert(symbols.fec_family == "none");
+  assert(symbols.sync_family == "none");
+  assert(symbols.bits_per_symbol == 2);
+  assert(symbols.symbol_rate.valid());
+  assert(symbols.symbols.size() == short_audio.mono.size() * 8);
+  assert(symbols.limitations.front().find("ISSUE-0042") !=
+         std::string::npos);
+
+  const auto baseband = f700f::modulate_700f_a_minimal_qpsk_baseband(symbols);
+  assert(baseband.sample_rate.valid());
+  assert(baseband.symbol_rate.valid());
+  assert(baseband.modem_family == "minimal_qpsk");
+  assert(baseband.sync_family == "none");
+  assert(baseband.occupied_bandwidth_hz == 1900.0);
+  assert(baseband.samples.size() == symbols.symbols.size());
+  assert(!baseband.limitations.empty());
+
+  const auto output = f700f::demodulate_700f_a_minimal_qpsk_baseband(
+      baseband, short_audio.mono.size());
+  assert(output.mode_id == "freedv700f_a_balanced");
+  assert(output.frame_index == 42);
+  assert(output.status.status == "completed");
+  assert(output.status.implementation_status == "real_modem_prototype");
+  assert(output.status.prototype);
+  assert(output.status.not_final_modem);
+  assert(!output.status.downselect_valid);
+  assert(output.status.performance_valid == "limited");
+  assert(output.symbol_count == symbols.symbols.size());
+  assert(output.decoded_payload_bytes.size() == short_audio.mono.size() * 2);
+}
+
+void balanced_qpsk_helpers_reject_invalid_rates() {
+  f700f::AudioBlock audio;
+  audio.sample_rate_hz =
+      f700f::freedv700f_a_balanced_descriptor().sample_rate_hz;
+  audio.mono = {0.25F};
+  auto input = f700f::make_700f_a_minimal_qpsk_input_frame(audio, 0, 0);
+  input.descriptor.sample_rate.hz = 0;
+  auto symbols = f700f::encode_700f_a_minimal_qpsk_symbols(input);
+  assert(symbols.symbols.empty());
+  assert(contains(symbols.limitations.front(), "invalid sample/symbol rate"));
+
+  input = f700f::make_700f_a_minimal_qpsk_input_frame(audio, 0, 0);
+  input.descriptor.symbol_rate.baud = 0.0;
+  symbols = f700f::encode_700f_a_minimal_qpsk_symbols(input);
+  assert(symbols.symbols.empty());
+  assert(contains(symbols.limitations.front(), "invalid sample/symbol rate"));
+
+  auto invalid_baseband =
+      f700f::modulate_700f_a_minimal_qpsk_baseband(symbols);
+  assert(invalid_baseband.samples.empty());
+  assert(contains(invalid_baseband.limitations.front(),
+                  "invalid sample/symbol rate"));
+}
+
+void balanced_candidate_runs_minimal_qpsk_baseband_prototype() {
   f700f::ModeRegistry registry;
   f700f::register_700f_candidate_profiles(registry);
   auto mode = registry.create("freedv700f_a_balanced");
   assert(mode != nullptr);
-  assert(mode->descriptor().implementation_status == "waveform_prototype");
+  assert(mode->descriptor().implementation_status == "real_modem_prototype");
+  assert(!mode->configure({.sample_rate_hz = 0}));
   assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
 
   f700f::AudioBlock empty;
@@ -151,16 +232,59 @@ void balanced_candidate_runs_minimal_waveform_prototype() {
   short_audio.mono = {0.25F, -0.125F, 0.0F, 0.5F};
   const auto encoded = mode->encode(short_audio);
   assert(encoded.ok);
-  assert(encoded.symbols.iq.size() == short_audio.mono.size());
+  assert(encoded.symbols.iq.size() == short_audio.mono.size() * 8);
+  assert(encoded.bits.bits.size() == short_audio.mono.size() * 16);
   assert(encoded.status.sync);
   assert(encoded.status.fec_ok);
   const auto decoded = mode->decode(encoded.symbols);
   assert(decoded.ok);
   assert(decoded.audio.sample_rate_hz == short_audio.sample_rate_hz);
   assert(decoded.audio.mono.size() == short_audio.mono.size());
+  assert(close_to(decoded.audio.mono[0], short_audio.mono[0]));
 }
 
 void metrics_snapshot_and_json_report_preserve_surrogate_boundary() {
+  const auto balanced_snapshot = f700f::metrics::make_mode_descriptor_snapshot(
+      f700f::freedv700f_a_balanced_descriptor());
+  assert(balanced_snapshot.mode_id == "freedv700f_a_balanced");
+  assert(balanced_snapshot.implementation_status == "real_modem_prototype");
+  assert(balanced_snapshot.implementation_classification ==
+         "real_modem_prototype");
+  assert(balanced_snapshot.prototype);
+  assert(balanced_snapshot.not_final_modem);
+  assert(balanced_snapshot.waveform_capable);
+  assert(!balanced_snapshot.downselect_valid);
+  assert(balanced_snapshot.not_downselect_valid);
+  assert(!balanced_snapshot.performance_valid);
+  assert(balanced_snapshot.performance_validity == "limited");
+  assert(balanced_snapshot.downselect_validity == "invalid");
+  assert(balanced_snapshot.codec_family == "synthetic");
+  assert(balanced_snapshot.fec_family == "none");
+  assert(balanced_snapshot.sync_family == "none");
+  assert(balanced_snapshot.modem_family == "minimal_qpsk");
+  assert(contains(balanced_snapshot.prototype_warning,
+                  "REAL MODEM PROTOTYPE WARNING"));
+  assert(contains(balanced_snapshot.prototype_warning,
+                  "performance_valid=limited"));
+
+  auto balanced_artifact = f700f::metrics::make_empty_result_artifact();
+  balanced_artifact.run_id = "balanced-qpsk-snapshot";
+  balanced_artifact.mode_descriptor = balanced_snapshot;
+  balanced_artifact.prototype_frame_status = "completed";
+  balanced_artifact.prototype_sync_status = "none";
+  balanced_artifact.prototype_baseband_sample_count = 32;
+  balanced_artifact.prototype_limitations =
+      balanced_snapshot.prototype_limitations;
+  const auto balanced_json = f700f::metrics::to_json(balanced_artifact);
+  assert(contains(balanced_json,
+                  "\"implementation_status\":\"real_modem_prototype\""));
+  assert(contains(balanced_json, "\"performance_validity\":\"limited\""));
+  assert(contains(balanced_json, "\"sync_family\":\"none\""));
+  assert(contains(balanced_json, "\"modem_family\":\"minimal_qpsk\""));
+  assert(contains(balanced_json, "\"prototype_frame_status\":\"completed\""));
+  assert(contains(balanced_json,
+                  "\"prototype_baseband_sample_count\":32"));
+
   const auto &descriptor = f700f::freedv700f_c_quality_descriptor();
   const auto snapshot = f700f::metrics::make_mode_descriptor_snapshot(descriptor);
 
@@ -254,7 +378,9 @@ int main() {
   profile_targets_are_encoded_in_descriptors();
   registry_selects_candidate_profiles();
   encode_decode_report_surrogate_boundary();
-  balanced_candidate_runs_minimal_waveform_prototype();
+  balanced_candidate_generates_qpsk_symbol_and_baseband_blocks();
+  balanced_qpsk_helpers_reject_invalid_rates();
+  balanced_candidate_runs_minimal_qpsk_baseband_prototype();
   metrics_snapshot_and_json_report_preserve_surrogate_boundary();
   sweep_runner_reaches_surrogate_and_reports_non_real_completion();
   return 0;

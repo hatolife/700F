@@ -13,6 +13,10 @@ ISSUE-0039 implements the first waveform-capable 700F candidate path for
 `toy_audio_waveform` path that maps audio samples to complex samples and back
 through the existing simulation pipeline.
 
+ISSUE-0042 supersedes this runtime path for `freedv700f_a_balanced` with the
+minimal QPSK-like baseband prototype documented in
+`docs/specs/700f_a_minimal_qpsk_baseband_prototype.md`.
+
 `freedv700f_b_robust` and `freedv700f_c_quality` remain ISSUE-0032 surrogate
 rows.
 

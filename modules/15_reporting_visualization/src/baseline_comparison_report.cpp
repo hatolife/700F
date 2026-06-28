@@ -129,8 +129,9 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
   }
   if (score.profile_snapshot.has_value() &&
       score.profile_snapshot->implementation_status == "real_modem_prototype") {
-    return "REAL MODEM PROTOTYPE WARNING: performance_validity=limited "
-           "downselect_valid=false downselect_validity=invalid";
+    return "REAL MODEM PROTOTYPE WARNING: performance_valid=limited "
+           "performance_validity=limited downselect_valid=false "
+           "downselect_validity=invalid";
   }
   if (score.performance_invalid_count > 0) {
     return "performance invalid; not_official_freedv=true";
@@ -257,7 +258,11 @@ std::vector<std::string> candidate_summary_lines(
         line += " downselect_valid=";
         line += snapshot.downselect_valid ? "true" : "false";
         line += " downselect_validity=" + snapshot.downselect_validity;
+        line += " performance_valid=limited";
         line += " performance_validity=" + snapshot.performance_validity;
+        if (!snapshot.sync_family.empty()) {
+          line += " sync_family=" + snapshot.sync_family;
+        }
         if (!snapshot.modem_family.empty()) {
           line += " modem_family=" + snapshot.modem_family;
         }

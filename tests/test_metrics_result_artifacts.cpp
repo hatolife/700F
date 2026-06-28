@@ -270,11 +270,12 @@ void test_real_modem_prototype_diagnostics_survive_result_serialization() {
   artifact.mode_descriptor.downselect_validity = "invalid";
   artifact.mode_descriptor.codec_family = "synthetic";
   artifact.mode_descriptor.fec_family = "none";
-  artifact.mode_descriptor.modem_family = "minimal_qpsk_baseband";
+  artifact.mode_descriptor.sync_family = "none";
+  artifact.mode_descriptor.modem_family = "minimal_qpsk";
   artifact.mode_descriptor.prototype_limitations =
       "minimal QPSK-like prototype; no FEC; limited sync; not final performance";
   artifact.mode_descriptor.prototype_warning =
-      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only";
+      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only; performance_valid=limited";
   artifact.prototype_symbol_error_rate = 0.125;
   artifact.prototype_frame_status = "limited";
   artifact.prototype_sync_status = "coarse_sync_placeholder";
@@ -292,6 +293,7 @@ void test_real_modem_prototype_diagnostics_survive_result_serialization() {
          std::string::npos);
   assert(json.find("\"downselect_validity\":\"invalid\"") !=
          std::string::npos);
+  assert(json.find("\"sync_family\":\"none\"") != std::string::npos);
   assert(json.find("\"prototype_symbol_error_rate\":0.125") !=
          std::string::npos);
   assert(json.find("\"prototype_frame_status\":\"limited\"") !=
@@ -311,7 +313,8 @@ void test_real_modem_prototype_diagnostics_survive_result_serialization() {
   assert(!parsed.mode_descriptor.performance_valid);
   assert(parsed.mode_descriptor.performance_validity == "limited");
   assert(parsed.mode_descriptor.downselect_validity == "invalid");
-  assert(parsed.mode_descriptor.modem_family == "minimal_qpsk_baseband");
+  assert(parsed.mode_descriptor.modem_family == "minimal_qpsk");
+  assert(parsed.mode_descriptor.sync_family == "none");
   assert(parsed.mode_descriptor.prototype_warning.find("limited diagnostics") !=
          std::string::npos);
   assert(parsed.prototype_symbol_error_rate.has_value());
@@ -329,6 +332,7 @@ void test_real_modem_prototype_diagnostics_survive_result_serialization() {
   assert(parsed.mode_descriptor.implementation_status ==
          "real_modem_prototype");
   assert(parsed.mode_descriptor.performance_validity == "limited");
+  assert(parsed.mode_descriptor.sync_family == "none");
   assert(parsed.prototype_symbol_error_rate.has_value());
   assert(parsed.prototype_symbol_error_rate.value() == 0.125);
   assert(parsed.prototype_frame_status == "limited");

@@ -32,7 +32,7 @@ Result artifacts and reports must keep these categories distinct:
 | SSB references | `ssb_standard_3k`, `ssb_narrow_1k9` | false | true | Local reference-mode approximations for comparison. |
 | Parameterized FreeDV emulators | `freedv700d_emulated`, `freedv700e_emulated` | false | true | Descriptor-only 700D/700E approximations, not official waveforms. |
 | Official FreeDV adapters | `freedv700d_official`, `freedv700e_official` | true | false | Guarded Codec2/FreeDV adapter descriptors; runtime availability depends on Codec2 integration. |
-| 700F candidates | `freedv700f_a_balanced`, `freedv700f_b_robust`, `freedv700f_c_quality` | false | false | Experimental M2 700F candidate profiles; ISSUE-0032 surrogate rows until later implementation issues land. |
+| 700F candidates | `freedv700f_a_balanced`, `freedv700f_b_robust`, `freedv700f_c_quality` | false | false | Experimental M2 700F candidate profiles. ISSUE-0042 moves only 700F-A to a minimal QPSK real-modem-prototype row; 700F-B/C remain ISSUE-0032 surrogate rows. |
 
 Reports must not collapse `emulator == false` into an official claim. Official status
 comes only from `official_baseline == true`.

@@ -26,6 +26,9 @@ work. The normative v0.1.0 details are split by concern:
 - `docs/specs/modem_frame_symbol_protocol.md` defines the ISSUE-0043
   source-level modem frame, symbol, baseband, status, and placeholder family
   metadata containers needed before the ISSUE-0042 700F-A modem prototype.
+- `docs/specs/700f_a_minimal_qpsk_baseband_prototype.md` defines the
+  ISSUE-0042 700F-A minimal QPSK-like baseband prototype and its
+  downselect-invalid metadata.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.
@@ -36,3 +39,8 @@ not-real-modem rows and do not encode or decode a 700F waveform.
 
 ISSUE-0043 adds C++ value types for the real-modem-prototype data boundary while
 leaving the existing Mode interface and runtime behavior unchanged.
+
+ISSUE-0042 moves only `freedv700f_a_balanced` to
+`implementation_status = "real_modem_prototype"` with `modem_family =
+"minimal_qpsk"`, `sync_family = "none"`, limited prototype diagnostics, and
+`downselect_valid = false`. 700F-B/C remain surrogate rows.

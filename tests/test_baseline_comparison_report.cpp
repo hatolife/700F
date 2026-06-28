@@ -122,13 +122,15 @@ void markdown_includes_scores_statuses_and_raw_metric_summary() {
   assert(contains(markdown, "unavailable/skipped: 1"));
   assert(contains(markdown, "SSB reference status"));
   assert(contains(markdown, "700F candidate summary"));
-  assert(contains(markdown, "`freedv700f_a_balanced` waveform_prototype"));
+  assert(contains(markdown, "`freedv700f_a_balanced` real_modem_prototype"));
   assert(contains(markdown, "prototype=true"));
   assert(contains(markdown, "not_final_modem=true"));
-  assert(contains(markdown, "waveform_capable=true"));
   assert(contains(markdown, "downselect_valid=false"));
-  assert(contains(markdown, "performance_valid=false"));
-  assert(contains(markdown, "modem_family=toy_audio_waveform"));
+  assert(contains(markdown, "performance_valid=limited"));
+  assert(contains(markdown, "performance_validity=limited"));
+  assert(contains(markdown, "sync_family=none"));
+  assert(contains(markdown, "modem_family=minimal_qpsk"));
+  assert(contains(markdown, "REAL MODEM PROTOTYPE WARNING"));
   assert(contains(markdown, "real score 0"));
   assert(contains(markdown, "## Raw Metrics Summary"));
   assert(contains(markdown, "mean dropout"));
@@ -148,9 +150,10 @@ void markdown_includes_real_modem_prototype_warning_without_ranking() {
   prototype.mode_descriptor.performance_valid = false;
   prototype.mode_descriptor.performance_validity = "limited";
   prototype.mode_descriptor.downselect_validity = "invalid";
-  prototype.mode_descriptor.modem_family = "minimal_qpsk_baseband";
+  prototype.mode_descriptor.modem_family = "minimal_qpsk";
+  prototype.mode_descriptor.sync_family = "none";
   prototype.mode_descriptor.prototype_warning =
-      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only";
+      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only; performance_valid=limited";
   prototype.prototype_symbol_error_rate = 0.25;
   prototype.prototype_frame_status = "limited";
   prototype.prototype_sync_status = "pilot_placeholder";
@@ -167,7 +170,9 @@ void markdown_includes_real_modem_prototype_warning_without_ranking() {
   assert(contains(markdown, "performance_validity=limited"));
   assert(contains(markdown, "downselect_valid=false"));
   assert(contains(markdown, "downselect_validity=invalid"));
-  assert(contains(markdown, "modem_family=minimal_qpsk_baseband"));
+  assert(contains(markdown, "performance_valid=limited"));
+  assert(contains(markdown, "sync_family=none"));
+  assert(contains(markdown, "modem_family=minimal_qpsk"));
   assert(contains(markdown, "prototype_symbol_error_rate=0.25"));
   assert(contains(markdown, "prototype_frame_status=limited"));
   assert(contains(markdown, "prototype_sync_status=pilot_placeholder"));

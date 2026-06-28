@@ -74,7 +74,8 @@ existing keys must stay stable; new keys can be added to
 | `waveform_capable` | boolean | Whether the row exercised a waveform encode/decode path. |
 | `codec_family` | string | Prototype codec family label, such as `synthetic`. |
 | `fec_family` | string | Prototype FEC family label, such as `none`. |
-| `modem_family` | string | Prototype modem family label, such as `toy_audio_waveform`. |
+| `sync_family` | string | Prototype synchronization family label, such as `none`. |
+| `modem_family` | string | Prototype modem family label, such as `toy_audio_waveform` or `minimal_qpsk`. |
 | `prototype_limitations` | string | Human-readable limitations for prototype rows. |
 | `prototype_warning` | string | Human-readable warning that prototype diagnostics are not final performance evidence. |
 | `surrogate_model_name` | string | Surrogate model identifier when `implementation_status = "surrogate"`. |
@@ -178,4 +179,6 @@ existing keys must stay stable; new keys can be added to
   `surrogate_readiness_score_synthetic` and `synthetic_metrics_label`.
 - Real modem prototype rows may carry prototype diagnostics, but must keep
   `performance_valid=false`, `performance_validity=limited`,
-  `downselect_valid=false`, and `downselect_validity=invalid`.
+  `downselect_valid=false`, and `downselect_validity=invalid`. ISSUE-0042
+  700F-A rows use `codec_family=synthetic`, `fec_family=none`,
+  `sync_family=none`, and `modem_family=minimal_qpsk`.

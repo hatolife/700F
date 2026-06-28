@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Implement ISSUE-0042 700F-A minimal QPSK-like baseband prototype with
+  ISSUE-0043 `SymbolBlock`/`BasebandFrame` helpers, real-modem-prototype
+  metadata, limited diagnostics, report warnings, and B/C surrogate
+  preservation while keeping real downselect prohibited.
 - Add ISSUE-0043 modem frame/symbol/baseband source protocol containers,
   placeholder carrier/sync/FEC/codec statuses, rate validation helpers, and
   contract tests without changing 700F-A runtime behavior.

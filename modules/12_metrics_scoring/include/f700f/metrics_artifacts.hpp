@@ -40,6 +40,7 @@ struct ModeDescriptorSnapshot {
   bool waveform_capable = false;
   std::string codec_family;
   std::string fec_family;
+  std::string sync_family;
   std::string modem_family;
   std::string prototype_limitations;
   std::string prototype_warning;

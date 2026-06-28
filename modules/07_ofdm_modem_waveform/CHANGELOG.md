@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.0 - 2026-06-29
+- Add ISSUE-0042 700F-A minimal QPSK-like baseband prototype helpers and
+  runtime metadata while keeping 700F-B/C surrogate and real downselect
+  prohibited.
+
 ## v0.1.0 - 2026-06-27
 - Document ISSUE-0013 OFDM descriptor assumptions for FreeDV 700D/700E emulator skeletons.
 
