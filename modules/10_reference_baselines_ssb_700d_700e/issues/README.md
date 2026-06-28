@@ -19,6 +19,6 @@
 | ISSUE-0011 | open | P0 | ssb reference emulator | Module 10 | see root ISSUE-0011 | v0.1.0 target as applicable | 2026-06-28 |
 | ISSUE-0012 | open | P0 | freedv 700d 700e official baseline adapter | Module 10 | see root ISSUE-0012 | v0.1.0 target as applicable | 2026-06-28 |
 | ISSUE-0013 | open | P0 | 700d 700e parameterized emulator skeleton | Module 10 | see root ISSUE-0013 | v0.1.0 target as applicable | 2026-06-27 |
-| ISSUE-0029 | open | P0 | SSB audio export | Module 10 + Module 11 + Module 15 | feature/ISSUE-0029-ssb-audio-export | v0.2.0 target | 2026-06-28 |
+| ISSUE-0029 | open | P0 | SSB audio export | Module 10 + Module 11 + Module 15 | feature/ISSUE-0029-ssb-audio-export | v0.2.0 target | 2026-06-29 |
 | ISSUE-0033 | planned | P0 | 700D/700E emulator minimal behavior bridge | Module 10 + Module 11 + Module 13 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | v0.2.0 target | 2026-06-28 |
 

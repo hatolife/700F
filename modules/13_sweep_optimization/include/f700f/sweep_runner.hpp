@@ -2,6 +2,7 @@
 
 #include <f700f/simulation_pipeline.hpp>
 
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -30,6 +31,11 @@ struct SweepConfig {
   std::vector<Seed> seeds;
 };
 
+struct SweepConfigOverrides {
+  std::optional<std::string> output_directory;
+  std::optional<std::string> run_id_prefix;
+};
+
 enum class SweepRunStatus {
   Completed,
   Skipped,
@@ -42,6 +48,7 @@ struct SweepRunRecord {
   ModeId mode_id;
   std::string condition_id;
   Seed seed = 0;
+  std::string audio_export_path = "N/A";
   SimulationResult simulation;
   std::string skipped_reason;
   std::string error_summary;
@@ -82,6 +89,12 @@ std::string sweep_result_to_csv(const SweepResult &result);
 std::shared_ptr<IChannelFactory> make_awgn_channel_factory();
 std::shared_ptr<IChannelFactory> make_frequency_offset_channel_factory();
 std::shared_ptr<IChannelFactory> make_simple_gain_fading_channel_factory();
+
+SweepConfig load_sweep_config_from_file(const std::string &path,
+                                        std::string &error);
+SweepConfig load_sweep_config_from_file(const std::string &path,
+                                        const SweepConfigOverrides &overrides,
+                                        std::string &error);
 
 SweepConfig make_m1_baseline_smoke_sweep_config(std::string output_directory);
 SweepConfig make_m2_channel_matrix_smoke_sweep_config(std::string output_directory);

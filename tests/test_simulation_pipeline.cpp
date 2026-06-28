@@ -4,6 +4,7 @@
 #include <cassert>
 #include <filesystem>
 #include <memory>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -85,6 +86,64 @@ void zero_length_audio_does_not_crash() {
   assert(result.decoded_audio.mono.empty());
 }
 
+void zero_length_audio_with_export_does_not_crash_and_reports_artifact_path() {
+  auto runner = make_runner();
+  auto config = make_config();
+  config.run_id = "run-ssb-zero-length";
+  config.input = f700f::GeneratedToneConfig{.sample_rate_hz = 8000, .sample_count = 0, .frequency_hz = 1000.0F, .amplitude = 0.25F};
+  const auto result = runner.run(config);
+  const auto expected_path =
+      std::filesystem::path(config.output_directory) / (config.run_id + ".decoded.raw");
+  assert(result.ok);
+  assert(result.audio_export_path == expected_path.generic_string());
+}
+
+void export_audio_records_placeholder_path() {
+  auto runner = make_runner();
+  auto config = make_config();
+  config.run_id = "run-audio-path";
+  const auto result = runner.run(config);
+  const auto expected_path =
+      std::filesystem::path(config.output_directory) / (config.run_id + ".decoded.raw");
+  assert(result.ok);
+  assert(result.audio_export_path == expected_path.generic_string());
+  bool found_artifact = false;
+  for (const auto &artifact : result.artifacts) {
+    if (artifact.artifact_id == "decoded-audio-placeholder") {
+      assert(artifact.path == expected_path.generic_string());
+      found_artifact = true;
+      break;
+    }
+  }
+  assert(found_artifact);
+}
+
+void export_audio_disabled_reports_na() {
+  auto runner = make_runner();
+  auto config = make_config();
+  config.run_id = "run-audio-disabled";
+  config.export_audio = false;
+  const auto result = runner.run(config);
+  assert(result.ok);
+  assert(result.audio_export_path == "N/A");
+}
+
+void invalid_output_directory_fails_clearly() {
+  auto runner = make_runner();
+  auto config = make_config();
+  config.run_id = "run-invalid-output";
+  const auto invalid_directory = std::string{"build/test-artifacts/invalid-output-dir"};
+  {
+    std::ofstream invalid_directory_file(invalid_directory);
+    invalid_directory_file << "occupied by file";
+  }
+  config.output_directory = invalid_directory;
+  const auto result = runner.run(config);
+  assert(!result.ok);
+  assert(!result.stage_status(f700f::PipelineStage::Metrics).ok);
+  assert(result.error.find("failed to create output directory") != std::string::npos);
+}
+
 void result_contains_identity_metadata() {
   auto runner = make_runner();
   const auto result = runner.run(make_config());
@@ -138,6 +197,10 @@ int main() {
   invalid_mode_id_fails();
   invalid_channel_config_fails();
   zero_length_audio_does_not_crash();
+  zero_length_audio_with_export_does_not_crash_and_reports_artifact_path();
+  export_audio_records_placeholder_path();
+  export_audio_disabled_reports_na();
+  invalid_output_directory_fails_clearly();
   result_contains_identity_metadata();
   ssb_mode_identity_channel_succeeds();
   pipeline_stage_failure_is_reflected();

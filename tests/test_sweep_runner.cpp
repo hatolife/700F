@@ -356,6 +356,91 @@ void m2_700f_candidate_full_campaign_uses_full_matrix() {
          "awgn-snr-8db-fo-200hz-fading-medium");
 }
 
+void m2_smoke_ssb_rows_expose_audio_export_path() {
+  auto runner = make_runner();
+  f700f::register_m2_campaign_mode_factories(runner);
+  auto config = f700f::make_m2_700f_candidate_smoke_sweep_config(
+      "build/test-artifacts/m2-700f-candidate-smoke-audio-path");
+  config.run_id_prefix = "m2-700f-candidate-smoke-audio-path";
+  config.modes = {{.mode_id = "ssb_standard_3k"}, {.mode_id = "ssb_narrow_1k9"}};
+  config.export_audio = true;
+
+  const auto result = runner.run(config);
+  assert(result.ok);
+  assert(std::filesystem::exists(
+      "build/test-artifacts/m2-700f-candidate-smoke-audio-path/"
+      "m2-700f-candidate-smoke-audio-path.json"));
+  assert(std::filesystem::exists(
+      "build/test-artifacts/m2-700f-candidate-smoke-audio-path/"
+      "m2-700f-candidate-smoke-audio-path.csv"));
+
+  bool saw_standard = false;
+  bool saw_narrow = false;
+  for (const auto &record : result.records) {
+    if (record.mode_id == "ssb_standard_3k" || record.mode_id == "ssb_narrow_1k9") {
+      const auto expected_path =
+          std::filesystem::path("build/test-artifacts/m2-700f-candidate-smoke-audio-path") /
+          "runs" / (record.run_id + ".decoded.raw");
+      assert(record.audio_export_path == expected_path.generic_string());
+      assert(record.status == f700f::SweepRunStatus::Completed);
+      if (record.mode_id == "ssb_standard_3k") {
+        saw_standard = true;
+      } else {
+        saw_narrow = true;
+      }
+    } else {
+      assert(record.audio_export_path == "N/A");
+    }
+  }
+  assert(saw_standard);
+  assert(saw_narrow);
+
+  std::ifstream csv_file(
+      "build/test-artifacts/m2-700f-candidate-smoke-audio-path/"
+      "m2-700f-candidate-smoke-audio-path.csv");
+  const std::string csv_text((std::istreambuf_iterator<char>(csv_file)),
+                             std::istreambuf_iterator<char>());
+  assert(csv_text.find("audio_export_path") != std::string::npos);
+
+  std::ifstream json_file(
+      "build/test-artifacts/m2-700f-candidate-smoke-audio-path/"
+      "m2-700f-candidate-smoke-audio-path.json");
+  const std::string json_text((std::istreambuf_iterator<char>(json_file)),
+                              std::istreambuf_iterator<char>());
+  assert(json_text.find("audio_export_path") != std::string::npos);
+}
+
+void m2_smoke_ssb_rows_disabled_export_are_na() {
+  auto runner = make_runner();
+  f700f::register_m2_campaign_mode_factories(runner);
+  auto config = f700f::make_m2_700f_candidate_smoke_sweep_config(
+      "build/test-artifacts/m2-700f-candidate-smoke-audio-disabled");
+  config.run_id_prefix = "m2-700f-candidate-smoke-audio-disabled";
+  config.modes = {{.mode_id = "ssb_standard_3k"}, {.mode_id = "ssb_narrow_1k9"}};
+  config.export_audio = false;
+
+  const auto result = runner.run(config);
+  assert(result.ok);
+  for (const auto &record : result.records) {
+    assert(record.audio_export_path == "N/A");
+  }
+}
+
+void sweep_invalid_output_directory_fails_clearly() {
+  auto runner = make_runner();
+  auto config = make_sweep_config();
+  const auto invalid_directory = std::string{"build/test-artifacts/invalid-output-dir"};
+  {
+    std::ofstream invalid_directory_file(invalid_directory);
+    invalid_directory_file << "occupied by file";
+  }
+  config.output_directory = invalid_directory;
+  const auto result = runner.run(config);
+  assert(!result.ok);
+  assert(!result.error.empty());
+  assert(result.error.find("failed to create sweep output directory") != std::string::npos);
+}
+
 } // namespace
 
 int main() {
@@ -374,5 +459,8 @@ int main() {
   m2_channel_matrix_empty_seed_list_rejected();
   m2_700f_candidate_smoke_campaign_records_skips_and_artifacts();
   m2_700f_candidate_full_campaign_uses_full_matrix();
+  m2_smoke_ssb_rows_expose_audio_export_path();
+  m2_smoke_ssb_rows_disabled_export_are_na();
+  sweep_invalid_output_directory_fails_clearly();
   return 0;
 }
