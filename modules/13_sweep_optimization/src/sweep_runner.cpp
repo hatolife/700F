@@ -174,6 +174,18 @@ SimulationConfig make_simulation_config(const SweepConfig &config,
   return simulation;
 }
 
+std::vector<SweepModeConfig> make_m2_700f_candidate_modes() {
+  return {{.mode_id = "ssb_standard_3k"},
+          {.mode_id = "ssb_narrow_1k9"},
+          {.mode_id = "freedv700d_emulated"},
+          {.mode_id = "freedv700e_emulated"},
+          {.mode_id = "freedv700d_official"},
+          {.mode_id = "freedv700e_official"},
+          {.mode_id = "freedv700f_a_balanced"},
+          {.mode_id = "freedv700f_b_robust"},
+          {.mode_id = "freedv700f_c_quality"}};
+}
+
 class EffectChannel final : public IChannel {
 public:
   using Maker = std::unique_ptr<ChannelEffect> (*)(const ChannelConfig &, Seed,
@@ -570,6 +582,24 @@ SweepConfig make_m2_channel_matrix_full_sweep_config(
     }
   }
   config.seeds = {1, 2, 3};
+  return config;
+}
+
+SweepConfig make_m2_700f_candidate_smoke_sweep_config(
+    std::string output_directory) {
+  auto config = make_m2_channel_matrix_smoke_sweep_config(
+      std::move(output_directory));
+  config.run_id_prefix = "m2-700f-candidate-smoke";
+  config.modes = make_m2_700f_candidate_modes();
+  return config;
+}
+
+SweepConfig make_m2_700f_candidate_full_sweep_config(
+    std::string output_directory) {
+  auto config = make_m2_channel_matrix_full_sweep_config(
+      std::move(output_directory));
+  config.run_id_prefix = "m2-700f-candidate-full";
+  config.modes = make_m2_700f_candidate_modes();
   return config;
 }
 

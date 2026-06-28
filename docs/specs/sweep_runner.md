@@ -95,3 +95,18 @@ TOML-friendly shapes under `configs/channels/`.
 The runner rejects duplicate channel condition ids before expansion and rejects empty
 seed lists before starting runs. Channel factory adapters reject malformed numeric
 parameters rather than silently substituting defaults.
+
+## M2 700F Candidate Campaign Helpers
+
+ISSUE-0026 adds campaign helpers that compose the ISSUE-0025 channel matrices with the
+M2 baseline/candidate mode list:
+
+- `make_m2_700f_candidate_smoke_sweep_config()` uses the smoke matrix, seed `1`, and
+  run id prefix `m2-700f-candidate-smoke`.
+- `make_m2_700f_candidate_full_sweep_config()` uses the full 72-condition matrix, seeds
+  `1`, `2`, and `3`, and run id prefix `m2-700f-candidate-full`.
+
+Both helpers use stable mode ordering: SSB standard/narrow, 700D/700E emulated,
+700D/700E official skip-capable entries, and 700F-A/B/C profile-only candidates.
+The campaign details are specified in `docs/specs/m2_sweep_campaign.md`, with
+TOML-friendly shapes under `configs/sweeps/`.

@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <filesystem>
+#include <fstream>
 #include <set>
 #include <string>
 #include <vector>
@@ -33,6 +34,25 @@ f700f::SweepRunner make_runner() {
   runner.register_channel_factory(f700f::make_simple_gain_fading_channel_factory());
   runner.register_metric(f700f::make_dummy_metric());
   return runner;
+}
+
+void assert_m2_candidate_mode_order(
+    const std::vector<f700f::SweepModeConfig> &modes) {
+  const std::vector<std::string> expected_modes = {
+      "ssb_standard_3k",
+      "ssb_narrow_1k9",
+      "freedv700d_emulated",
+      "freedv700e_emulated",
+      "freedv700d_official",
+      "freedv700e_official",
+      "freedv700f_a_balanced",
+      "freedv700f_b_robust",
+      "freedv700f_c_quality"};
+  assert(modes.size() == expected_modes.size());
+  for (std::size_t i = 0; i < expected_modes.size(); ++i) {
+    assert(modes[i].mode_id == expected_modes[i]);
+    assert(modes[i].skip_if_unavailable);
+  }
 }
 
 void empty_sweep_config_rejected() {
@@ -219,6 +239,66 @@ void m2_channel_matrix_empty_seed_list_rejected() {
   assert(result.error.find("seed") != std::string::npos);
 }
 
+void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
+  auto runner = make_runner();
+  auto config = f700f::make_m2_700f_candidate_smoke_sweep_config(
+      "build/test-artifacts/m2-700f-candidate-smoke");
+  config.modes.push_back({.mode_id = "unknown.mode.for-skip-test"});
+
+  assert(config.run_id_prefix == "m2-700f-candidate-smoke");
+  assert(config.channel_conditions.size() == 3);
+  assert(config.seeds == std::vector<f700f::Seed>{1});
+  std::vector<f700f::SweepModeConfig> campaign_modes(config.modes.begin(),
+                                                     config.modes.end() - 1);
+  assert_m2_candidate_mode_order(campaign_modes);
+
+  const auto first = runner.run(config);
+  const auto second = runner.run(config);
+  assert(first.ok);
+  assert(second.ok);
+  assert(first.records.size() == config.modes.size() *
+                                     config.channel_conditions.size() *
+                                     config.seeds.size());
+  assert(first.records.size() == second.records.size());
+  for (std::size_t i = 0; i < first.records.size(); ++i) {
+    assert(first.records[i].run_id == second.records[i].run_id);
+    assert(first.records[i].mode_id == second.records[i].mode_id);
+    assert(first.records[i].condition_id == second.records[i].condition_id);
+    assert(first.records[i].seed == second.records[i].seed);
+    assert(first.records[i].status == f700f::SweepRunStatus::Skipped);
+    assert(first.records[i].skipped_reason.find(first.records[i].mode_id) !=
+           std::string::npos);
+  }
+
+  assert(std::filesystem::exists(
+      "build/test-artifacts/m2-700f-candidate-smoke/"
+      "m2-700f-candidate-smoke.json"));
+  assert(std::filesystem::exists(
+      "build/test-artifacts/m2-700f-candidate-smoke/"
+      "m2-700f-candidate-smoke.csv"));
+
+  std::ifstream json("build/test-artifacts/m2-700f-candidate-smoke/"
+                     "m2-700f-candidate-smoke.json");
+  const std::string json_text((std::istreambuf_iterator<char>(json)),
+                              std::istreambuf_iterator<char>());
+  assert(json_text.find("unknown.mode.for-skip-test") != std::string::npos);
+  assert(json_text.find("mode id not registered: unknown.mode.for-skip-test") !=
+         std::string::npos);
+}
+
+void m2_700f_candidate_full_campaign_uses_full_matrix() {
+  const auto config = f700f::make_m2_700f_candidate_full_sweep_config(
+      "build/test-artifacts/m2-700f-candidate-full");
+  assert(config.run_id_prefix == "m2-700f-candidate-full");
+  assert_m2_candidate_mode_order(config.modes);
+  assert(config.channel_conditions.size() == 72);
+  assert(config.seeds == std::vector<f700f::Seed>({1, 2, 3}));
+  assert(config.channel_conditions.front().condition_id ==
+         "awgn-snr--2db-fo-0hz-fading-none");
+  assert(config.channel_conditions.back().condition_id ==
+         "awgn-snr-8db-fo-200hz-fading-medium");
+}
+
 } // namespace
 
 int main() {
@@ -235,5 +315,7 @@ int main() {
   duplicate_condition_ids_are_rejected();
   invalid_channel_matrix_parameters_are_rejected();
   m2_channel_matrix_empty_seed_list_rejected();
+  m2_700f_candidate_smoke_campaign_records_skips_and_artifacts();
+  m2_700f_candidate_full_campaign_uses_full_matrix();
   return 0;
 }

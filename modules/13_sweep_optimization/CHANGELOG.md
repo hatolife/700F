@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0026 M2 700F candidate smoke/full campaign helpers and TOML-friendly
+  config shapes.
 - Add ISSUE-0025 M2 smoke/full channel matrix config helpers.
 - Reject duplicate channel condition ids and malformed channel numeric parameters in
   sweep orchestration.

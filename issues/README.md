@@ -39,7 +39,7 @@
 | ISSUE-0023 | open | P0 | qa | M2 audit and candidate downselect | Manager + QA | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 target | M2 | ISSUE-0018 through ISSUE-0022 | 2026-06-28 |
 | ISSUE-0024 | open | P0 | module:12 | M2 scoring model and comparison policy | Module 12 + Module 13 | feature/ISSUE-0024-scoring-model | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
 | ISSUE-0025 | closed | P0 | module:08 | M2 expanded channel condition matrix | Module 08 + Module 13 | feature/ISSUE-0025-expanded-channel-matrix | v0.2.0 | M2 | ISSUE-0018, ISSUE-0010 | 2026-06-28 |
-| ISSUE-0026 | open | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
+| ISSUE-0026 | closed | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
 | ISSUE-0027 | open | P0 | module:15 | M2 baseline comparison report generation | Module 15 + Module 12 | feature/ISSUE-0027-baseline-comparison-report | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0024, ISSUE-0026 | 2026-06-28 |
 
 ## M1-A integration status
