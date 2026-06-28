@@ -19,4 +19,5 @@
 | ISSUE-0009 | open | P0 | deterministic simulation core | Module 02 | see root ISSUE-0009 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0032 | complete | P0 | 700F candidate minimal behavior bridge | Module 02 + candidate modules | feature/ISSUE-0032-700f-candidate-minimal-behavior | v0.2.0 target | 2026-06-29 |
 | ISSUE-0038 | complete | P0 | 700F waveform-capable prototype RFC | Module 02 + Module 07 + Module 13 + Module 15 | docs/ISSUE-0038-700f-waveform-prototype-rfc | v0.2.0 target | 2026-06-29 |
+| ISSUE-0041 | complete | P0 | real 700F modem architecture RFC | Module 02 + Module 07 + Module 13 + Module 15 | docs/ISSUE-0041-real-700f-modem-architecture-rfc | v0.2.0 target | 2026-06-29 |
 

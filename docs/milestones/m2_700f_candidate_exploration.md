@@ -39,6 +39,7 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0038 | 700F waveform-capable prototype RFC | Module 02 + Module 07 + Module 13 + Module 15 | `docs/ISSUE-0038-700f-waveform-prototype-rfc` | 02, 07, 11, 12, 13, 15 |
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | Module 02 + Module 07 + Module 13 + Module 15 | `feature/ISSUE-0039-700f-a-minimal-waveform-prototype` | 02, 07, 11, 12, 13, 15 |
 | ISSUE-0040 | M2 audit update after 700F-A prototype | Manager + QA | `chore/ISSUE-0040-m2-audit-update-after-700f-a-prototype` | 16, project |
+| ISSUE-0041 | real 700F modem architecture RFC | Module 02 + Module 07 + Module 13 + Module 15 | `docs/ISSUE-0041-real-700f-modem-architecture-rfc` | 02, 07, 11, 12, 13, 15 |
 
 ## M2-A Gate
 
@@ -72,6 +73,10 @@ ISSUE-0039 implements the first guarded 700F-A toy waveform prototype. It keeps
 ISSUE-0040 audits the post-prototype state. The decision is
 `M2_GO_TO_REAL_MODEM_RFC`: M2 may proceed to a real modem architecture RFC, but
 real candidate downselect remains prohibited.
+
+ISSUE-0041 defines that RFC. The selected architecture is Option B followed by
+Option C: a minimal QPSK-like baseband prototype first, then OFDM/FEC/sync
+expansion after frame/status boundaries are stable.
 
 ## M1 Limitations Carried Into M2
 
