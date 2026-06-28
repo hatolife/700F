@@ -75,6 +75,8 @@ add_executable(f700f-sweep src/apps/f700f-sweep.cpp)
 target_link_libraries(f700f-sweep PRIVATE f700f_core f700f_sweep_runner)
 add_executable(test_mode_interface tests/test_mode_interface.cpp)
 target_link_libraries(test_mode_interface PRIVATE f700f_core)
+add_executable(test_modem_frame_symbol_protocol tests/test_modem_frame_symbol_protocol.cpp)
+target_link_libraries(test_modem_frame_symbol_protocol PRIVATE f700f_core)
 add_executable(test_metrics_result_artifacts
   tests/test_metrics_result_artifacts.cpp
   $<TARGET_OBJECTS:f700f_metrics>)
@@ -141,6 +143,7 @@ set_tests_properties(f700f_report_help PROPERTIES
 add_test(NAME f700f_report_missing_input COMMAND f700f-report)
 set_tests_properties(f700f_report_missing_input PROPERTIES WILL_FAIL TRUE)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
+add_test(NAME modem_frame_symbol_protocol_contract COMMAND test_modem_frame_symbol_protocol)
 add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
 add_test(NAME scoring_model_contract COMMAND test_scoring_model)
 add_test(NAME baseline_comparison_report_contract COMMAND test_baseline_comparison_report)

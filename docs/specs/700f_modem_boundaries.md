@@ -4,7 +4,12 @@
 
 - Issue: ISSUE-0041
 - Scope: protocol and architecture boundary
-- Implementation status: RFC only
+- Implementation status: RFC plus ISSUE-0043 source protocol boundary
+
+The source-level C++20 boundary types are defined in `include/f700f/types.hpp`
+and documented in `docs/specs/modem_frame_symbol_protocol.md`. ISSUE-0043 keeps
+these as value-type containers and validation helpers only; it does not add real
+waveform, FEC, synchronization, codec, or scoring behavior.
 
 ## Boundary Types
 
@@ -114,3 +119,11 @@ marked `real_modem_prototype`.
 Metrics and reports may consume prototype diagnostics, but final scoring must
 continue to treat real modem prototype rows as downselect-invalid until a later
 audit changes the policy.
+
+## ISSUE-0043 Source Mapping
+
+`ModemFrameDescriptor` carries common frame metadata shared by input, symbol,
+baseband, and output containers. `SampleRate` and `SymbolRate` expose minimal
+positive-rate validation. `CarrierLayout`, `TimingSyncStatus`, `FecStatus`, and
+`CodecStatus` are explicit placeholders so ISSUE-0042 can propagate modem
+family metadata without silently implying final OFDM/FEC/sync/codec behavior.
