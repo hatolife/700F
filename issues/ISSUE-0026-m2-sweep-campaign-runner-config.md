@@ -1,7 +1,7 @@
 # ISSUE-0026: M2 sweep campaign runner config
 
 ## Status
-open
+closed
 
 ## Scope
 module:13
@@ -33,18 +33,33 @@ P0
 Create M2 700F candidate smoke/full sweep campaign configs for existing sweep runner entry points.
 
 ## Acceptance criteria
-- [ ] Smoke and full campaign configs exist.
-- [ ] Campaign includes SSB standard/narrow, 700D/700E emulated, official 700D/700E skip-capable entries, and 700F-A/B/C profile-only candidates.
-- [ ] Smoke campaign completes quickly.
-- [ ] Unknown or unavailable modes are recorded as skips.
-- [ ] JSON/CSV aggregate outputs are generated.
-- [ ] Stable result ordering is verified for the same seed.
+- [x] Smoke and full campaign configs exist.
+- [x] Campaign includes SSB standard/narrow, 700D/700E emulated, official 700D/700E skip-capable entries, and 700F-A/B/C profile-only candidates.
+- [x] Smoke campaign completes quickly.
+- [x] Unknown or unavailable modes are recorded as skips.
+- [x] JSON/CSV aggregate outputs are generated.
+- [x] Stable result ordering is verified for the same seed.
 
 ## Test plan
 - ./tools/run_ci_local.sh
 
 ## TDD record
-- Red test added: to be completed by issue owner before implementation.
+- Red test added: `test_sweep_runner` now expects an M2 700F candidate smoke
+  campaign helper, expected M2 mode ordering, skip reasons, JSON/CSV artifacts,
+  and stable repeated-run ordering.
+- Red result: `bash -lc 'cmake --build build --target test_sweep_runner'`
+  failed because `f700f::make_m2_700f_candidate_smoke_sweep_config` was missing.
 
 ## Result
-Pending.
+Completed. Added M2 700F candidate smoke/full sweep campaign helpers,
+TOML-friendly campaign configs, campaign spec docs, and sweep runner tests for
+mode ordering, skip reasons, aggregate JSON/CSV generation, and stable ordering.
+
+Verification:
+- `bash -lc 'cmake --build build --target test_sweep_runner && ctest --test-dir build -R sweep_runner_contract --output-on-failure'`: passed
+- `bash ./tools/run_ci_local.sh`: passed on 2026-06-28 with 11/11 CTest tests,
+  version check passed, governance check passed
+
+Notes:
+- Clock-skew warnings were observed during build and did not block passing tests.
+- No push or PR was performed per manager instruction.

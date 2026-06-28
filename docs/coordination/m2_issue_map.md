@@ -18,7 +18,7 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0023 | M2 audit and candidate downselect | hold | Hold until M2-B work is complete or explicitly marked blocked. |
 | ISSUE-0024 | M2 scoring model and comparison policy | open | Follow-up issue for requested scoring path. |
 | ISSUE-0025 | M2 expanded channel condition matrix | open | Follow-up issue for requested channel matrix path. |
-| ISSUE-0026 | M2 sweep campaign runner config | open | Follow-up issue for requested sweep campaign path. |
+| ISSUE-0026 | M2 sweep campaign runner config | complete | Follow-up issue for requested sweep campaign path. |
 | ISSUE-0027 | M2 baseline comparison report generation | open | Follow-up issue for requested comparison report path. |
 
 ## Collision Rule

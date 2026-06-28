@@ -1,0 +1,73 @@
+# ISSUE-0026 full campaign axes. TOML parsing is deferred; this file records the
+# intended config shape mirrored by make_m2_700f_candidate_full_sweep_config().
+
+run_id_prefix = "m2-700f-candidate-full"
+output_directory = "reports/sweeps/m2-700f-candidate-full"
+export_audio = false
+metric_ids = ["dummy.metric"]
+seeds = [1, 2, 3]
+
+[input.generated_tone]
+sample_rate_hz = 8000
+sample_count = 32
+frequency_hz = 1000.0
+amplitude = 0.25
+
+[[modes]]
+mode_id = "ssb_standard_3k"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "ssb_narrow_1k9"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700d_emulated"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700e_emulated"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700d_official"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700e_official"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700f_a_balanced"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700f_b_robust"
+skip_if_unavailable = true
+
+[[modes]]
+mode_id = "freedv700f_c_quality"
+skip_if_unavailable = true
+
+[matrix.axes]
+snr_db = [-2, 0, 2, 4, 6, 8]
+freq_offset_hz = [0, 50, 100, 200]
+fading = ["none", "weak", "medium"]
+
+[matrix.condition_id]
+format = "awgn-snr-<snr>db-fo-<offset>hz-fading-<profile>"
+example_first = "awgn-snr--2db-fo-0hz-fading-none"
+example_last = "awgn-snr-8db-fo-200hz-fading-medium"
+
+[matrix.fading_profiles.none]
+channel_id = ""
+
+[matrix.fading_profiles.weak]
+channel_id = "simple_gain_fading"
+min_gain_db = "-1.5"
+max_gain_db = "1.5"
+
+[matrix.fading_profiles.medium]
+channel_id = "simple_gain_fading"
+min_gain_db = "-3.0"
+max_gain_db = "3.0"
