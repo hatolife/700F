@@ -31,7 +31,7 @@
 | ISSUE-0015 | closed | P0 | module:13 | Sweep runner v0.1.0 | Module 13 + Module 11 + Module 15 | feature/ISSUE-0015-sweep-runner-v0-1 | v0.1.0 | M1 | ISSUE-0009, ISSUE-0014 | 2026-06-28 |
 | ISSUE-0016 | closed | P0 | qa | M1 audit report | Manager + QA | docs/ISSUE-0016-m1-audit-report | v0.1.0 | M1 | ISSUE-0004 through ISSUE-0015 | 2026-06-28 |
 | ISSUE-0017 | closed | P0 | project | M2 planning issue expansion | Manager | docs/ISSUE-0017-m2-planning | v0.2.0 target | M2 | ISSUE-0016 | 2026-06-28 |
-| ISSUE-0018 | open | P0 | architecture | 700F candidate architecture RFC | Module 02 + Manager | docs/ISSUE-0018-700f-candidate-architecture-rfc | v0.2.0 target | M2 | ISSUE-0017 | 2026-06-28 |
+| ISSUE-0018 | closed | P0 | architecture | 700F candidate architecture RFC | Module 02 + Manager | docs/ISSUE-0018-700f-candidate-architecture-rfc | v0.2.0 | M2 | ISSUE-0017 | 2026-06-28 |
 | ISSUE-0019 | open | P0 | module:06 | FEC UEP engine prototype | Module 06 + Module 02 | feature/ISSUE-0019-fec-uep-prototype | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
 | ISSUE-0020 | open | P0 | module:07 | OFDM waveform candidate prototype | Module 07 + Module 09 | feature/ISSUE-0020-ofdm-waveform-candidate | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
 | ISSUE-0021 | open | P0 | module:09 | sync and impairment estimator prototype | Module 09 + Module 07 | feature/ISSUE-0021-sync-impairment-estimator | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0020 | 2026-06-28 |

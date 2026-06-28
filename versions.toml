@@ -1,11 +1,11 @@
-project = "v0.1.0"
-protocol = "f700f-protocol-0.1"
+project = "v0.2.0"
+protocol = "f700f-protocol-0.2"
 plugin_abi = "f700f-plugin-abi-0.1"
-compatibility_minor = 1
+compatibility_minor = 2
 
 [modules]
 01_repository_build_ci = "v0.1.0"
-02_core_data_model_protocol = "v0.1.0"
+02_core_data_model_protocol = "v0.2.0"
 03_plugin_abi_registry = "v0.1.0"
 04_audio_io_dataset = "v0.1.0"
 05_codec_adapter = "v0.1.0"
