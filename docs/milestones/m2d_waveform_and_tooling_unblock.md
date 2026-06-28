@@ -24,14 +24,16 @@ downselect.
 | ISSUE-0033 | 700D/700E emulator minimal behavior bridge | complete-local | Module 10 + Module 11 + Module 13 | `feature/ISSUE-0033-700d-700e-emulator-minimal-behavior` |
 | ISSUE-0034 | official FreeDV waveform roundtrip | complete-local | Module 05 + Module 10 | `research/ISSUE-0034-official-freedv-waveform-roundtrip` |
 | ISSUE-0035 | clock-skew warning investigation | complete-local | Module 01 + Manager | `chore/ISSUE-0035-clock-skew-warning-investigation` |
-| ISSUE-0036 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | planned | Module 05 + Module 10 + Module 11 + Module 13 | `feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip` |
+| ISSUE-0036 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | complete-local | Module 05 + Module 10 + Module 11 + Module 13 | `feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip` |
+| ISSUE-0037 | Codec2-on CI and official regression smoke | planned | Module 01 + Module 05 + Module 10 + Module 13 | `chore/ISSUE-0037-codec2-on-ci-official-regression-smoke` |
 
 ## Downselect Rule
 
-Real candidate downselect remains prohibited until official baseline runtime work
-and waveform-capable 700F work produce valid performance rows. Current M2-E rows
-distinguish real, surrogate, emulator, and official-unavailable states, but do not
-provide a real downselect basis.
+Real candidate downselect remains prohibited until waveform-capable 700F work
+produces valid performance rows and official runtime evidence is in a recurring
+regression path. Current M2-E/M2-F rows distinguish real, surrogate, emulator,
+official-runtime, and official-unavailable states, but do not provide a real
+downselect basis.
 
 ## Partial Integration
 
@@ -45,4 +47,11 @@ ISSUE-0032 through ISSUE-0035 are integrated locally into `develop`. The M2-E
 smoke sweep produced 27 rows: 21 completed, 6 skipped, 0 failed. 700F candidates
 complete as synthetic surrogate rows, 700D/700E emulators complete as
 non-official emulated-surrogate rows, and official FreeDV rows remain skipped in
-the default Codec2-off smoke. ISSUE-0036 tracks direct Codec2 runtime linkage.
+the default Codec2-off smoke.
+
+## M2-F Codec2 Runtime Follow-up
+
+ISSUE-0036 is integrated locally. Default Codec2-off CI remains green. Optional
+Codec2-on builds import/link the pinned `external/codec2` runtime and complete
+official 700D/700E Mode-boundary smoke rows. ISSUE-0037 tracks making this
+non-default Codec2-on path recurring.

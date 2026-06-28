@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2f-codec2-off-000-ssb-standard-3k-identity-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_standard_3k",
+  "deterministic_digest": "adea1af38c257dbd",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.120737}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

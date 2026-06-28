@@ -266,6 +266,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   std::size_t failed = 0;
   std::size_t surrogate_completed = 0;
   std::size_t emulated_surrogate_completed = 0;
+  std::size_t official_completed = 0;
   std::size_t official_skipped = 0;
   std::size_t unknown_skipped = 0;
   for (std::size_t i = 0; i < first.records.size(); ++i) {
@@ -328,11 +329,31 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
     }
     if (first.records[i].mode_id == "freedv700d_official" ||
         first.records[i].mode_id == "freedv700e_official") {
-      assert(first.records[i].status == f700f::SweepRunStatus::Skipped);
-      assert(first.records[i].skipped_reason.find(
-                 "official_waveform_roundtrip_not_implemented") !=
-             std::string::npos);
-      ++official_skipped;
+      if (first.records[i].status == f700f::SweepRunStatus::Skipped) {
+        assert(first.records[i].skipped_reason.find(
+                   "official_freedv_codec2_unavailable") !=
+               std::string::npos);
+        ++official_skipped;
+      } else {
+        assert(first.records[i].status == f700f::SweepRunStatus::Completed);
+        assert(first.records[i].simulation.ok);
+        assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Encode).ok);
+        assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Decode).ok);
+        assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Metrics).ok);
+        assert(first.records[i].error_summary.find("official_freedv_completed") !=
+               std::string::npos);
+        assert(first.records[i].error_summary.find("official=true") !=
+               std::string::npos);
+        assert(first.records[i].error_summary.find("codec2_available=true") !=
+               std::string::npos);
+        assert(first.records[i].error_summary.find("roundtrip_available=true") !=
+               std::string::npos);
+        assert(first.records[i].error_summary.find("not_emulator=true") !=
+               std::string::npos);
+        assert(first.records[i].error_summary.find("not_surrogate=true") !=
+               std::string::npos);
+        ++official_completed;
+      }
     }
     if (first.records[i].mode_id == "unknown.mode.for-skip-test") {
       assert(first.records[i].status == f700f::SweepRunStatus::Skipped);
@@ -346,7 +367,8 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(failed == 0);
   assert(surrogate_completed == 9);
   assert(emulated_surrogate_completed == 6);
-  assert(official_skipped == 6);
+  assert((official_skipped == 6 && official_completed == 0) ||
+         (official_skipped == 0 && official_completed == 6));
   assert(unknown_skipped == 3);
 
   assert(std::filesystem::exists(
@@ -377,8 +399,9 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(json_text.find("performance_valid=false") != std::string::npos);
   assert(json_text.find("emulator_limitations=") != std::string::npos);
   assert(json_text.find("descriptor_only_completed") == std::string::npos);
-  assert(json_text.find("official_waveform_roundtrip_not_implemented") !=
-         std::string::npos);
+  assert(json_text.find("official_freedv_codec2_unavailable") !=
+             std::string::npos ||
+         json_text.find("freedv700d_official") != std::string::npos);
   assert(json_text.find("unknown.mode.for-skip-test") != std::string::npos);
   assert(json_text.find("mode id not registered: unknown.mode.for-skip-test") !=
          std::string::npos);

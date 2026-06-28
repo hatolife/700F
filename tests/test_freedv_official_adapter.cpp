@@ -3,6 +3,7 @@
 #include <f700f/types.hpp>
 
 #include <cassert>
+#include <cmath>
 #include <memory>
 #include <string>
 
@@ -112,20 +113,34 @@ void codec2_enabled_smoke_test_is_guarded_test() {
     auto mode = registry.create("freedv700d_official");
     assert(mode != nullptr);
     assert(contains(mode->descriptor().implementation_status, "available"));
-    assert(contains(mode->descriptor().implementation_status, "ISSUE-0034"));
     assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
 
-    const auto encoded = mode->encode({});
-    assert(!encoded.ok);
-    assert(contains(encoded.error, "freedv700d_official"));
-    assert(contains(encoded.error, "ISSUE-0034"));
-    assert(contains(encoded.error, "roundtrip binding is not implemented yet"));
+    const auto empty_encoded = mode->encode({});
+    assert(empty_encoded.ok);
+    assert(empty_encoded.symbols.iq.empty());
+    const auto empty_decoded = mode->decode({});
+    assert(empty_decoded.ok);
+    assert(empty_decoded.audio.mono.empty());
 
-    const auto decoded = mode->decode({});
-    assert(!decoded.ok);
-    assert(contains(decoded.error, "freedv700d_official"));
-    assert(contains(decoded.error, "ISSUE-0034"));
-    assert(contains(decoded.error, "roundtrip binding is not implemented yet"));
+    f700f::AudioBlock tone;
+    tone.sample_rate_hz = mode->descriptor().sample_rate_hz;
+    tone.mono.resize(2560);
+    for (std::size_t i = 0; i < tone.mono.size(); ++i) {
+      tone.mono[i] = 0.15F *
+                     std::sin(2.0 * 3.14159265358979323846 *
+                              440.0 * static_cast<double>(i) /
+                              static_cast<double>(tone.sample_rate_hz));
+    }
+
+    const auto encoded = mode->encode(tone);
+    assert(encoded.ok);
+    assert(encoded.symbols.sample_rate_hz > 0);
+    assert(!encoded.symbols.iq.empty());
+
+    const auto decoded = mode->decode(encoded.symbols);
+    assert(decoded.ok);
+    assert(decoded.audio.sample_rate_hz == tone.sample_rate_hz);
+    assert(!decoded.audio.mono.empty());
   }
 }
 

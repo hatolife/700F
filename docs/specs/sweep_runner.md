@@ -130,7 +130,9 @@ completed with an
 performance evidence. 700F surrogate rows do not claim waveform encode/decode or
 real performance metrics. Official FreeDV 700D/700E entries remain skipped in
 default Codec2-disabled smoke runs with an
-`official_waveform_roundtrip_not_implemented` reason.
+`official_freedv_codec2_unavailable` reason that records
+`official=true`, `codec2_enabled=false`, `codec2_available=false`,
+`roundtrip_available=false`, `not_emulator=true`, and `not_surrogate=true`.
 
 ISSUE-0032 appends these aggregate row fields to JSON/CSV outputs while keeping
 existing columns stable: `implementation_status`, `not_real_modem`,

@@ -16,6 +16,7 @@ Module 05 exposes `f700f/codec_adapter/freedv_official.hpp`.
   modes: 700D is `7`, 700E is `13`, unknown mode ids return `-1`.
 
 With Codec2 disabled, runtime `configure`, `encode`, and `decode` fail gracefully with an
-unavailable reason. With Codec2 enabled, v0.1.0 compile-checks the official API ids but
-still reports guarded ISSUE-0034 runtime failures for waveform encode/decode because the
-adapter does not yet link or call the upstream `codec2` library target.
+unavailable reason. With Codec2 enabled, the adapter links the pinned upstream `codec2`
+runtime target, opens official 700D/700E FreeDV TX/RX handles, converts F700F float audio
+to Codec2 short/`COMP` samples, and uses complex TX/RX for Mode-boundary smoke coverage.
+This is official baseline runtime evidence, not real 700F candidate downselect evidence.

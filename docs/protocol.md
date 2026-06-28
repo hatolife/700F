@@ -22,7 +22,7 @@ work. The normative v0.1.0 details are split by concern:
   Markdown report generated from scoring output and report context.
 - `docs/specs/freedv_official_waveform_roundtrip.md` records the ISSUE-0034
   source-backed Codec2/FreeDV 700D/700E waveform roundtrip research, manual upstream
-  CLI probe, and remaining guarded F700F runtime blockers.
+  CLI probe, plus ISSUE-0036 optional F700F Codec2 runtime smoke coverage.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.

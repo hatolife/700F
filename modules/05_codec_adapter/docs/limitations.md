@@ -1,9 +1,9 @@
 # Limitations
 
-- ISSUE-0012 adds official FreeDV 700D/700E descriptors and availability reporting, but
-  full Codec2 waveform encode/decode binding is not implemented in v0.1.0.
+- ISSUE-0012 adds official FreeDV 700D/700E descriptors and availability reporting.
 - With `F700F_ENABLE_CODEC2=OFF`, official modes are discoverable and return explicit
   unavailable/skip errors rather than attempting to use Codec2.
-- With `F700F_ENABLE_CODEC2=ON`, the adapter includes the pinned Codec2 FreeDV API header
-  and compile-checks `FREEDV_MODE_700D`/`FREEDV_MODE_700E`; runtime encode/decode still
-  reports a guarded skeleton failure until the full Codec2 binding issue lands.
+- With `F700F_ENABLE_CODEC2=ON`, ISSUE-0036 links the pinned Codec2 runtime and supports
+  official 700D/700E Mode-boundary smoke encode/decode.
+- The Codec2-on path is still optional and non-default; recurring Codec2-on CI, broader
+  waveform validation, and real 700F candidate downselect remain follow-up work.

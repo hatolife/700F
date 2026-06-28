@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m2f-codec2-off-005-ssb-narrow-1k9-awgn-snr-0db-seed-1,1,ssb_narrow_1k9,awgn,b17ae826d2b44cef,N/A,dummy.metric,0.162606,true
