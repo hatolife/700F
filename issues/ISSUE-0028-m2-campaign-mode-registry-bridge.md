@@ -18,7 +18,7 @@ P0
 - Work branch: feature/ISSUE-0028-m2-campaign-mode-registry
 - Worktree: ../f700f-wt-issue-0028
 - Merge target: develop
-- PR/Merge status: local branch complete; pending local merge to develop
+- PR/Merge status: locally merged to develop as `6d04f2a`; push/PR not performed by instruction
 
 ## Target version and milestone
 - Project version: v0.2.0 target

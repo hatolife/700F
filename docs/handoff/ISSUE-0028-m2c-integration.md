@@ -2,7 +2,10 @@
 
 ## Current State
 
-- Current branch: `feature/ISSUE-0028-m2-campaign-mode-registry`
+- Current branch after integration: `develop`
+- Issue work branch: `feature/ISSUE-0028-m2-campaign-mode-registry`
+- ISSUE-0028 commit: `a5020be`
+- Local develop merge commit: `6d04f2a`
 - Base commit before ISSUE-0028 commit: `7989d0c`
 - Integrated issue: ISSUE-0028
 - Local CI: pass, 12 CTest tests

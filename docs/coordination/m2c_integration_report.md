@@ -2,7 +2,10 @@
 
 ## Summary
 
-- Branch: `feature/ISSUE-0028-m2-campaign-mode-registry`
+- Branch after integration: `develop`
+- Issue work branch: `feature/ISSUE-0028-m2-campaign-mode-registry`
+- ISSUE-0028 commit: `a5020be`
+- Local develop merge commit: `6d04f2a`
 - Merge target: `develop`
 - Issue: ISSUE-0028
 - Report time: 2026-06-28 23:04:02 +09:00
