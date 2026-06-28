@@ -24,6 +24,7 @@
 | ISSUE-0035 | chore/ISSUE-0035-clock-skew-warning-investigation | Module 01 + Manager | ../700F-ISSUE-0035 | merged-local | develop |
 | ISSUE-0036 | feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip | Module 05 + Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0036 | merged-local | develop |
 | ISSUE-0037 | chore/ISSUE-0037-codec2-on-ci-official-regression-smoke | Module 01 + Module 05 + Module 10 + Module 13 | ../700F-ISSUE-0037 | merged-local | develop |
+| ISSUE-0038 | docs/ISSUE-0038-700f-waveform-prototype-rfc | Module 02 + Module 07 + Module 13 + Module 15 | ../700F-ISSUE-0038 | ready-to-merge | develop |
 
 ## M1-A dispatch worktrees
 
@@ -60,3 +61,4 @@ Remote `develop` is not published. `origin` is configured, but previous push was
 | ISSUE-0035 | ../700F-ISSUE-0035 | GPT-5.3-Codex-Spark | Merged locally in M2-E. |
 | ISSUE-0036 | ../700F-ISSUE-0036 | gpt-5.5-xhigh | Merged locally; optional Codec2 runtime path keeps default OFF green and passes ON smoke locally. |
 | ISSUE-0037 | ../700F-ISSUE-0037 | gpt-5.5-medium | Merged locally; Codec2-on official smoke is recurring through local wrapper and Linux Actions job. |
+| ISSUE-0038 | ../700F-ISSUE-0038 | gpt-5.5-medium; gpt-5.5-xhigh for boundary disputes | RFC active; authorizes only 700F-A as the first waveform-capable prototype candidate. |

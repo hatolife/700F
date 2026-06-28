@@ -30,6 +30,7 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0035 | Clock-skew warning investigation | complete | Documented as non-blocking when local CI, CTest, version, and governance checks pass. |
 | ISSUE-0036 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | complete | Optional Codec2-on builds import/link the pinned runtime and complete 700D/700E Mode-boundary roundtrip smoke rows; default Codec2-off CI remains green. |
 | ISSUE-0037 | Codec2-on CI and official regression smoke | complete | Added a local Codec2-on wrapper plus Linux Actions job that initializes the submodule, runs ON CTest, validates official 700D/700E smoke completion, and keeps default OFF CI submodule-independent. |
+| ISSUE-0038 | 700F waveform-capable prototype RFC | complete | Defines the guarded metadata and reporting boundary for upgrading only `freedv700f_a_balanced` to a first waveform-capable prototype while keeping B/C surrogate and downselect prohibited. |
 
 ## Collision Rule
 
@@ -58,3 +59,7 @@ a guarded research checkpoint, and ISSUE-0036 adds direct optional F700F Codec2
 runtime linkage for official 700D/700E Mode-boundary smoke rows. ISSUE-0037 makes
 that official evidence repeatable in local/CI regression. Real candidate
 downselect remains prohibited until waveform-capable 700F rows exist.
+
+ISSUE-0038 is the RFC gate for that next step. It allows only 700F-A to become a
+first waveform-capable prototype in a follow-up issue and keeps prototype rows
+performance-invalid and downselect-invalid.

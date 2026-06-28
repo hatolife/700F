@@ -36,6 +36,7 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0026 | M2 sweep campaign runner config | Module 13 + Module 11 | `feature/ISSUE-0026-m2-sweep-campaign-config` | 13, 11 |
 | ISSUE-0027 | M2 baseline comparison report generation | Module 15 + Module 12 | `feature/ISSUE-0027-baseline-comparison-report` | 15, 12 |
 | ISSUE-0028 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | `feature/ISSUE-0028-m2-campaign-mode-registry` | 13, 10, 02 |
+| ISSUE-0038 | 700F waveform-capable prototype RFC | Module 02 + Module 07 + Module 13 + Module 15 | `docs/ISSUE-0038-700f-waveform-prototype-rfc` | 02, 07, 11, 12, 13, 15 |
 
 ## M2-A Gate
 
@@ -57,6 +58,11 @@ ISSUE-0023 completed a limited M2 audit with decision `M2_GO_WITH_LIMITATIONS`.
 M2-D follow-up work is tracked in
 `docs/milestones/m2d_waveform_and_tooling_unblock.md`. Real candidate downselect
 remains prohibited until waveform-capable rows and clear reporting semantics exist.
+
+ISSUE-0038 defines the first waveform-capable prototype boundary. It permits only
+`freedv700f_a_balanced` to move to a guarded prototype in a follow-up
+implementation issue. The prototype remains experimental, performance-invalid,
+and downselect-invalid.
 
 ## M1 Limitations Carried Into M2
 
