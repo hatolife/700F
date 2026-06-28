@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "issue0039-m2g-smoke-018-freedv700f-a-balanced-identity-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700f_a_balanced",
+  "deterministic_digest": "e606948462442575",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

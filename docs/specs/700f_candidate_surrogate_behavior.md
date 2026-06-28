@@ -1,18 +1,19 @@
 # 700F Candidate Surrogate Behavior v0.2.0
 
-ISSUE-0032 moves the three M2 700F candidates from profile-only sweep rows to
+ISSUE-0032 moved the three M2 700F candidates from profile-only sweep rows to
 minimal surrogate behavior rows. The surrogate exists only to exercise campaign,
 artifact, scoring, and reporting paths before a real modem is implemented.
+ISSUE-0039 upgrades only 700F-A to a waveform-capable prototype; this document now
+defines the remaining 700F-B/C surrogate boundary.
 
 ## Scope
 
-The surrogate applies to:
+After ISSUE-0039, the surrogate applies to:
 
-- `freedv700f_a_balanced`
 - `freedv700f_b_robust`
 - `freedv700f_c_quality`
 
-Each candidate descriptor uses `implementation_status = "surrogate"`. Runtime
+Each B/C candidate descriptor uses `implementation_status = "surrogate"`. Runtime
 encode/decode still fail clearly with ISSUE-0032 text; the sweep runner completes
 these modes through a metadata/surrogate bridge without running waveform encode,
 channel decode, FEC, sync, BER, or FER.

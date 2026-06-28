@@ -32,6 +32,13 @@ struct ModeDescriptorSnapshot {
   bool downselect_valid = true;
   bool not_downselect_valid = false;
   bool performance_valid = true;
+  bool prototype = false;
+  bool not_final_modem = false;
+  bool waveform_capable = false;
+  std::string codec_family;
+  std::string fec_family;
+  std::string modem_family;
+  std::string prototype_limitations;
   std::string surrogate_model_name;
   std::string surrogate_model_version;
   std::string surrogate_limitations;

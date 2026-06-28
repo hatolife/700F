@@ -187,6 +187,10 @@ bool is_surrogate_mode(const ModeDescriptor &descriptor) {
   return descriptor.implementation_status == "surrogate";
 }
 
+bool is_waveform_prototype_mode(const ModeDescriptor &descriptor) {
+  return descriptor.implementation_status == "waveform_prototype";
+}
+
 bool is_metadata_only_mode(const ModeDescriptor &descriptor) {
   return is_surrogate_mode(descriptor) ||
          contains_token(descriptor.implementation_status, "profile_only") ||
@@ -225,6 +229,35 @@ void apply_surrogate_metadata(SweepRunRecord &record,
       "synthetic readiness only; not a real modem; BER/FER are not emitted as real values";
   record.surrogate_readiness_score_synthetic = "0.625";
   record.synthetic_metrics_label = "synthetic_surrogate_readiness_only";
+}
+
+std::string waveform_prototype_note() {
+  return "waveform_prototype_completed: implementation_status=waveform_prototype; "
+         "prototype=true; not_final_modem=true; waveform_capable=true; "
+         "codec_family=synthetic; fec_family=none; "
+         "modem_family=toy_audio_waveform; downselect_valid=false; "
+         "performance_valid=false; prototype_limitations=toy audio waveform, "
+         "synthetic codec, no FEC, not final modem, not official FreeDV, "
+         "not valid for real downselect";
+}
+
+void apply_waveform_prototype_metadata(SweepRunRecord &record,
+                                       const ModeDescriptor &descriptor) {
+  record.implementation_status = descriptor.implementation_status;
+  if (!is_waveform_prototype_mode(descriptor)) {
+    return;
+  }
+  record.prototype = true;
+  record.not_final_modem = true;
+  record.waveform_capable = true;
+  record.downselect_valid = false;
+  record.not_downselect_valid = true;
+  record.performance_valid = false;
+  record.codec_family = "synthetic";
+  record.fec_family = "none";
+  record.modem_family = "toy_audio_waveform";
+  record.prototype_limitations =
+      "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect";
 }
 
 std::string emulated_surrogate_note() {
@@ -730,6 +763,7 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
         const auto simulation_config =
             make_simulation_config(config, record, condition);
         apply_surrogate_metadata(record, descriptor_it->second);
+        apply_waveform_prototype_metadata(record, descriptor_it->second);
         if (is_metadata_only_mode(descriptor_it->second)) {
           record.simulation = make_metadata_only_simulation_result(
               simulation_config, descriptor_it->second);
@@ -747,7 +781,9 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
         }
         if (record.simulation.ok) {
           record.status = SweepRunStatus::Completed;
-          if (is_emulated_surrogate_mode(descriptor_it->second)) {
+          if (is_waveform_prototype_mode(descriptor_it->second)) {
+            record.error_summary = waveform_prototype_note();
+          } else if (is_emulated_surrogate_mode(descriptor_it->second)) {
             record.error_summary = emulated_surrogate_note();
           } else if (is_official_freedv_mode(record.mode_id)) {
             record.error_summary = official_freedv_completed_note();
@@ -818,7 +854,21 @@ std::string sweep_result_to_json(const SweepResult &result) {
         << (record.not_downselect_valid ? "true" : "false")
         << ", \"performance_valid\": "
         << (record.performance_valid ? "true" : "false")
-        << ", \"surrogate_model_name\": \""
+        << ", \"prototype\": "
+        << (record.prototype ? "true" : "false")
+        << ", \"not_final_modem\": "
+        << (record.not_final_modem ? "true" : "false")
+        << ", \"waveform_capable\": "
+        << (record.waveform_capable ? "true" : "false")
+        << ", \"codec_family\": \""
+        << escape_json(record.codec_family)
+        << "\", \"fec_family\": \""
+        << escape_json(record.fec_family)
+        << "\", \"modem_family\": \""
+        << escape_json(record.modem_family)
+        << "\", \"prototype_limitations\": \""
+        << escape_json(record.prototype_limitations)
+        << "\", \"surrogate_model_name\": \""
         << escape_json(record.surrogate_model_name)
         << "\", \"surrogate_model_version\": \""
         << escape_json(record.surrogate_model_version)
@@ -840,6 +890,8 @@ std::string sweep_result_to_csv(const SweepResult &result) {
   out << "run_id,status,mode_id,condition_id,seed,simulation_ok,digest,"
          "audio_export_path,skipped_reason,error_summary,implementation_status,"
          "not_real_modem,downselect_valid,not_downselect_valid,performance_valid,"
+         "prototype,not_final_modem,waveform_capable,codec_family,fec_family,"
+         "modem_family,prototype_limitations,"
          "surrogate_model_name,surrogate_model_version,surrogate_limitations,"
          "surrogate_readiness_score_synthetic,synthetic_metrics_label\n";
   for (const auto &record : result.records) {
@@ -857,6 +909,13 @@ std::string sweep_result_to_csv(const SweepResult &result) {
         << (record.downselect_valid ? "true" : "false") << ','
         << (record.not_downselect_valid ? "true" : "false") << ','
         << (record.performance_valid ? "true" : "false") << ','
+        << (record.prototype ? "true" : "false") << ','
+        << (record.not_final_modem ? "true" : "false") << ','
+        << (record.waveform_capable ? "true" : "false") << ','
+        << csv_quote(record.codec_family) << ','
+        << csv_quote(record.fec_family) << ','
+        << csv_quote(record.modem_family) << ','
+        << csv_quote(record.prototype_limitations) << ','
         << csv_quote(record.surrogate_model_name) << ','
         << csv_quote(record.surrogate_model_version) << ','
         << csv_quote(record.surrogate_limitations) << ','

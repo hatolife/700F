@@ -31,6 +31,13 @@ struct SweepRow {
   std::string downselect_valid;
   std::string not_downselect_valid;
   std::string performance_valid;
+  std::string prototype;
+  std::string not_final_modem;
+  std::string waveform_capable;
+  std::string codec_family;
+  std::string fec_family;
+  std::string modem_family;
+  std::string prototype_limitations;
   std::string surrogate_model_name;
   std::string surrogate_model_version;
   std::string surrogate_limitations;
@@ -380,9 +387,12 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
   descriptor.supports_bit_payload = true;
 
   const bool row_marks_emulated_surrogate = is_emulated_surrogate_row(row);
+  const bool row_marks_waveform_prototype =
+      row.implementation_status == "waveform_prototype" ||
+      contains(row.error_summary, "waveform_prototype_completed");
   const bool row_marks_surrogate =
       row.implementation_status == "surrogate" ||
-      starts_with(row.mode_id, "freedv700f_");
+      (starts_with(row.mode_id, "freedv700f_") && !row_marks_waveform_prototype);
   const bool row_marks_profile_only =
       contains(row.error_summary, "profile_only") ||
       row.implementation_status == "profile_only";
@@ -396,6 +406,24 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
     descriptor.emulator = false;
     descriptor.implementation_status =
         is_official_runtime_row(row) ? "official_runtime" : "unavailable";
+  } else if (row_marks_waveform_prototype) {
+    descriptor.implementation_status = "waveform_prototype";
+    descriptor.prototype = parse_bool_or(row.prototype, true);
+    descriptor.not_final_modem = parse_bool_or(row.not_final_modem, true);
+    descriptor.waveform_capable = parse_bool_or(row.waveform_capable, true);
+    descriptor.downselect_valid = parse_bool_or(row.downselect_valid, false);
+    descriptor.not_downselect_valid =
+        parse_bool_or(row.not_downselect_valid, !descriptor.downselect_valid);
+    descriptor.performance_valid = parse_bool_or(row.performance_valid, false);
+    descriptor.codec_family =
+        row.codec_family.empty() ? "synthetic" : row.codec_family;
+    descriptor.fec_family = row.fec_family.empty() ? "none" : row.fec_family;
+    descriptor.modem_family =
+        row.modem_family.empty() ? "toy_audio_waveform" : row.modem_family;
+    descriptor.prototype_limitations =
+        row.prototype_limitations.empty()
+            ? "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect"
+            : row.prototype_limitations;
   } else if (row_marks_surrogate) {
     descriptor.implementation_status = "surrogate";
     descriptor.not_real_modem = parse_bool_or(row.not_real_modem, true);
@@ -479,6 +507,26 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
     result.optional_metrics["surrogate_limitations"] =
         result.mode_descriptor.surrogate_limitations;
   }
+  if (result.mode_descriptor.implementation_status == "waveform_prototype") {
+    result.warnings.push_back(
+        "WAVEFORM PROTOTYPE WARNING: prototype=true; not_final_modem=true; "
+        "downselect_valid=false; performance_valid=false; not valid for real 700F downselect");
+    result.optional_metrics["prototype"] =
+        result.mode_descriptor.prototype ? "true" : "false";
+    result.optional_metrics["not_final_modem"] =
+        result.mode_descriptor.not_final_modem ? "true" : "false";
+    result.optional_metrics["waveform_capable"] =
+        result.mode_descriptor.waveform_capable ? "true" : "false";
+    result.optional_metrics["codec_family"] =
+        result.mode_descriptor.codec_family;
+    result.optional_metrics["fec_family"] = result.mode_descriptor.fec_family;
+    result.optional_metrics["modem_family"] =
+        result.mode_descriptor.modem_family;
+    result.optional_metrics["prototype_limitations"] =
+        result.mode_descriptor.prototype_limitations;
+    result.optional_metrics["downselect_valid"] = "false";
+    result.optional_metrics["performance_valid"] = "false";
+  }
   if (is_emulated_surrogate_row(row)) {
     const auto values = parse_semicolon_key_values(row.error_summary);
     const auto lookup = [&](const std::string &key, const std::string &fallback) {
@@ -540,6 +588,7 @@ void finalize_context(LoadedReportInput &loaded,
   std::set<std::uint64_t> seeds;
   bool saw_profile_only = false;
   bool saw_surrogate = false;
+  bool saw_waveform_prototype = false;
   bool saw_descriptor_only = false;
   bool saw_emulated_surrogate = false;
   bool saw_skipped = false;
@@ -549,8 +598,13 @@ void finalize_context(LoadedReportInput &loaded,
     modes.insert(row.mode_id);
     channels.insert(row.condition_id);
     seeds.insert(row.seed);
-    saw_surrogate = saw_surrogate || row.implementation_status == "surrogate" ||
-                    starts_with(row.mode_id, "freedv700f_");
+    const bool row_is_waveform_prototype =
+        row.implementation_status == "waveform_prototype" ||
+        contains(row.error_summary, "waveform_prototype_completed");
+    saw_waveform_prototype = saw_waveform_prototype || row_is_waveform_prototype;
+    saw_surrogate =
+        saw_surrogate || row.implementation_status == "surrogate" ||
+        (starts_with(row.mode_id, "freedv700f_") && !row_is_waveform_prototype);
     saw_profile_only = saw_profile_only || contains(row.error_summary, "profile_only") ||
                        row.implementation_status == "profile_only";
     saw_descriptor_only = saw_descriptor_only ||
@@ -567,17 +621,17 @@ void finalize_context(LoadedReportInput &loaded,
   loaded.context.sweep_status =
       saw_failed ? "loaded with failed rows" : "loaded from artifact";
   loaded.real_downselect_possible =
-      !saw_surrogate && !saw_profile_only && !saw_descriptor_only &&
-      !saw_emulated_surrogate && !saw_skipped && !saw_failed &&
-      !rows.empty();
+      !saw_surrogate && !saw_waveform_prototype && !saw_profile_only &&
+      !saw_descriptor_only && !saw_emulated_surrogate && !saw_skipped &&
+      !saw_failed && !rows.empty();
   loaded.context.real_downselect_possible = loaded.real_downselect_possible;
   loaded.context.downselect_feasibility_summary =
       loaded.real_downselect_possible
           ? "Real downselect possible: yes; all loaded rows contain completed "
             "performance evidence."
-          : "Real downselect possible: no; surrogate, skipped, profile-only, "
-            "descriptor-only, emulated-surrogate, or failed rows prevent real "
-            "downselect.";
+          : "Real downselect possible: no; surrogate, waveform-prototype, skipped, "
+            "profile-only, descriptor-only, emulated-surrogate, or failed rows "
+            "prevent real downselect.";
   loaded.context.known_limitations.push_back(
       loaded.context.downselect_feasibility_summary);
   if (saw_surrogate) {
@@ -585,6 +639,12 @@ void finalize_context(LoadedReportInput &loaded,
         "SURROGATE WARNING: 700F surrogate rows are synthetic readiness evidence "
         "only; not_real_modem=true; downselect_valid=false; "
         "performance_valid=false.");
+  }
+  if (saw_waveform_prototype) {
+    loaded.context.known_limitations.push_back(
+        "WAVEFORM PROTOTYPE WARNING: 700F prototype rows are experimental "
+        "readiness evidence only; prototype=true; not_final_modem=true; "
+        "downselect_valid=false; performance_valid=false.");
   }
   if (saw_profile_only) {
     loaded.context.known_limitations.push_back(
@@ -664,6 +724,14 @@ LoadedReportInput load_report_input_json(const std::string &json_payload) {
     row.not_downselect_valid =
         extract_raw_field(object, "not_downselect_valid");
     row.performance_valid = extract_raw_field(object, "performance_valid");
+    row.prototype = extract_raw_field(object, "prototype");
+    row.not_final_modem = extract_raw_field(object, "not_final_modem");
+    row.waveform_capable = extract_raw_field(object, "waveform_capable");
+    row.codec_family = extract_quoted_field(object, "codec_family");
+    row.fec_family = extract_quoted_field(object, "fec_family");
+    row.modem_family = extract_quoted_field(object, "modem_family");
+    row.prototype_limitations =
+        extract_quoted_field(object, "prototype_limitations");
     row.surrogate_model_name =
         extract_quoted_field(object, "surrogate_model_name");
     row.surrogate_model_version =
@@ -720,6 +788,22 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
             : "";
     row.performance_valid =
         values.contains("performance_valid") ? values.at("performance_valid") : "";
+    row.prototype =
+        values.contains("prototype") ? values.at("prototype") : "";
+    row.not_final_modem =
+        values.contains("not_final_modem") ? values.at("not_final_modem") : "";
+    row.waveform_capable =
+        values.contains("waveform_capable") ? values.at("waveform_capable") : "";
+    row.codec_family =
+        values.contains("codec_family") ? values.at("codec_family") : "";
+    row.fec_family =
+        values.contains("fec_family") ? values.at("fec_family") : "";
+    row.modem_family =
+        values.contains("modem_family") ? values.at("modem_family") : "";
+    row.prototype_limitations =
+        values.contains("prototype_limitations")
+            ? values.at("prototype_limitations")
+            : "";
     row.surrogate_model_name =
         values.contains("surrogate_model_name")
             ? values.at("surrogate_model_name")

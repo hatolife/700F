@@ -87,6 +87,9 @@ std::string descriptor_status(const f700f::metrics::M2ModeScore &score) {
   if (snapshot.implementation_status == "emulated_surrogate") {
     return "emulated_surrogate";
   }
+  if (snapshot.implementation_status == "waveform_prototype") {
+    return "waveform_prototype";
+  }
   if (!snapshot.implementation_status.empty()) {
     return snapshot.implementation_status;
   }
@@ -115,6 +118,11 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
   }
   if (score.profile_only) {
     return "profile_only";
+  }
+  if (score.profile_snapshot.has_value() &&
+      score.profile_snapshot->implementation_status == "waveform_prototype") {
+    return "WAVEFORM PROTOTYPE WARNING: prototype=true not_final_modem=true "
+           "downselect_valid=false performance_valid=false";
   }
   if (score.performance_invalid_count > 0) {
     return "performance invalid; not_official_freedv=true";
@@ -211,6 +219,23 @@ std::vector<std::string> candidate_summary_lines(
         line += " synthetic_surrogate_readiness_only";
         if (!snapshot.surrogate_model_name.empty()) {
           line += " model=" + snapshot.surrogate_model_name;
+        }
+      } else if (score.profile_snapshot.has_value() &&
+                 score.profile_snapshot->implementation_status ==
+                     "waveform_prototype") {
+        const auto &snapshot = *score.profile_snapshot;
+        line += " prototype=";
+        line += snapshot.prototype ? "true" : "false";
+        line += " not_final_modem=";
+        line += snapshot.not_final_modem ? "true" : "false";
+        line += " waveform_capable=";
+        line += snapshot.waveform_capable ? "true" : "false";
+        line += " downselect_valid=";
+        line += snapshot.downselect_valid ? "true" : "false";
+        line += " performance_valid=";
+        line += snapshot.performance_valid ? "true" : "false";
+        if (!snapshot.modem_family.empty()) {
+          line += " modem_family=" + snapshot.modem_family;
         }
       }
       lines.push_back(line);

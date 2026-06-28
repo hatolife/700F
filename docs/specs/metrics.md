@@ -56,11 +56,18 @@ existing keys must stay stable; new keys can be added to
 | `audio_bandwidth_hz` | number | Nominal audio bandwidth target. |
 | `official_baseline` | boolean | Whether this descriptor is an official baseline. |
 | `emulator` | boolean | Whether this descriptor is an emulator/skeleton. |
-| `implementation_status` | string | Runtime implementation status such as `surrogate`, `profile_only`, or `emulated`. |
+| `implementation_status` | string | Runtime implementation status such as `surrogate`, `waveform_prototype`, `profile_only`, or `emulated`. |
 | `not_real_modem` | boolean | Whether a completed row is explicitly not a real modem implementation. |
 | `downselect_valid` | boolean | Whether the row can be used for real candidate downselect. |
 | `not_downselect_valid` | boolean | Inverse guardrail for reports that need explicit not-downselect-valid text. |
 | `performance_valid` | boolean | Whether BER/FER, RF, audio, latency, and dropout fields can be used as real performance evidence. |
+| `prototype` | boolean | Whether the row is an experimental prototype rather than a final modem. |
+| `not_final_modem` | boolean | Explicit guardrail for prototype rows that are not final modem implementations. |
+| `waveform_capable` | boolean | Whether the row exercised a waveform encode/decode path. |
+| `codec_family` | string | Prototype codec family label, such as `synthetic`. |
+| `fec_family` | string | Prototype FEC family label, such as `none`. |
+| `modem_family` | string | Prototype modem family label, such as `toy_audio_waveform`. |
+| `prototype_limitations` | string | Human-readable limitations for prototype rows. |
 | `surrogate_model_name` | string | Surrogate model identifier when `implementation_status = "surrogate"`. |
 | `surrogate_model_version` | string | Surrogate model version when `implementation_status = "surrogate"`. |
 | `surrogate_limitations` | string | Human-readable limits for surrogate rows. |
@@ -150,10 +157,11 @@ existing keys must stay stable; new keys can be added to
 - Optional future metrics (`asr_wer`, `stoi`, `estoi`, `pesq`, `polqa`, `mos`, ...)
   are expected to be placed in `optional_metrics` as string-typed entries until
   the schema formalizes their dedicated fields.
-- ISSUE-0024/ISSUE-0032 scoring uses the append-only descriptor fields
+- ISSUE-0024/ISSUE-0032/ISSUE-0039 scoring uses the append-only descriptor fields
   `official_baseline`, `emulator`, `implementation_status`, `not_real_modem`,
-  `downselect_valid`, and `performance_valid` to distinguish official-unavailable
-  records from emulator, profile-only, descriptor-only, surrogate, and real
+  `downselect_valid`, `performance_valid`, `prototype`, `not_final_modem`, and
+  `waveform_capable` to distinguish official-unavailable records from emulator,
+  profile-only, descriptor-only, surrogate, waveform-prototype, and real
   performance records.
 - Surrogate rows must leave `ber` and `fer` as `"N/A"`/unset. Any readiness metric
   must be stored in `optional_metrics` with a synthetic label, such as

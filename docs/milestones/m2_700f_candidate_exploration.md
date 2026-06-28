@@ -37,6 +37,7 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0027 | M2 baseline comparison report generation | Module 15 + Module 12 | `feature/ISSUE-0027-baseline-comparison-report` | 15, 12 |
 | ISSUE-0028 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | `feature/ISSUE-0028-m2-campaign-mode-registry` | 13, 10, 02 |
 | ISSUE-0038 | 700F waveform-capable prototype RFC | Module 02 + Module 07 + Module 13 + Module 15 | `docs/ISSUE-0038-700f-waveform-prototype-rfc` | 02, 07, 11, 12, 13, 15 |
+| ISSUE-0039 | 700F-A minimal waveform-capable prototype | Module 02 + Module 07 + Module 13 + Module 15 | `feature/ISSUE-0039-700f-a-minimal-waveform-prototype` | 02, 07, 11, 12, 13, 15 |
 
 ## M2-A Gate
 
@@ -63,6 +64,9 @@ ISSUE-0038 defines the first waveform-capable prototype boundary. It permits onl
 `freedv700f_a_balanced` to move to a guarded prototype in a follow-up
 implementation issue. The prototype remains experimental, performance-invalid,
 and downselect-invalid.
+
+ISSUE-0039 implements the first guarded 700F-A toy waveform prototype. It keeps
+700F-B/C surrogate and still blocks real downselect.
 
 ## M1 Limitations Carried Into M2
 

@@ -17,6 +17,9 @@ of truth:
   `performance_valid`;
 - ISSUE-0032 surrogate readiness uses optional metrics
   `surrogate_readiness_score_synthetic` and `synthetic_metrics_label`;
+- ISSUE-0039 waveform-prototype rows use `prototype`, `not_final_modem`,
+  `waveform_capable`, `codec_family`, `fec_family`, `modem_family`, and
+  `prototype_limitations`;
 - future ASR WER, STOI, ESTOI, and subjective notes use `optional_metrics` keys
   `asr_wer`, `stoi`, `estoi`, and `subjective_note`.
 
@@ -35,11 +38,16 @@ Each result record has one inferred scoring status:
 | skipped | `skipped_reason` present | availability/configuration evidence only |
 | failed | `error_summary` present and not skipped | attempted-run evidence with penalty |
 
-700F candidates are represented by snapshots whose `implementation_status` is
+700F-B/C candidates are represented by snapshots whose `implementation_status` is
 `surrogate`. A surrogate snapshot can appear in score output without any result
 records. Such entries have real performance score `0.0`; completed surrogate rows
 increase surrogate/readiness counters but do not contribute to real performance score,
 BER/FER availability, or real downselect feasibility.
+
+ISSUE-0039 700F-A rows use `implementation_status = waveform_prototype`. They may
+complete encode/channel/decode/metrics, but `performance_valid=false` and
+`downselect_valid=false` keep them out of real performance scoring and real
+downselect feasibility.
 
 ISSUE-0033 `freedv700d_emulated` and `freedv700e_emulated` rows may be operationally
 completed with `implementation_status = emulated_surrogate`. These rows are
@@ -92,8 +100,8 @@ score = clamp_0_100(evidence
 ```
 
 This rewards completed real-performance runs, keeps failed attempts distinguishable
-from unavailable records, and prevents skipped/profile-only/surrogate entries from
-masquerading as performance evidence.
+from unavailable records, and prevents skipped/profile-only/surrogate/prototype
+entries from masquerading as performance evidence.
 
 ISSUE-0032 uses real performance score as the primary `score`. Completed surrogate
 rows with `performance_valid = false` receive real performance score `0.0` and may
@@ -104,14 +112,19 @@ Rows with `implementation_status = emulated_surrogate` or
 `optional_metrics.performance_valid = "false"` are scored with zero completed-run
 evidence even when their sweep status is completed.
 
+Rows with `implementation_status = waveform_prototype` are also scored with zero
+completed-run performance evidence until a later audit explicitly permits
+performance-valid prototype or final-modem rows.
+
 ## Comparison Policy
 
 Reports should sort by score descending with `mode_id` as the deterministic tie-breaker.
 Human reports must display counters and penalties next to the score so a lower score can
 be traced to availability, failure, dropout, latency, or bandwidth.
 
-Human reports must also display surrogate warnings and keep real performance score
-separate from synthetic surrogate readiness score.
+Human reports must also display surrogate/prototype warnings and keep real
+performance score separate from synthetic surrogate readiness or prototype
+readiness evidence.
 
 SSB/audio-only modes may legitimately carry BER/FER as `N/A`; this is counted as
 audio-only N/A rather than an unavailable digital metric. Digital modes with bit-payload
