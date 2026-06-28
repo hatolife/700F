@@ -48,7 +48,7 @@
 | ISSUE-0032 | planned | P0 | module:02,06,07,09,11,13 | 700F candidate minimal behavior bridge | Module 02 + candidate modules | feature/ISSUE-0032-700f-candidate-minimal-behavior | v0.2.0 target | M2-D | ISSUE-0029, ISSUE-0030, ISSUE-0031 | 2026-06-28 |
 | ISSUE-0033 | planned | P0 | module:10,11,13 | 700D/700E emulator minimal behavior bridge | Module 10 + Module 11 + Module 13 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | v0.2.0 target | M2-D | ISSUE-0029, ISSUE-0030, ISSUE-0031 | 2026-06-28 |
 | ISSUE-0034 | planned | P1 | module:05,10 | official FreeDV waveform roundtrip research/integration | Module 05 + Module 10 | research/ISSUE-0034-official-freedv-waveform-roundtrip | v0.2.0 target | M2-D | ISSUE-0007, ISSUE-0012 | 2026-06-28 |
-| ISSUE-0035 | planned | P2 | module:01 | clock-skew warning investigation | Module 01 + Manager | chore/ISSUE-0035-clock-skew-warning-investigation | v0.2.0 target | M2-D | ISSUE-0023 | 2026-06-28 |
+| ISSUE-0035 | in_progress | P2 | module:01 | clock-skew warning investigation | Module 01 + Manager | chore/ISSUE-0035-clock-skew-warning-investigation | v0.2.0 target | M2-D | ISSUE-0023 | 2026-06-29 |
 
 ## M1-A integration status
 
@@ -146,3 +146,4 @@
 - CLI smoke ran through `f700f-sweep`; comparison Markdown was generated through
   `f700f-report`.
 - Real candidate downselect remains prohibited.
+
