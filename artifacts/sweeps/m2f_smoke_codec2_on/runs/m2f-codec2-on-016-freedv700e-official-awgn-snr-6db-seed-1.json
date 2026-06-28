@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2f-codec2-on-016-freedv700e-official-awgn-snr-6db-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700e_official",
+  "deterministic_digest": "8440c14bb6a69020",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.157604}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

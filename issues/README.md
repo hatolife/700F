@@ -49,7 +49,8 @@
 | ISSUE-0033 | closed | P0 | module:10,11,13 | 700D/700E emulator minimal behavior bridge | Module 10 + Module 11 + Module 13 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | v0.2.0 | M2-D | ISSUE-0029, ISSUE-0030, ISSUE-0031 | 2026-06-29 |
 | ISSUE-0034 | closed | P1 | module:05,10 | official FreeDV waveform roundtrip research/integration | Module 05 + Module 10 | research/ISSUE-0034-official-freedv-waveform-roundtrip | v0.2.0 target | M2-D | ISSUE-0007, ISSUE-0012 | 2026-06-29 |
 | ISSUE-0035 | closed | P2 | module:01 | clock-skew warning investigation | Module 01 + Manager | chore/ISSUE-0035-clock-skew-warning-investigation | v0.2.0 | M2-D | ISSUE-0023 | 2026-06-29 |
-| ISSUE-0036 | planned | P0 | module:05,10,11,13 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | Module 05 + Module 10 + Module 11 + Module 13 | feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip | v0.2.0 target | M2 follow-up | ISSUE-0007, ISSUE-0012, ISSUE-0034 | 2026-06-29 |
+| ISSUE-0036 | closed | P0 | module:05,10,11,13 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | Module 05 + Module 10 + Module 11 + Module 13 | feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip | v0.2.0 target | M2 follow-up | ISSUE-0007, ISSUE-0012, ISSUE-0034 | 2026-06-29 |
+| ISSUE-0037 | planned | P1 | module:01,05,10,13 | Codec2-on CI and official regression smoke | Module 01 + Module 05 + Module 10 + Module 13 | chore/ISSUE-0037-codec2-on-ci-official-regression-smoke | v0.2.0 target | M2 follow-up | ISSUE-0036 | 2026-06-29 |
 
 ## M1-A integration status
 

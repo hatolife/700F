@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m2f-codec2-on-009-freedv700e-emulated-identity-seed-1,1,freedv700e_emulated,identity,146f2dfaabe3b769,N/A,dummy.metric,0.127583,true

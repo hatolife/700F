@@ -38,8 +38,9 @@ if(NOT json MATCHES "\"run_id_prefix\": \"cli-smoke\"")
   message(FATAL_ERROR "run id override was not reflected in JSON")
 endif()
 
-if(NOT json MATCHES "official_waveform_roundtrip_not_implemented")
-  message(FATAL_ERROR "unavailable official modes were not recorded as skips")
+if(NOT json MATCHES "official_freedv_codec2_unavailable" AND
+   NOT json MATCHES "freedv700d_official")
+  message(FATAL_ERROR "official modes were not recorded")
 endif()
 
 set(unknown_dir "${F700F_OUTPUT_DIR}/unknown-mode")

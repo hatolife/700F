@@ -1,10 +1,10 @@
 # FreeDV Official Waveform Roundtrip Research
 
 ISSUE-0034 researched the pinned Codec2/FreeDV 700D and 700E API surface and
-the current F700F guarded integration path. The conclusion is intentionally
-partial: upstream Codec2 can perform a local 700D/700E CLI waveform roundtrip,
-and F700F can compile its optional Codec2 header-gated adapter, but the F700F
-Mode runtime does not yet link or call the Codec2 runtime library.
+the then-current F700F guarded integration path. ISSUE-0036 follows that research
+by linking the optional F700F Codec2-on build to the pinned runtime and proving
+700D/700E official Mode-boundary smoke roundtrips. Default Codec2-off builds remain
+the normal CI path.
 
 ## Source Pin
 
@@ -30,7 +30,7 @@ Mode runtime does not yet link or call the Codec2 runtime library.
 | 700D OFDM defaults | `external/codec2/src/ofdm_mode.c:24-44` | `ofdm_init_mode` default block | 700D defaults include `nc=17`, `ns=8`, `ts=0.018`, `tcp=0.002`, `fs=8000`, `txtbits=4`, `bps=2`, `codename="HRA_112_112"`. |
 | 700E OFDM overrides | `external/codec2/src/ofdm_mode.c:56-72` | `"700E"` branch | 700E overrides include `ts=0.014`, `tcp=0.006`, `nc=21`, `ns=4`, `edge_pilots=0`, `nuwbits=12`, `txtbits=2`, `state_machine="voice2"`, `codename="HRA_56_56"`. |
 | Upstream CLI model | `external/codec2/src/freedv_tx.c:169-206`, `external/codec2/src/freedv_rx.c:206-268` | `freedv_tx`, `freedv_rx` apps | CLI tools show the official real-short waveform roundtrip sequence and option setup. |
-| Codec2 CMake target | `external/codec2/src/CMakeLists.txt:245`, `external/codec2/src/CMakeLists.txt:259-262` | `codec2` | Upstream defines a real `codec2` library target with build-interface includes. F700F does not currently add or link this target. |
+| Codec2 CMake target | `external/codec2/src/CMakeLists.txt:245`, `external/codec2/src/CMakeLists.txt:259-262` | `codec2` | Upstream defines a real `codec2` library target with build-interface includes. ISSUE-0036 imports and links this target only when `F700F_ENABLE_CODEC2=ON`. |
 
 ## F700F Integration State
 
@@ -38,17 +38,16 @@ Default F700F builds keep `F700F_ENABLE_CODEC2=OFF`. In that path the official
 FreeDV modes remain discoverable, but runtime `configure`, `encode`, and
 `decode` fail with an explicit unavailable reason.
 
-With `F700F_ENABLE_CODEC2=ON`, root `CMakeLists.txt` currently validates that
-`external/codec2/src/freedv_api.h` exists and exposes an interface include
-target named `f700f_codec2_headers`. Module 05 links only that header target
-and sets `F700F_CODEC2_AVAILABLE=1`. The adapter compile-checks
-`FREEDV_MODE_700D == 7` and `FREEDV_MODE_700E == 13`, but it does not link
-`codec2` or call `freedv_open`, `freedv_tx`, `freedv_comptx`, `freedv_rx`, or
-`freedv_comprx`.
+With `F700F_ENABLE_CODEC2=ON`, root `CMakeLists.txt` now validates
+`external/codec2/src/freedv_api.h`, imports the upstream `codec2` target, exposes
+`f700f_codec2_headers`, and links Module 05 through `f700f_codec2_runtime`.
+The adapter compile-checks `FREEDV_MODE_700D == 7` and `FREEDV_MODE_700E == 13`,
+owns separate TX/RX `struct freedv *` handles with `freedv_close`, calls
+`freedv_comptx` and `freedv_comprx`, and buffers RX input around `freedv_nin()`.
 
-ISSUE-0034 therefore keeps the F700F runtime as a guarded skeleton. The code now
-reports the remaining enabled-path gap as ISSUE-0034 rather than the older
-ISSUE-0012 descriptor adapter gap.
+ISSUE-0036 changes the F700F official adapter state from guarded skeleton to
+optional linked runtime smoke coverage. Reports still distinguish this evidence
+from real 700F candidate downselect data.
 
 ## Manual Verification
 
@@ -95,22 +94,39 @@ Artifact hashes from the local manual probe:
 | `build/issue-0034/700e_modem.raw` | `87e541f9549aaeafe9ed00923cc0fe16e38bfc077d0e484b5b5e673a4e88dea6` |
 | `build/issue-0034/700e_speech.raw` | `02511ef1b3c2fc31c2c8b2ec4f285d2606e21d60c5a08892ae5ae4d9fee4d748` |
 
-## Blocked Runtime Work
+## ISSUE-0036 Verification
 
-Direct F700F waveform roundtrip remains blocked by integration work that is
-larger than this research checkpoint:
+F700F default Codec2-off CI passed:
 
-- add or import the upstream `codec2` CMake target only when
-  `F700F_ENABLE_CODEC2=ON`, without affecting default Codec2-off CI;
-- add an owning `freedv_close` wrapper and probably separate TX/RX `struct freedv`
-  instances for each mode runtime;
-- define amplitude conversion between F700F float blocks and Codec2 short/`COMP`
-  samples;
-- implement RX buffering around `freedv_nin()` so `decode(ComplexBlock)` can
-  consume variable Codec2 frame sizes safely;
-- add optional Codec2-on tests that are skipped or not configured when the
-  submodule is unavailable.
+```bash
+bash ./tools/run_ci_local.sh
+```
 
-Until that follow-up lands, reports must continue to treat `freedv700d_official`
-and `freedv700e_official` as official descriptors with guarded runtime status,
-not as F700F-produced performance evidence.
+F700F Codec2-on runtime tests passed:
+
+```bash
+bash -lc "cmake -S . -B build-codec2 -DCMAKE_BUILD_TYPE=Debug -DF700F_ENABLE_CODEC2=ON"
+bash -lc "cmake --build build-codec2 -j2"
+bash -lc "ctest --test-dir build-codec2 --output-on-failure"
+```
+
+M2-F smoke comparison status:
+
+| Build | Completed | Skipped | Failed | Official 700D/700E rows |
+| --- | ---: | ---: | ---: | --- |
+| Codec2 off | 21 | 6 | 0 | Explicitly skipped as unavailable |
+| Codec2 on | 27 | 0 | 0 | Completed with `official_freedv_completed` metadata |
+
+## Remaining Runtime Work
+
+ISSUE-0036 completes the first direct F700F official Mode-boundary smoke path.
+Remaining work is smaller and operational:
+
+- make Codec2-on build and official smoke coverage recurring without making the
+  default Codec2-off CI depend on optional runtime availability;
+- broaden waveform validation beyond smoke-length and nonempty output checks;
+- keep official baseline rows separate from real 700F candidate performance
+  evidence until waveform-capable 700F rows exist.
+
+Reports must continue to treat `freedv700d_official` and `freedv700e_official`
+as official baseline evidence, not as F700F-produced candidate performance.

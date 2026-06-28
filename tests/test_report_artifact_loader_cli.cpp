@@ -24,7 +24,7 @@ std::string sample_sweep_json() {
   "error": "",
   "records": [
     {"run_id": "m2-ssb", "status": "completed", "mode_id": "ssb_standard_3k", "condition_id": "identity", "seed": 1, "skipped_reason": null, "error_summary": null, "simulation_digest": "abc"},
-    {"run_id": "m2-official", "status": "skipped", "mode_id": "freedv700d_official", "condition_id": "identity", "seed": 1, "skipped_reason": "official_waveform_roundtrip_not_implemented", "error_summary": null, "simulation_digest": ""},
+    {"run_id": "m2-official", "status": "skipped", "mode_id": "freedv700d_official", "condition_id": "identity", "seed": 1, "skipped_reason": "official_freedv_codec2_unavailable: F700F_ENABLE_CODEC2=OFF; official=true codec2_enabled=false codec2_available=false roundtrip_available=false not_emulator=true not_surrogate=true", "error_summary": null, "simulation_digest": ""},
     {"run_id": "m2-surrogate", "status": "completed", "mode_id": "freedv700f_a_balanced", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "surrogate_completed: not_real_modem=true downselect_valid=false performance_valid=false", "simulation_digest": "surrogate", "implementation_status": "surrogate", "not_real_modem": true, "downselect_valid": false, "not_downselect_valid": true, "performance_valid": false, "surrogate_model_name": "700f_candidate_minimal_behavior", "surrogate_model_version": "ISSUE-0032-v1", "surrogate_limitations": "synthetic readiness only; not a real modem; BER/FER are not emitted as real values", "surrogate_readiness_score_synthetic": "0.625", "synthetic_metrics_label": "synthetic_surrogate_readiness_only"},
     {"run_id": "m2-emulated", "status": "completed", "mode_id": "freedv700d_emulated", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "emulated_surrogate_completed: implementation_status=emulated_surrogate; official=false; not_official_freedv=true; downselect_valid=false; performance_valid=false; emulator_model_name=f700f-minimal-freedv700d700e-surrogate; emulator_model_version=ISSUE-0033-v1; emulator_limitations=deterministic surrogate only, not official FreeDV performance", "simulation_digest": "emulated"}
   ]
@@ -34,7 +34,7 @@ std::string sample_sweep_json() {
 std::string sample_sweep_csv() {
   return "run_id,status,mode_id,condition_id,seed,simulation_ok,digest,skipped_reason,error_summary,implementation_status,not_real_modem,downselect_valid,not_downselect_valid,performance_valid,surrogate_model_name,surrogate_model_version,surrogate_limitations,surrogate_readiness_score_synthetic,synthetic_metrics_label\n"
          "m2-ssb,completed,ssb_standard_3k,identity,1,true,abc,,,,,,,,,,,,\n"
-         "m2-official,skipped,freedv700d_official,identity,1,false,,official_waveform_roundtrip_not_implemented,,,,,,,,,,,\n"
+         "m2-official,skipped,freedv700d_official,identity,1,false,,official_freedv_codec2_unavailable: F700F_ENABLE_CODEC2=OFF; official=true codec2_enabled=false codec2_available=false roundtrip_available=false not_emulator=true not_surrogate=true,,,,,,,,,,,\n"
          "m2-surrogate,completed,freedv700f_a_balanced,awgn-snr-6db,1,true,surrogate,,surrogate_completed: not_real_modem=true downselect_valid=false performance_valid=false,surrogate,true,false,true,false,700f_candidate_minimal_behavior,ISSUE-0032-v1,synthetic readiness only not a real modem and not real BER/FER,0.625,synthetic_surrogate_readiness_only\n"
          "m2-emulated,completed,freedv700d_emulated,awgn-snr-6db,1,true,emulated,,emulated_surrogate_completed: implementation_status=emulated_surrogate; official=false; not_official_freedv=true; downselect_valid=false; performance_valid=false; emulator_model_name=f700f-minimal-freedv700d700e-surrogate; emulator_model_version=ISSUE-0033-v1; emulator_limitations=deterministic surrogate only not official FreeDV performance,,,,,,,,,,\n";
 }
@@ -71,7 +71,7 @@ void sample_sweep_json_generates_markdown_with_all_row_types() {
   const auto markdown = f700f::reporting::render_report_from_loaded_input(loaded);
   assert(contains(markdown, "# M2 Baseline Comparison Report"));
   assert(contains(markdown, "`freedv700d_official`"));
-  assert(contains(markdown, "official_waveform_roundtrip_not_implemented"));
+  assert(contains(markdown, "official_freedv_codec2_unavailable"));
   assert(contains(markdown, "`freedv700f_a_balanced`"));
   assert(contains(markdown, "surrogate"));
   assert(contains(markdown, "SURROGATE WARNING"));

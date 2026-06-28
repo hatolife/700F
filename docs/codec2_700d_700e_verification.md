@@ -1,13 +1,14 @@
 # Codec2 700D/700E Verification Notes
 
 This document records the pinned Codec2/FreeDV source anchors for official baseline
-verification. ISSUE-0007 pinned the source, and ISSUE-0012 uses these anchors for the
-700D/700E official descriptor and availability adapter. The v0.1.0 adapter does not
-implement bit-exact waveform encode/decode.
+verification. ISSUE-0007 pinned the source, ISSUE-0012 used these anchors for the
+700D/700E official descriptor and availability adapter, and ISSUE-0036 links the
+optional Codec2-on F700F build to the pinned runtime for Mode-boundary smoke coverage.
 
-ISSUE-0034 adds official waveform roundtrip research. See
+ISSUE-0034 adds official waveform roundtrip research, and ISSUE-0036 adds the first
+direct F700F runtime linkage. See
 `docs/specs/freedv_official_waveform_roundtrip.md` for the detailed API map, the
-local upstream CLI roundtrip probe, and the remaining F700F runtime blockers.
+local upstream CLI roundtrip probe, F700F smoke results, and remaining validation work.
 
 Pinned source:
 
@@ -40,7 +41,8 @@ Verification rule for future issues:
   the default `F700F_ENABLE_CODEC2=OFF` path discoverable with an explicit unavailable
   status.
 - ISSUE-0034 verified that the upstream pinned Codec2 CLI tools can roundtrip
-  700D and 700E waveforms locally, but F700F still links only Codec2 headers in
-  the optional enabled path. Direct F700F runtime roundtrip remains a follow-up
-  requiring Codec2 library linkage, `freedv_close` ownership, float/short/`COMP`
-  amplitude conversion, and `freedv_nin()`-driven RX buffering.
+  700D and 700E waveforms locally.
+- ISSUE-0036 verifies that optional F700F Codec2-on builds import/link the pinned
+  runtime, own FreeDV handles with `freedv_close`, convert float audio to Codec2
+  short/`COMP` samples, and complete 700D/700E Mode-boundary smoke roundtrips.
+  Recurring Codec2-on CI and broader official waveform validation remain follow-up work.

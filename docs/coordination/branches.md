@@ -22,7 +22,8 @@
 | ISSUE-0033 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0033 | merged-local | develop |
 | ISSUE-0034 | research/ISSUE-0034-official-freedv-waveform-roundtrip | Module 05 + Module 10 | ../700F-ISSUE-0034 | merged-local | develop |
 | ISSUE-0035 | chore/ISSUE-0035-clock-skew-warning-investigation | Module 01 + Manager | ../700F-ISSUE-0035 | merged-local | develop |
-| ISSUE-0036 | feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip | Module 05 + Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0036 | planned_followup | develop |
+| ISSUE-0036 | feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip | Module 05 + Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0036 | merged-local | develop |
+| ISSUE-0037 | chore/ISSUE-0037-codec2-on-ci-official-regression-smoke | Module 01 + Module 05 + Module 10 + Module 13 | ../700F-ISSUE-0037 | planned_followup | develop |
 
 ## M1-A dispatch worktrees
 
@@ -57,4 +58,5 @@ Remote `develop` is not published. `origin` is configured, but previous push was
 | ISSUE-0033 | ../700F-ISSUE-0033 | gpt-5.5-xhigh | Merged locally in M2-E. |
 | ISSUE-0034 | ../700F-ISSUE-0034 | gpt-5.5-xhigh | Merged locally in M2-E; direct runtime linkage remains ISSUE-0036. |
 | ISSUE-0035 | ../700F-ISSUE-0035 | GPT-5.3-Codex-Spark | Merged locally in M2-E. |
-| ISSUE-0036 | ../700F-ISSUE-0036 | gpt-5.5-xhigh | Start from local `develop`; optional Codec2 runtime path must keep default OFF green. |
+| ISSUE-0036 | ../700F-ISSUE-0036 | gpt-5.5-xhigh | Merged locally; optional Codec2 runtime path keeps default OFF green and passes ON smoke locally. |
+| ISSUE-0037 | ../700F-ISSUE-0037 | gpt-5.5-medium | Start from local `develop`; make Codec2-on official smoke recurring without making default CI depend on Codec2 availability. |

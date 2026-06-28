@@ -57,6 +57,11 @@ bool is_emulated_surrogate_row(const SweepRow &row) {
          contains(row.error_summary, "implementation_status=emulated_surrogate");
 }
 
+bool is_official_runtime_row(const SweepRow &row) {
+  return contains(row.error_summary, "official_freedv_completed") ||
+         contains(row.error_summary, "roundtrip_available=true");
+}
+
 std::string trim(std::string value) {
   auto is_space = [](unsigned char ch) { return std::isspace(ch) != 0; };
   value.erase(value.begin(), std::find_if(value.begin(), value.end(),
@@ -388,7 +393,9 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
 
   if (contains(row.mode_id, "_official")) {
     descriptor.official_baseline = true;
-    descriptor.implementation_status = "unavailable";
+    descriptor.emulator = false;
+    descriptor.implementation_status =
+        is_official_runtime_row(row) ? "official_runtime" : "unavailable";
   } else if (row_marks_surrogate) {
     descriptor.implementation_status = "surrogate";
     descriptor.not_real_modem = parse_bool_or(row.not_real_modem, true);
@@ -495,6 +502,22 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
         "not_official_freedv=true; performance_valid=false; "
         "downselect_valid=false; emulator_limitations=" +
         result.optional_metrics["emulator_limitations"]);
+  }
+  if (is_official_runtime_row(row)) {
+    const auto values = parse_semicolon_key_values(row.error_summary);
+    const auto lookup = [&](const std::string &key, const std::string &fallback) {
+      const auto it = values.find(key);
+      return it == values.end() || it->second.empty() ? fallback : it->second;
+    };
+    result.optional_metrics["official"] = lookup("official", "true");
+    result.optional_metrics["codec2_enabled"] =
+        lookup("codec2_enabled", "true");
+    result.optional_metrics["codec2_available"] =
+        lookup("codec2_available", "true");
+    result.optional_metrics["roundtrip_available"] =
+        lookup("roundtrip_available", "true");
+    result.optional_metrics["not_emulator"] = lookup("not_emulator", "true");
+    result.optional_metrics["not_surrogate"] = lookup("not_surrogate", "true");
   }
 
   if (row.status == "skipped") {

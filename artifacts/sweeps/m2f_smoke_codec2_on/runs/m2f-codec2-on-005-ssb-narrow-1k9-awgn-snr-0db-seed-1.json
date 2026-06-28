@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2f-codec2-on-005-ssb-narrow-1k9-awgn-snr-0db-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_narrow_1k9",
+  "deterministic_digest": "246ac12d32d244db",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.162606}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

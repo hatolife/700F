@@ -13,7 +13,7 @@ target_link_libraries(f700f_codec_adapter
 )
 
 if(F700F_ENABLE_CODEC2)
-  target_link_libraries(f700f_codec_adapter PRIVATE f700f_codec2_headers)
+  target_link_libraries(f700f_codec_adapter PRIVATE f700f_codec2_headers f700f_codec2_runtime)
   target_compile_definitions(f700f_codec_adapter PUBLIC F700F_CODEC2_AVAILABLE=1)
 else()
   target_compile_definitions(f700f_codec_adapter PUBLIC F700F_CODEC2_AVAILABLE=0)

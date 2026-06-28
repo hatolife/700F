@@ -2,6 +2,7 @@
 
 #include <f700f/candidate_profiles.hpp>
 #include <f700f/channel_model.hpp>
+#include <f700f/codec_adapter/freedv_official.hpp>
 #include <f700f/reference_baselines/freedv_emulator.hpp>
 
 #include <algorithm>
@@ -237,6 +238,12 @@ std::string emulated_surrogate_note() {
          freedv_emulator_limitations();
 }
 
+std::string official_freedv_completed_note() {
+  return "official_freedv_completed: official=true; codec2_enabled=true; "
+         "codec2_available=true; roundtrip_available=true; "
+         "not_emulator=true; not_surrogate=true";
+}
+
 bool is_official_freedv_mode(const ModeId &mode_id) {
   return mode_id == "freedv700d_official" ||
          mode_id == "freedv700e_official";
@@ -244,9 +251,13 @@ bool is_official_freedv_mode(const ModeId &mode_id) {
 
 std::string unavailable_mode_reason(const ModeId &mode_id) {
   if (is_official_freedv_mode(mode_id)) {
-    return "official_waveform_roundtrip_not_implemented: default M2 smoke "
-           "keeps official FreeDV skipped until Codec2 official roundtrip is "
-           "wired";
+    if (!freedv_official_codec2_available()) {
+      return "official_freedv_codec2_unavailable: F700F_ENABLE_CODEC2=OFF; "
+             "official=true codec2_enabled=false codec2_available=false "
+             "roundtrip_available=false not_emulator=true not_surrogate=true";
+    }
+    return "official_freedv_not_registered: Codec2 runtime is enabled but "
+           "official FreeDV mode factory was not registered";
   }
   return "mode id not registered: " + mode_id;
 }
@@ -738,6 +749,8 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
           record.status = SweepRunStatus::Completed;
           if (is_emulated_surrogate_mode(descriptor_it->second)) {
             record.error_summary = emulated_surrogate_note();
+          } else if (is_official_freedv_mode(record.mode_id)) {
+            record.error_summary = official_freedv_completed_note();
           }
         } else {
           record.status = SweepRunStatus::Failed;
@@ -1196,6 +1209,10 @@ void register_m2_campaign_mode_factories(SweepRunner &runner) {
   runner.register_mode_factory(make_ssb_narrow_1k9_mode_factory());
   runner.register_mode_factory(make_freedv700d_emulated_mode_factory());
   runner.register_mode_factory(make_freedv700e_emulated_mode_factory());
+  if (freedv_official_codec2_available()) {
+    runner.register_mode_factory(make_freedv700d_official_mode_factory());
+    runner.register_mode_factory(make_freedv700e_official_mode_factory());
+  }
   runner.register_mode_factory(
       make_700f_candidate_profile_factory("freedv700f_a_balanced"));
   runner.register_mode_factory(

@@ -30,8 +30,8 @@ not authoritative for these constants unless a future issue links them back to p
 source files and symbols.
 
 `docs/specs/freedv_official_waveform_roundtrip.md` records the ISSUE-0034
-source-level roundtrip API findings, local upstream CLI 700D/700E manual probe, and
-the remaining F700F Codec2 runtime blockers.
+source-level roundtrip API findings, the local upstream CLI 700D/700E manual probe,
+and the ISSUE-0036 F700F Codec2 runtime linkage result.
 
 ## Availability behavior
 
@@ -41,12 +41,14 @@ Codec2 support is skipped because `F700F_ENABLE_CODEC2=OFF`. Runtime `configure`
 `encode`, and `decode` calls fail gracefully with the same unavailable reason.
 
 When `F700F_ENABLE_CODEC2=ON`, CMake requires `external/codec2/src/freedv_api.h` to be
-present and the Module 05 adapter includes that header. The v0.1.0 adapter checks the
-official 700D/700E API ids at compile time, but the waveform encode/decode binding remains
-a guarded skeleton and reports a runtime failure if called after successful configuration.
+present, imports the pinned upstream `codec2` target, and links Module 05 against the
+runtime. The adapter opens official 700D and 700E FreeDV handles, uses complex TX/RX at
+the Mode boundary, and reports official runtime smoke rows as available. This is still
+not a 700F candidate downselect signal.
 
 ## Non-goals
 
-ISSUE-0012 does not implement 700F optimization, copy or vendor Codec2 sources, or claim
-bit-exact waveform parity with Codec2. Full official Codec2 encode/decode integration and
-sample-audio round trip validation belong to a follow-up issue.
+ISSUE-0012 did not implement 700F optimization, copy or vendor Codec2 sources, or claim
+bit-exact waveform parity with Codec2. ISSUE-0036 adds optional linked official runtime
+smoke coverage, but full production waveform validation, recurring Codec2-on CI, and any
+real 700F downselect remain follow-up work.
