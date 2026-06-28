@@ -19,6 +19,11 @@ FreeDV baselines. Sweep execution can still be described as blocked or missing b
 setting the context `sweep_status` string, which is expected while ISSUE-0026 is not
 available or has not produced artifacts.
 
+ISSUE-0031 adds a CLI path that loads sweep aggregate JSON/CSV artifacts, translates
+rows into reporting/scoring artifacts, and renders this same Markdown report. Loaded
+profile-only, descriptor-only, skipped, or failed rows must be labeled as
+non-performance evidence.
+
 ## Required Markdown Sections
 
 Generated reports include:
@@ -33,6 +38,7 @@ Generated reports include:
 - baseline and candidate status for official FreeDV, SSB references, and 700F
   candidates;
 - known limitations;
+- explicit real-downselect feasibility statement;
 - next recommendation placeholder.
 
 ## Empty And Minimal Inputs
@@ -54,10 +60,13 @@ such as `2026-06-28T12:34:56Z` becomes `20260628T123456Z`.
 
 ## Limitations
 
-- The report renderer does not parse sweep TOML, run a sweep, or read artifacts from
-  disk. ISSUE-0026 owns sweep execution and artifact production.
+- The report renderer does not parse sweep TOML or run a sweep. ISSUE-0026 owns sweep
+  execution and artifact production; ISSUE-0031 can read the produced aggregate
+  JSON/CSV artifacts.
 - Official FreeDV availability is summarized from scored records whose descriptor has
   `official_baseline = true` and skipped/unavailable counts.
 - 700F candidate entries with `implementation_status = "profile_only"` are displayed
   as non-performance evidence with score `0.0` until later implementation issues
   produce completed runs.
+- Descriptor-only emulator rows are displayed as non-performance evidence and prevent
+  real downselect.

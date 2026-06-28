@@ -14,7 +14,8 @@ target_include_directories(f700f_metrics PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include)
 add_library(f700f_reporting OBJECT
-  modules/15_reporting_visualization/src/baseline_comparison_report.cpp)
+  modules/15_reporting_visualization/src/baseline_comparison_report.cpp
+  modules/15_reporting_visualization/src/report_artifact_loader.cpp)
 target_include_directories(f700f_reporting PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
@@ -32,6 +33,15 @@ endif()
 add_subdirectory(modules/05_codec_adapter)
 add_executable(f700f-info src/apps/f700f-info.cpp)
 target_link_libraries(f700f-info PRIVATE f700f_core)
+add_executable(f700f-report
+  src/apps/f700f-report.cpp
+  $<TARGET_OBJECTS:f700f_metrics>
+  $<TARGET_OBJECTS:f700f_reporting>)
+target_link_libraries(f700f-report PRIVATE f700f_core)
+target_include_directories(f700f-report PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/15_reporting_visualization/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(modules/11_pipeline_runner)
 add_subdirectory(modules/13_sweep_optimization)
 add_executable(test_mode_interface tests/test_mode_interface.cpp)
@@ -60,6 +70,15 @@ target_include_directories(test_baseline_comparison_report PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/15_reporting_visualization/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(test_report_artifact_loader_cli
+  tests/test_report_artifact_loader_cli.cpp
+  $<TARGET_OBJECTS:f700f_metrics>
+  $<TARGET_OBJECTS:f700f_reporting>)
+target_link_libraries(test_report_artifact_loader_cli PRIVATE f700f_core)
+target_include_directories(test_report_artifact_loader_cli PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/15_reporting_visualization/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(test_channel_models tests/test_channel_models.cpp)
 target_link_libraries(test_channel_models PRIVATE f700f_core f700f_channel_model)
 add_executable(test_freedv_emulator tests/test_freedv_emulator.cpp)
@@ -85,10 +104,21 @@ target_link_libraries(test_700f_candidate_profiles
     f700f_sweep_runner)
 enable_testing()
 add_test(NAME f700f_info_version COMMAND f700f-info)
+add_test(NAME f700f_report_help COMMAND f700f-report --help)
+set_tests_properties(f700f_report_help PROPERTIES
+  PASS_REGULAR_EXPRESSION "Usage: f700f-report")
+add_test(NAME f700f_report_missing_input COMMAND f700f-report)
+set_tests_properties(f700f_report_missing_input PROPERTIES WILL_FAIL TRUE)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
 add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
 add_test(NAME scoring_model_contract COMMAND test_scoring_model)
 add_test(NAME baseline_comparison_report_contract COMMAND test_baseline_comparison_report)
+add_test(NAME report_artifact_loader_cli_contract COMMAND test_report_artifact_loader_cli)
+add_test(NAME f700f_report_cli_contract
+  COMMAND ${CMAKE_COMMAND}
+    -DF700F_REPORT_EXE=$<TARGET_FILE:f700f-report>
+    -DF700F_REPORT_TEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/test-artifacts/report-cli
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/report_cli_contract.cmake)
 add_test(NAME channel_model_contract COMMAND test_channel_models)
 add_test(NAME freedv_emulator_contract COMMAND test_freedv_emulator)
 add_test(NAME ssb_reference_emulator_contract COMMAND test_ssb_reference_emulator)

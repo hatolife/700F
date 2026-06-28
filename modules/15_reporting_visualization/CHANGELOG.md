@@ -4,6 +4,8 @@
 - Add ISSUE-0027 M2 baseline comparison Markdown renderer over Module 12 scoring output.
 - Document deterministic report sections, empty-input behavior, skipped/unavailable
   baseline handling, profile-only candidate handling, and timestamped filenames.
+- Add ISSUE-0031 sweep JSON/CSV report loader and `f700f-report` CLI with explicit
+  real-downselect feasibility wording.
 
 ## v0.1.0 - 2026-06-28
 - Mark M1 result artifact and sweep aggregate reporting scope complete with limitations.

@@ -18,6 +18,9 @@ struct M2BaselineComparisonReportContext {
   std::vector<std::string> channel_ids;
   std::vector<std::uint64_t> seeds;
   std::vector<std::string> known_limitations;
+  bool real_downselect_possible = false;
+  std::string downselect_feasibility_summary =
+      "Real downselect possible: no; complete waveform evidence is not available.";
   std::string next_recommendation_placeholder =
       "Pending M2 downselect review after complete sweep evidence.";
 };
