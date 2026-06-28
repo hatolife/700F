@@ -17,3 +17,4 @@
 | ISSUE-0006 | open | P0 | docs issues reports governance structure | Module 12 | see root ISSUE-0006 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0009 | open | P0 | deterministic simulation core | Module 12 | see root ISSUE-0009 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0014 | done | P0 | metrics and result artifact format | Module 12 | see root ISSUE-0014 | v0.1.0 target as applicable | 2026-06-27 |
+| ISSUE-0024 | done | P0 | M2 scoring model and comparison policy | Module 12 | feature/ISSUE-0024-scoring-model | v0.2.0 | 2026-06-28 |

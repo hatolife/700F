@@ -1,7 +1,7 @@
 # ISSUE-0024: M2 scoring model and comparison policy
 
 ## Status
-open
+done
 
 ## Scope
 module:12
@@ -33,16 +33,22 @@ P0
 Define and implement an interim scoring model for comparing SSB, 700D, 700E, and 700F candidate sweep results.
 
 ## Acceptance criteria
-- [ ] Scoring model documentation exists.
-- [ ] Completed run ratio, skipped/failed penalties, dropout, latency, bandwidth, BER/FER availability, official-unavailable handling, audio-only handling, future ASR WER, future STOI/ESTOI, and subjective note slots are represented.
-- [ ] 700F profile snapshot can be included in score output.
-- [ ] Deterministic tests cover empty results, completed/failed/skipped comparisons, dropout, latency, bandwidth penalty, BER/FER N/A, and profile snapshot.
+- [x] Scoring model documentation exists.
+- [x] Completed run ratio, skipped/failed penalties, dropout, latency, bandwidth, BER/FER availability, official-unavailable handling, audio-only handling, future ASR WER, future STOI/ESTOI, and subjective note slots are represented.
+- [x] 700F profile snapshot can be included in score output.
+- [x] Deterministic tests cover empty results, completed/failed/skipped comparisons, dropout, latency, bandwidth penalty, BER/FER N/A, and profile snapshot.
 
 ## Test plan
 - ./tools/run_ci_local.sh
 
 ## TDD record
-- Red test added: to be completed by issue owner before implementation.
+- Red test target: add deterministic scorer tests for empty inputs, completed/failed/skipped
+  penalties, dropout, latency, bandwidth, BER/FER N/A handling, and 700F profile snapshots
+  before implementing the scoring model.
+- Red test added in `tests/test_scoring_model.cpp`; initial focused build failed because
+  `f700f/scoring_model.hpp` did not exist.
+- Green test evidence: `bash ./tools/run_ci_local.sh` passed with 11/11 CTest tests,
+  version check, and governance check.
 
 ## Result
-Pending.
+Implemented ISSUE-0024 interim M2 scoring model and comparison policy.

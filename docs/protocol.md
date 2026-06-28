@@ -12,6 +12,8 @@ work. The normative v0.1.0 details are split by concern:
   candidate boundary and baseline-vs-candidate labeling rules.
 - `docs/specs/700f_candidate_profiles.md` lists the three experimental 700F candidate
   profile descriptors introduced for ISSUE-0018.
+- `docs/specs/scoring_model.md` defines the ISSUE-0024 interim M2 scoring and comparison
+  policy over result artifacts and profile snapshots.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.

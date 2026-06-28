@@ -549,6 +549,10 @@ ModeDescriptorSnapshot make_mode_descriptor_snapshot(
   snapshot.codec_id = descriptor.codec_id;
   snapshot.fec_id = descriptor.fec_id;
   snapshot.modem_id = descriptor.modem_id;
+  snapshot.audio_bandwidth_hz = descriptor.audio_bandwidth_hz;
+  snapshot.official_baseline = descriptor.official_baseline;
+  snapshot.emulator = descriptor.emulator;
+  snapshot.implementation_status = descriptor.implementation_status;
   snapshot.supports_audio_input = descriptor.capabilities.audio_input;
   snapshot.supports_audio_output = descriptor.capabilities.audio_output;
   snapshot.supports_complex_input = descriptor.capabilities.complex_input;
@@ -596,6 +600,17 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
   append_json_key_value(out, "fec_id", snapshot.fec_id);
   out.push_back(',');
   append_json_key_value(out, "modem_id", snapshot.modem_id);
+  out.push_back(',');
+  out += "\"audio_bandwidth_hz\":" +
+         to_string_with_precision(snapshot.audio_bandwidth_hz);
+  out.push_back(',');
+  out += std::string("\"official_baseline\":") +
+         bool_to_json(snapshot.official_baseline);
+  out.push_back(',');
+  out += "\"emulator\":" + bool_to_json(snapshot.emulator);
+  out.push_back(',');
+  append_json_key_value(out, "implementation_status",
+                        snapshot.implementation_status);
   out.push_back(',');
   out += std::string("\"supports_audio_input\":") + bool_to_json(snapshot.supports_audio_input);
   out.push_back(',');
@@ -869,6 +884,22 @@ ResultArtifact from_json(const std::string &json_payload) {
     if (it_cap != descriptor_map.end()) {
       result.mode_descriptor.modem_id = it_cap->second;
     }
+    if (const auto it = descriptor_map.find("audio_bandwidth_hz");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.audio_bandwidth_hz = parse_double(it->second);
+    }
+    if (const auto it = descriptor_map.find("official_baseline");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.official_baseline = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("emulator");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.emulator = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("implementation_status");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.implementation_status = it->second;
+    }
     if (const auto it = descriptor_map.find("supports_audio_input");
         it != descriptor_map.end()) {
       result.mode_descriptor.supports_audio_input = parse_bool(it->second);
@@ -963,6 +994,92 @@ ResultArtifact from_csv_row(const std::string &header_line,
       const auto it_name = descriptor_map.find("sample_rate_hz");
       if (it_name != descriptor_map.end()) {
         result.mode_descriptor.sample_rate_hz = parse_u32(it_name->second);
+      }
+      if (const auto it_display = descriptor_map.find("display_name");
+          it_display != descriptor_map.end()) {
+        result.mode_descriptor.display_name = it_display->second;
+      }
+      if (const auto it_bw = descriptor_map.find("rf_bandwidth_hz");
+          it_bw != descriptor_map.end()) {
+        result.mode_descriptor.rf_bandwidth_hz = parse_double(it_bw->second);
+      }
+      if (const auto it_audio_low = descriptor_map.find("audio_low_hz");
+          it_audio_low != descriptor_map.end()) {
+        result.mode_descriptor.audio_low_hz = parse_double(it_audio_low->second);
+      }
+      if (const auto it_audio_high = descriptor_map.find("audio_high_hz");
+          it_audio_high != descriptor_map.end()) {
+        result.mode_descriptor.audio_high_hz = parse_double(it_audio_high->second);
+      }
+      if (const auto it_latency = descriptor_map.find("nominal_latency_s");
+          it_latency != descriptor_map.end()) {
+        result.mode_descriptor.nominal_latency_s = parse_double(it_latency->second);
+      }
+      if (const auto it_frame = descriptor_map.find("frame_duration_s");
+          it_frame != descriptor_map.end()) {
+        result.mode_descriptor.frame_duration_s = parse_double(it_frame->second);
+      }
+      if (const auto it_raw = descriptor_map.find("raw_bitrate_bps");
+          it_raw != descriptor_map.end()) {
+        result.mode_descriptor.raw_bitrate_bps = parse_u32(it_raw->second);
+      }
+      if (const auto it_voice = descriptor_map.find("voice_bitrate_bps");
+          it_voice != descriptor_map.end()) {
+        result.mode_descriptor.voice_bitrate_bps = parse_u32(it_voice->second);
+      }
+      if (const auto it_codec = descriptor_map.find("codec_id");
+          it_codec != descriptor_map.end()) {
+        result.mode_descriptor.codec_id = it_codec->second;
+      }
+      if (const auto it_fec = descriptor_map.find("fec_id");
+          it_fec != descriptor_map.end()) {
+        result.mode_descriptor.fec_id = it_fec->second;
+      }
+      if (const auto it_modem = descriptor_map.find("modem_id");
+          it_modem != descriptor_map.end()) {
+        result.mode_descriptor.modem_id = it_modem->second;
+      }
+      if (const auto it_audio_bw = descriptor_map.find("audio_bandwidth_hz");
+          it_audio_bw != descriptor_map.end()) {
+        result.mode_descriptor.audio_bandwidth_hz =
+            parse_double(it_audio_bw->second);
+      }
+      if (const auto it_status = descriptor_map.find("implementation_status");
+          it_status != descriptor_map.end()) {
+        result.mode_descriptor.implementation_status = it_status->second;
+      }
+      if (const auto it_official = descriptor_map.find("official_baseline");
+          it_official != descriptor_map.end()) {
+        result.mode_descriptor.official_baseline = parse_bool(it_official->second);
+      }
+      if (const auto it_emulator = descriptor_map.find("emulator");
+          it_emulator != descriptor_map.end()) {
+        result.mode_descriptor.emulator = parse_bool(it_emulator->second);
+      }
+      if (const auto it_audio_in = descriptor_map.find("supports_audio_input");
+          it_audio_in != descriptor_map.end()) {
+        result.mode_descriptor.supports_audio_input =
+            parse_bool(it_audio_in->second);
+      }
+      if (const auto it_audio_out = descriptor_map.find("supports_audio_output");
+          it_audio_out != descriptor_map.end()) {
+        result.mode_descriptor.supports_audio_output =
+            parse_bool(it_audio_out->second);
+      }
+      if (const auto it_complex_in = descriptor_map.find("supports_complex_input");
+          it_complex_in != descriptor_map.end()) {
+        result.mode_descriptor.supports_complex_input =
+            parse_bool(it_complex_in->second);
+      }
+      if (const auto it_complex_out =
+              descriptor_map.find("supports_complex_output");
+          it_complex_out != descriptor_map.end()) {
+        result.mode_descriptor.supports_complex_output =
+            parse_bool(it_complex_out->second);
+      }
+      if (const auto it_bits = descriptor_map.find("supports_bit_payload");
+          it_bits != descriptor_map.end()) {
+        result.mode_descriptor.supports_bit_payload = parse_bool(it_bits->second);
       }
     } else if (starts_with(name, "opt.")) {
       result.optional_metrics[name.substr(4)] = value;
