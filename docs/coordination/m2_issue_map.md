@@ -34,6 +34,10 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | complete | Implements a toy waveform-capable 700F-A path with prototype metadata while keeping 700F-B/C surrogate and real downselect prohibited. |
 | ISSUE-0040 | M2 audit update after 700F-A prototype | complete | Audits the post-ISSUE-0039 state, confirms Codec2 OFF/ON local CI, keeps real downselect prohibited, and authorizes a real modem architecture RFC. |
 | ISSUE-0041 | real 700F modem architecture RFC | complete | Defines the real modem prototype boundary and selects Option B then Option C; implementation and downselect remain follow-up-gated. |
+| ISSUE-0042 | 700F-A minimal QPSK baseband prototype | open | First Option B implementation issue; should wait for the ISSUE-0043 protocol boundary where practical. |
+| ISSUE-0043 | modem frame and symbol protocol | open | Source-level protocol boundary for modem input/output frames, symbol blocks, baseband frames, and prototype status. |
+| ISSUE-0044 | prototype modem metrics separation | open | Keeps limited prototype modem diagnostics separate from final performance and downselect scoring. |
+| ISSUE-0045 | M3 planning for OFDM/FEC/sync | open | Planning-only bridge toward Option C; no M3 implementation until M2 real prototype boundaries are audited. |
 
 ## Collision Rule
 
@@ -77,3 +81,6 @@ blocked until explicit follow-up gates.
 ISSUE-0041 completes that RFC and authorizes follow-up issue expansion for a
 minimal QPSK-like baseband prototype, modem frame/symbol protocol, prototype
 metrics separation, and M3 OFDM/FEC/sync planning.
+
+Dispatch is recorded in `docs/coordination/real_700f_modem_dispatch_plan.md`.
+Real 700F downselect remains prohibited across ISSUE-0042 through ISSUE-0045.
