@@ -13,9 +13,9 @@ module:10
 Expose SSB reference output audio artifact support for the M2-D smoke/report path.
 
 ## Acceptance criteria
-- [ ] SSB standard/narrow rows can record audio artifact paths when export is enabled.
-- [ ] Disabled export is reported as N/A.
-- [ ] Zero-length audio does not crash.
+- [x] SSB standard/narrow rows can record audio artifact paths when export is enabled.
+- [x] Disabled export is reported as N/A.
+- [x] Zero-length audio does not crash.
 
 ## TDD record
-- Pending.
+- 2026-06-29: Marked done by simulation/sweep aggregate propagation in module 11/13.

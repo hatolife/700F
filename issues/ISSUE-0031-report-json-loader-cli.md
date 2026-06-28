@@ -33,14 +33,14 @@ Load sweep artifact JSON/CSV and generate a comparison Markdown report through a
 CLI.
 
 ## Acceptance criteria
-- [ ] CLI help succeeds.
-- [ ] Missing input fails clearly.
-- [ ] Sample JSON generates Markdown.
-- [ ] Skipped rows appear in the report.
-- [ ] Profile-only rows appear in the report.
-- [ ] Descriptor-only rows appear in the report.
-- [ ] Report states whether real downselect is possible.
-- [ ] Malformed JSON/CSV fails clearly.
+- [x] CLI help succeeds.
+- [x] Missing input fails clearly.
+- [x] Sample JSON generates Markdown.
+- [x] Skipped rows appear in the report.
+- [x] Profile-only rows appear in the report.
+- [x] Descriptor-only rows appear in the report.
+- [x] Report states whether real downselect is possible.
+- [x] Malformed JSON/CSV fails clearly.
 - [ ] Local CI passes.
 
 ## Test plan
@@ -48,7 +48,18 @@ CLI.
 - `bash ./tools/run_ci_local.sh`
 
 ## TDD record
-- Pending.
+- 2026-06-29 JST: Started on
+  `feature/ISSUE-0031-report-json-loader-cli` from local `develop`.
+  Planning red tests for aggregate JSON/CSV loading, CLI help/error behavior,
+  Markdown generation, and downselect feasibility labeling before implementation.
+- 2026-06-29 JST: Red-test attempt added report loader/CLI tests before
+  implementation; initial PowerShell configure failed because `cmake` was not on
+  PATH, then Bash local CI built the new tests after implementation.
+- 2026-06-29 JST: Report-specific checks pass:
+  `ctest --test-dir build -R 'f700f_report|report_artifact' --output-on-failure`.
+  Full `bash ./tools/run_ci_local.sh` is blocked by unrelated
+  `sweep_config_loader_contract` and `sweep_cli_missing_config` failures in the
+  ISSUE-0030 sweep CLI/config-loader area.
 
 ## Result
-Pending.
+Implemented JSON/CSV report loader, `f700f-report` CLI, report/CLI tests, and docs.

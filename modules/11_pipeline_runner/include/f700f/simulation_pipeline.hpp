@@ -76,6 +76,7 @@ struct SimulationResult {
   ModeId mode_id;
   std::vector<std::string> channel_ids;
   std::string deterministic_digest;
+  std::string audio_export_path = "N/A";
   AudioBlock input_audio;
   ComplexBlock channel_output;
   AudioBlock decoded_audio;

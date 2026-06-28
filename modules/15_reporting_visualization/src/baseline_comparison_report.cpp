@@ -81,11 +81,11 @@ std::string descriptor_status(const f700f::metrics::M2ModeScore &score) {
   if (snapshot.implementation_status == "profile_only") {
     return "profile_only";
   }
-  if (snapshot.emulator) {
-    return "emulator";
-  }
   if (!snapshot.implementation_status.empty()) {
     return snapshot.implementation_status;
+  }
+  if (snapshot.emulator) {
+    return "emulator";
   }
   return "experimental";
 }
@@ -238,6 +238,8 @@ std::string render_m2_baseline_comparison_report(
   out << "- Score policy: `" << value_or_unknown(score_report.policy_id) << "`\n";
   out << "- Total result records: " << score_report.total_records << "\n";
   out << "- Sweep status: " << value_or_unknown(context.sweep_status) << "\n\n";
+  out << "- Downselect feasibility: "
+      << value_or_unknown(context.downselect_feasibility_summary) << "\n\n";
 
   out << "## Mode List\n\n";
   out << code_list(context.mode_ids) << "\n\n";

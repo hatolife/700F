@@ -268,6 +268,210 @@ std::vector<SweepModeConfig> make_m2_700f_candidate_modes() {
           {.mode_id = "freedv700f_c_quality"}};
 }
 
+std::string trim_copy(const std::string &value) {
+  const auto begin = value.find_first_not_of(" \t\r\n");
+  if (begin == std::string::npos) {
+    return {};
+  }
+  const auto end = value.find_last_not_of(" \t\r\n");
+  return value.substr(begin, end - begin + 1);
+}
+
+std::string strip_comment(const std::string &line) {
+  bool in_string = false;
+  std::string out;
+  for (std::size_t i = 0; i < line.size(); ++i) {
+    const char c = line[i];
+    if (c == '"' && (i == 0 || line[i - 1] != '\\')) {
+      in_string = !in_string;
+    }
+    if (c == '#' && !in_string) {
+      break;
+    }
+    out.push_back(c);
+  }
+  return trim_copy(out);
+}
+
+bool parse_toml_string(const std::string &value,
+                       std::string &out,
+                       std::string &error) {
+  const auto trimmed = trim_copy(value);
+  if (trimmed.size() < 2 || trimmed.front() != '"' ||
+      trimmed.back() != '"') {
+    error = "expected quoted string";
+    return false;
+  }
+
+  out.clear();
+  for (std::size_t i = 1; i + 1 < trimmed.size(); ++i) {
+    if (trimmed[i] == '\\' && i + 2 < trimmed.size()) {
+      const char escaped = trimmed[++i];
+      switch (escaped) {
+      case '"':
+      case '\\':
+        out.push_back(escaped);
+        break;
+      case 'n':
+        out.push_back('\n');
+        break;
+      case 'r':
+        out.push_back('\r');
+        break;
+      case 't':
+        out.push_back('\t');
+        break;
+      default:
+        error = "unsupported string escape";
+        return false;
+      }
+    } else {
+      out.push_back(trimmed[i]);
+    }
+  }
+  return true;
+}
+
+std::vector<std::string> split_toml_array_items(const std::string &value,
+                                                std::string &error) {
+  std::vector<std::string> items;
+  const auto trimmed = trim_copy(value);
+  if (trimmed.size() < 2 || trimmed.front() != '[' ||
+      trimmed.back() != ']') {
+    error = "expected array";
+    return items;
+  }
+
+  bool in_string = false;
+  std::string item;
+  for (std::size_t i = 1; i + 1 < trimmed.size(); ++i) {
+    const char c = trimmed[i];
+    if (c == '"' && (i == 1 || trimmed[i - 1] != '\\')) {
+      in_string = !in_string;
+    }
+    if (c == ',' && !in_string) {
+      items.push_back(trim_copy(item));
+      item.clear();
+    } else {
+      item.push_back(c);
+    }
+  }
+  if (in_string) {
+    error = "unterminated string in array";
+    return {};
+  }
+  if (!trim_copy(item).empty()) {
+    items.push_back(trim_copy(item));
+  }
+  return items;
+}
+
+bool parse_string_array(const std::string &value,
+                        std::vector<std::string> &out,
+                        std::string &error) {
+  const auto items = split_toml_array_items(value, error);
+  if (!error.empty()) {
+    return false;
+  }
+  out.clear();
+  for (const auto &item : items) {
+    std::string parsed;
+    if (!parse_toml_string(item, parsed, error)) {
+      return false;
+    }
+    out.push_back(std::move(parsed));
+  }
+  return true;
+}
+
+bool parse_seed_array(const std::string &value,
+                      std::vector<Seed> &out,
+                      std::string &error) {
+  const auto items = split_toml_array_items(value, error);
+  if (!error.empty()) {
+    return false;
+  }
+  out.clear();
+  for (const auto &item : items) {
+    try {
+      std::size_t consumed = 0;
+      const auto parsed = std::stoull(item, &consumed);
+      if (consumed != item.size()) {
+        error = "invalid seed value: " + item;
+        return false;
+      }
+      out.push_back(static_cast<Seed>(parsed));
+    } catch (const std::exception &) {
+      error = "invalid seed value: " + item;
+      return false;
+    }
+  }
+  return true;
+}
+
+bool parse_bool(const std::string &value, bool &out, std::string &error) {
+  const auto trimmed = trim_copy(value);
+  if (trimmed == "true") {
+    out = true;
+    return true;
+  }
+  if (trimmed == "false") {
+    out = false;
+    return true;
+  }
+  error = "expected boolean";
+  return false;
+}
+
+bool parse_uint32(const std::string &value,
+                  std::uint32_t &out,
+                  std::string &error) {
+  const auto trimmed = trim_copy(value);
+  try {
+    std::size_t consumed = 0;
+    const auto parsed = std::stoul(trimmed, &consumed);
+    if (consumed != trimmed.size()) {
+      error = "expected unsigned integer";
+      return false;
+    }
+    out = static_cast<std::uint32_t>(parsed);
+    return true;
+  } catch (const std::exception &) {
+    error = "expected unsigned integer";
+    return false;
+  }
+}
+
+bool parse_float(const std::string &value, float &out, std::string &error) {
+  const auto trimmed = trim_copy(value);
+  try {
+    std::size_t consumed = 0;
+    const auto parsed = std::stof(trimmed, &consumed);
+    if (consumed != trimmed.size()) {
+      error = "expected float";
+      return false;
+    }
+    out = parsed;
+    return true;
+  } catch (const std::exception &) {
+    error = "expected float";
+    return false;
+  }
+}
+
+std::string parse_parameter_value(const std::string &value,
+                                  std::string &error) {
+  const auto trimmed = trim_copy(value);
+  if (!trimmed.empty() && trimmed.front() == '"') {
+    std::string parsed;
+    if (!parse_toml_string(trimmed, parsed, error)) {
+      return {};
+    }
+    return parsed;
+  }
+  return trimmed;
+}
+
 class EffectChannel final : public IChannel {
 public:
   using Maker = std::unique_ptr<ChannelEffect> (*)(const ChannelConfig &, Seed,
@@ -464,6 +668,7 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
           record.skipped_reason = unavailable_mode_reason(mode.mode_id);
           record.error_summary = mode.skip_if_unavailable ? std::string{}
                                                           : record.skipped_reason;
+          record.audio_export_path = "N/A";
           result.records.push_back(std::move(record));
           continue;
         }
@@ -475,11 +680,13 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
               simulation_config, descriptor_it->second);
           record.status = SweepRunStatus::Completed;
           record.error_summary = metadata_only_note(descriptor_it->second);
+          record.audio_export_path = "N/A";
           result.records.push_back(std::move(record));
           continue;
         }
 
         record.simulation = simulation_runner_.run(simulation_config);
+        record.audio_export_path = record.simulation.audio_export_path;
         if (record.simulation.ok) {
           record.status = SweepRunStatus::Completed;
         } else {
@@ -535,7 +742,8 @@ std::string sweep_result_to_json(const SweepResult &result) {
       out << '"' << escape_json(record.error_summary) << '"';
     }
     out << ", \"simulation_digest\": \""
-        << escape_json(record.simulation.deterministic_digest) << "\"}";
+        << escape_json(record.simulation.deterministic_digest) << "\", \"audio_export_path\": \""
+        << escape_json(record.audio_export_path) << "\"}";
     out << (i + 1 == result.records.size() ? "\n" : ",\n");
   }
   out << "  ]\n";
@@ -546,7 +754,7 @@ std::string sweep_result_to_json(const SweepResult &result) {
 std::string sweep_result_to_csv(const SweepResult &result) {
   std::ostringstream out;
   out << "run_id,status,mode_id,condition_id,seed,simulation_ok,digest,"
-         "skipped_reason,error_summary\n";
+         "audio_export_path,skipped_reason,error_summary\n";
   for (const auto &record : result.records) {
     out << csv_quote(record.run_id) << ','
         << sweep_run_status_name(record.status) << ','
@@ -554,6 +762,7 @@ std::string sweep_result_to_csv(const SweepResult &result) {
         << csv_quote(record.condition_id) << ',' << record.seed << ','
         << (record.simulation.ok ? "true" : "false") << ','
         << csv_quote(record.simulation.deterministic_digest) << ','
+        << csv_quote(record.audio_export_path) << ','
         << csv_quote(record.skipped_reason) << ','
         << csv_quote(record.error_summary) << '\n';
   }
@@ -572,6 +781,205 @@ std::shared_ptr<IChannelFactory> make_frequency_offset_channel_factory() {
 std::shared_ptr<IChannelFactory> make_simple_gain_fading_channel_factory() {
   return std::make_shared<EffectChannelFactory>("simple_gain_fading",
                                                 make_simple_gain_fading_effect);
+}
+
+SweepConfig load_sweep_config_from_file(const std::string &path,
+                                        const SweepConfigOverrides &overrides,
+                                        std::string &error) {
+  error.clear();
+  SweepConfig config;
+
+  std::ifstream in(path);
+  if (!in) {
+    error = "missing config: " + path;
+    return config;
+  }
+
+  enum class Section {
+    Root,
+    InputGeneratedTone,
+    Mode,
+    ChannelCondition,
+    ChannelChain,
+  };
+
+  Section section = Section::Root;
+  auto tone = GeneratedToneConfig{};
+  config.input = tone;
+
+  std::string line;
+  std::size_t line_number = 0;
+  while (std::getline(in, line)) {
+    ++line_number;
+    const auto cleaned = strip_comment(line);
+    if (cleaned.empty()) {
+      continue;
+    }
+
+    if (cleaned.front() == '[') {
+      if (cleaned == "[input.generated_tone]") {
+        section = Section::InputGeneratedTone;
+      } else if (cleaned == "[[modes]]") {
+        config.modes.push_back({});
+        section = Section::Mode;
+      } else if (cleaned == "[[channel_conditions]]") {
+        config.channel_conditions.push_back({});
+        section = Section::ChannelCondition;
+      } else if (cleaned == "[[channel_conditions.channel_chain]]") {
+        if (config.channel_conditions.empty()) {
+          error = "line " + std::to_string(line_number) +
+                  ": channel_chain declared before channel_conditions";
+          return {};
+        }
+        config.channel_conditions.back().channel_chain.push_back({});
+        section = Section::ChannelChain;
+      } else {
+        error = "line " + std::to_string(line_number) +
+                ": unsupported table: " + cleaned;
+        return {};
+      }
+      continue;
+    }
+
+    const auto equals = cleaned.find('=');
+    if (equals == std::string::npos) {
+      error = "line " + std::to_string(line_number) + ": expected key = value";
+      return {};
+    }
+    const auto key = trim_copy(cleaned.substr(0, equals));
+    const auto value = trim_copy(cleaned.substr(equals + 1));
+    std::string parsed;
+
+    const auto fail = [&](const std::string &message) {
+      error = "line " + std::to_string(line_number) + ": " + message;
+      return SweepConfig{};
+    };
+
+    switch (section) {
+    case Section::Root:
+      if (key == "run_id_prefix") {
+        if (!parse_toml_string(value, config.run_id_prefix, error)) {
+          return fail(error);
+        }
+      } else if (key == "output_directory") {
+        if (!parse_toml_string(value, config.output_directory, error)) {
+          return fail(error);
+        }
+      } else if (key == "export_audio") {
+        if (!parse_bool(value, config.export_audio, error)) {
+          return fail(error);
+        }
+      } else if (key == "metric_ids") {
+        if (!parse_string_array(value, config.metric_ids, error)) {
+          return fail(error);
+        }
+      } else if (key == "seeds") {
+        if (!parse_seed_array(value, config.seeds, error)) {
+          return fail(error);
+        }
+      } else {
+        return fail("unsupported root key: " + key);
+      }
+      break;
+
+    case Section::InputGeneratedTone: {
+      auto *generated = std::get_if<GeneratedToneConfig>(&config.input);
+      if (generated == nullptr) {
+        config.input = GeneratedToneConfig{};
+        generated = std::get_if<GeneratedToneConfig>(&config.input);
+      }
+      if (key == "sample_rate_hz") {
+        if (!parse_uint32(value, generated->sample_rate_hz, error)) {
+          return fail(error);
+        }
+      } else if (key == "sample_count") {
+        if (!parse_uint32(value, generated->sample_count, error)) {
+          return fail(error);
+        }
+      } else if (key == "frequency_hz") {
+        if (!parse_float(value, generated->frequency_hz, error)) {
+          return fail(error);
+        }
+      } else if (key == "amplitude") {
+        if (!parse_float(value, generated->amplitude, error)) {
+          return fail(error);
+        }
+      } else {
+        return fail("unsupported generated_tone key: " + key);
+      }
+      break;
+    }
+
+    case Section::Mode:
+      if (config.modes.empty()) {
+        return fail("mode key declared before [[modes]]");
+      }
+      if (key == "mode_id") {
+        if (!parse_toml_string(value, config.modes.back().mode_id, error)) {
+          return fail(error);
+        }
+      } else if (key == "skip_if_unavailable") {
+        if (!parse_bool(value, config.modes.back().skip_if_unavailable,
+                        error)) {
+          return fail(error);
+        }
+      } else {
+        return fail("unsupported mode key: " + key);
+      }
+      break;
+
+    case Section::ChannelCondition:
+      if (config.channel_conditions.empty()) {
+        return fail("condition key declared before [[channel_conditions]]");
+      }
+      if (key == "condition_id") {
+        if (!parse_toml_string(value,
+                               config.channel_conditions.back().condition_id,
+                               error)) {
+          return fail(error);
+        }
+      } else {
+        return fail("unsupported channel condition key: " + key);
+      }
+      break;
+
+    case Section::ChannelChain:
+      if (config.channel_conditions.empty() ||
+          config.channel_conditions.back().channel_chain.empty()) {
+        return fail("channel_chain key declared before channel_chain table");
+      }
+      if (key == "channel_id") {
+        if (!parse_toml_string(
+                value,
+                config.channel_conditions.back().channel_chain.back().channel_id,
+                error)) {
+          return fail(error);
+        }
+      } else {
+        parsed = parse_parameter_value(value, error);
+        if (!error.empty()) {
+          return fail(error);
+        }
+        config.channel_conditions.back()
+            .channel_chain.back()
+            .parameters.push_back({key, parsed});
+      }
+      break;
+    }
+  }
+
+  if (overrides.output_directory.has_value()) {
+    config.output_directory = *overrides.output_directory;
+  }
+  if (overrides.run_id_prefix.has_value()) {
+    config.run_id_prefix = *overrides.run_id_prefix;
+  }
+  return config;
+}
+
+SweepConfig load_sweep_config_from_file(const std::string &path,
+                                        std::string &error) {
+  return load_sweep_config_from_file(path, SweepConfigOverrides{}, error);
 }
 
 SweepConfig make_m1_baseline_smoke_sweep_config(std::string output_directory) {

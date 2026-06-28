@@ -119,6 +119,9 @@ bool write_text_file(const std::filesystem::path &path, const std::string &conte
 
 void emit_summary_artifacts(const SimulationConfig &config, SimulationResult &result) {
   if (config.output_directory.empty() || config.run_id.empty()) {
+    if (config.export_audio) {
+      result.audio_export_path = "N/A";
+    }
     return;
   }
 
@@ -143,7 +146,11 @@ void emit_summary_artifacts(const SimulationConfig &config, SimulationResult &re
   }
 
   if (config.export_audio) {
-    result.artifacts.push_back({"decoded-audio-placeholder", (base / (config.run_id + ".decoded.raw")).generic_string(), "audio/f32le"});
+    const auto audio_path = (base / (config.run_id + ".decoded.raw")).generic_string();
+    result.audio_export_path = audio_path;
+    result.artifacts.push_back({"decoded-audio-placeholder", audio_path, "audio/f32le"});
+  } else {
+    result.audio_export_path = "N/A";
   }
 }
 
@@ -455,6 +462,7 @@ std::string simulation_result_to_json(const SimulationResult &result) {
   out << "  \"seed\": " << result.seed << ",\n";
   out << "  \"mode_id\": \"" << result.mode_id << "\",\n";
   out << "  \"deterministic_digest\": \"" << result.deterministic_digest << "\",\n";
+  out << "  \"audio_export_path\": \"" << result.audio_export_path << "\",\n";
   out << "  \"channels\": [";
   for (std::size_t i = 0; i < result.channel_ids.size(); ++i) {
     out << (i == 0 ? "" : ", ") << "\"" << result.channel_ids[i] << "\"";
@@ -479,13 +487,14 @@ std::string simulation_result_to_json(const SimulationResult &result) {
 
 std::string simulation_result_to_csv(const SimulationResult &result) {
   std::ostringstream out;
-  out << "run_id,seed,mode_id,channels,digest,metric_id,metric_value,ok\n";
+  out << "run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok\n";
   if (result.metrics.empty()) {
     out << result.run_id << ',' << result.seed << ',' << result.mode_id << ',';
     for (std::size_t i = 0; i < result.channel_ids.size(); ++i) {
       out << (i == 0 ? "" : "|") << result.channel_ids[i];
     }
-    out << ',' << result.deterministic_digest << ",,," << (result.ok ? "true" : "false") << '\n';
+    out << ',' << result.deterministic_digest << ',' << result.audio_export_path
+        << ",," << (result.ok ? "true" : "false") << '\n';
     return out.str();
   }
   for (const auto &metric : result.metrics) {
@@ -493,7 +502,8 @@ std::string simulation_result_to_csv(const SimulationResult &result) {
     for (std::size_t i = 0; i < result.channel_ids.size(); ++i) {
       out << (i == 0 ? "" : "|") << result.channel_ids[i];
     }
-    out << ',' << result.deterministic_digest << ',' << metric.metric_id << ',' << metric.value << ','
+    out << ',' << result.deterministic_digest << ',' << result.audio_export_path << ','
+        << metric.metric_id << ',' << metric.value << ','
         << (result.ok ? "true" : "false") << '\n';
   }
   return out.str();
