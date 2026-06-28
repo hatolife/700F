@@ -22,8 +22,11 @@ The v0.1.0 C++ config lives in `f700f::SweepConfig`:
 - `seeds`: ordered deterministic seeds.
 - `export_audio`: forwarded to single-run placeholder artifact recording.
 
-TOML parsing is intentionally deferred. `configs/sweeps/m1_baseline_smoke.toml`
-documents the intended file schema for the later parser.
+ISSUE-0030 adds a minimal TOML-shaped loader for the existing sweep config files
+and a user-facing `f700f-sweep` CLI. The loader supports the documented scalar
+keys, generated-tone input, `[[modes]]`, `[[channel_conditions]]`, and
+`[[channel_conditions.channel_chain]]` arrays of tables. Richer TOML schema work,
+including includes/shared channel fragments and file-audio inputs, remains planned.
 
 ## Run Behavior
 
@@ -119,3 +122,13 @@ records are marked completed with `descriptor_only_completed` or
 encode/decode or performance metrics. Official FreeDV 700D/700E entries remain
 skipped in default Codec2-disabled smoke runs with an
 `official_waveform_roundtrip_not_implemented` reason.
+
+## Sweep CLI
+
+`f700f-sweep --config <path>` loads a supported sweep TOML file, registers the
+default M2 smoke-capable factories, runs the sweep, and writes aggregate JSON/CSV
+artifacts according to the sweep config. `--output-dir <path>` overrides
+`output_directory`, and `--run-id <id>` overrides `run_id_prefix`.
+
+With `F700F_ENABLE_CODEC2=OFF`, unavailable official FreeDV modes and unknown
+skip-capable modes are recorded as skipped rows rather than failing the sweep.

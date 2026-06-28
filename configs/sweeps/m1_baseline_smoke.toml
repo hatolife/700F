@@ -1,5 +1,5 @@
-# ISSUE-0015 schema example. TOML parsing is deferred for v0.1.0; the C++
-# config helper `make_m1_baseline_smoke_sweep_config()` mirrors this shape.
+# ISSUE-0015 schema example. ISSUE-0030 loads this minimal TOML-shaped schema;
+# richer shared fragments/includes remain planned.
 
 run_id_prefix = "m1-baseline-smoke"
 output_directory = "reports/sweeps/m1-baseline-smoke"

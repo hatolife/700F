@@ -1,5 +1,5 @@
-# ISSUE-0026 smoke campaign. TOML parsing is deferred; this file records the
-# intended config shape mirrored by make_m2_700f_candidate_smoke_sweep_config().
+# ISSUE-0026 smoke campaign. ISSUE-0030 loads this minimal TOML-shaped schema;
+# richer shared fragments/includes remain planned.
 
 run_id_prefix = "m2-700f-candidate-smoke"
 output_directory = "reports/sweeps/m2-700f-candidate-smoke"
