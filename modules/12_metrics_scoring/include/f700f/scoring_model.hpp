@@ -31,6 +31,9 @@ struct M2ModeScore {
   std::uint64_t skipped_count = 0;
   std::uint64_t official_unavailable_count = 0;
   std::uint64_t profile_only_count = 0;
+  std::uint64_t surrogate_count = 0;
+  std::uint64_t performance_valid_count = 0;
+  std::uint64_t performance_invalid_count = 0;
   std::uint64_t audio_only_ber_fer_na_count = 0;
   std::uint64_t ber_available_count = 0;
   std::uint64_t fer_available_count = 0;
@@ -50,7 +53,10 @@ struct M2ModeScore {
   double latency_penalty = 0.0;
   double bandwidth_penalty = 0.0;
   double score = 0.0;
+  double real_performance_score = 0.0;
+  double surrogate_readiness_score = 0.0;
   bool profile_only = false;
+  bool surrogate = false;
 };
 
 struct M2ScoreReport {

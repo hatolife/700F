@@ -25,10 +25,15 @@ implementation exists.
 
 Module 02 remains owner of the descriptor fields used by the profiles. Module 03 remains
 owner of registry semantics. Modules 06, 07, 09, 11, 12, 13, and 15 may consume the
-profile descriptors, but must treat `implementation_status = "profile_only"` as
-non-performance evidence until their follow-up issues replace the stub runtime with
-tested implementations.
+profile descriptors, but must treat `implementation_status = "surrogate"` as
+not-real-modem, not-downselect-valid, non-performance evidence until their follow-up
+issues replace the stub runtime with tested implementations.
 
 700F candidates must not be labeled as official baselines. A profile with
 `emulator = false` is still experimental unless `official_baseline = true`, which these
 profiles deliberately do not set.
+
+ISSUE-0032 adds append-only reporting/scoring fields for surrogate rows:
+`not_real_modem`, `downselect_valid`, `not_downselect_valid`,
+`performance_valid`, `surrogate_model_name`, `surrogate_model_version`, and
+`surrogate_limitations`.

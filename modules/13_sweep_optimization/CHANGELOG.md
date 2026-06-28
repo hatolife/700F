@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Mark 700F A/B/C campaign rows as ISSUE-0032 `surrogate_completed` rows with
+  append-only not-real-modem/downselect/performance guardrails.
 - Bridge M2 campaign mode registration to SSB, FreeDV emulator, and 700F
   candidate profile factories, with metadata-only completed rows for
   descriptor/profile-only modes and explicit official FreeDV skips.

@@ -24,7 +24,7 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0029 | M2-D SSB audio export | complete | First-wave low-risk tooling/readiness issue integrated locally. |
 | ISSUE-0030 | M2-D sweep CLI and config loader | complete | First-wave low-risk tooling issue integrated locally. |
 | ISSUE-0031 | M2-D report JSON loader and CLI | complete | First-wave low-risk reporting issue integrated locally. |
-| ISSUE-0032 | M2-D 700F candidate minimal behavior bridge | planned | Requires careful surrogate/not-downselect-valid labeling. |
+| ISSUE-0032 | M2-D 700F candidate minimal behavior bridge | complete | 700F A/B/C rows complete as surrogate/not-real-modem/not-downselect-valid evidence. |
 | ISSUE-0033 | M2-D 700D/700E emulator minimal behavior bridge | planned | Must not imply official FreeDV behavior. |
 | ISSUE-0034 | M2-D official FreeDV waveform roundtrip | planned | Heavy Codec2/FreeDV integration/research. |
 | ISSUE-0035 | Clock-skew warning investigation | planned | Low priority because CI succeeds. |
@@ -51,7 +51,7 @@ ISSUE-0023 decided `M2_GO_WITH_LIMITATIONS`. Start ISSUE-0029 through ISSUE-0031
 first. Keep ISSUE-0032 through ISSUE-0035 planned until the first-wave tooling
 path is available or Manager explicitly reprioritizes.
 
-ISSUE-0029 through ISSUE-0031 are integrated locally. ISSUE-0032, ISSUE-0033,
-ISSUE-0034, and ISSUE-0035 are now startable in priority order, but real
-candidate downselect remains prohibited until surrogate/emulator/official
-semantics are explicit in reports.
+ISSUE-0029 through ISSUE-0032 are integrated locally. ISSUE-0033, ISSUE-0034, and
+ISSUE-0035 remain startable in priority order, but real candidate downselect remains
+prohibited until emulator and official semantics are explicit and waveform-capable
+700F/official evidence exists.

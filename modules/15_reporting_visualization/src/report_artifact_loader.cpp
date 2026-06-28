@@ -26,6 +26,16 @@ struct SweepRow {
   std::string skipped_reason;
   std::string error_summary;
   std::string simulation_digest;
+  std::string implementation_status;
+  std::string not_real_modem;
+  std::string downselect_valid;
+  std::string not_downselect_valid;
+  std::string performance_valid;
+  std::string surrogate_model_name;
+  std::string surrogate_model_version;
+  std::string surrogate_limitations;
+  std::string surrogate_readiness_score_synthetic;
+  std::string synthetic_metrics_label;
 };
 
 bool starts_with(std::string_view value, std::string_view prefix) {
@@ -60,6 +70,17 @@ std::uint64_t parse_u64(const std::string &value,
     throw std::runtime_error("Malformed input: expected integer field `" +
                              field_name + "`");
   }
+}
+
+bool parse_bool_or(const std::string &value, bool fallback) {
+  const auto cleaned = trim(value);
+  if (cleaned == "true" || cleaned == "1" || cleaned == "yes") {
+    return true;
+  }
+  if (cleaned == "false" || cleaned == "0" || cleaned == "no") {
+    return false;
+  }
+  return fallback;
 }
 
 std::string unescape_json_string(const std::string &value) {
@@ -316,16 +337,50 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
   descriptor.supports_complex_output = true;
   descriptor.supports_bit_payload = true;
 
+  const bool row_marks_surrogate =
+      row.implementation_status == "surrogate" ||
+      contains(row.error_summary, "surrogate") ||
+      starts_with(row.mode_id, "freedv700f_");
+  const bool row_marks_profile_only =
+      contains(row.error_summary, "profile_only") ||
+      row.implementation_status == "profile_only";
+  const bool row_marks_descriptor_only =
+      contains(row.mode_id, "_emulated") ||
+      contains(row.error_summary, "descriptor_only") ||
+      row.implementation_status == "descriptor_only";
+
   if (contains(row.mode_id, "_official")) {
     descriptor.official_baseline = true;
     descriptor.implementation_status = "unavailable";
-  } else if (starts_with(row.mode_id, "freedv700f_") ||
-             contains(row.error_summary, "profile_only")) {
+  } else if (row_marks_surrogate) {
+    descriptor.implementation_status = "surrogate";
+    descriptor.not_real_modem = parse_bool_or(row.not_real_modem, true);
+    descriptor.downselect_valid = parse_bool_or(row.downselect_valid, false);
+    descriptor.not_downselect_valid =
+        parse_bool_or(row.not_downselect_valid, !descriptor.downselect_valid);
+    descriptor.performance_valid = parse_bool_or(row.performance_valid, false);
+    descriptor.surrogate_model_name =
+        row.surrogate_model_name.empty()
+            ? "700f_candidate_minimal_behavior"
+            : row.surrogate_model_name;
+    descriptor.surrogate_model_version =
+        row.surrogate_model_version.empty() ? "ISSUE-0032-v1"
+                                            : row.surrogate_model_version;
+    descriptor.surrogate_limitations =
+        row.surrogate_limitations.empty()
+            ? "synthetic readiness only; not a real modem; BER/FER are not emitted as real values"
+            : row.surrogate_limitations;
+  } else if (row_marks_profile_only) {
     descriptor.implementation_status = "profile_only";
-  } else if (contains(row.mode_id, "_emulated") ||
-             contains(row.error_summary, "descriptor_only")) {
+    descriptor.downselect_valid = false;
+    descriptor.not_downselect_valid = true;
+    descriptor.performance_valid = false;
+  } else if (row_marks_descriptor_only) {
     descriptor.emulator = true;
     descriptor.implementation_status = "descriptor_only";
+    descriptor.downselect_valid = false;
+    descriptor.not_downselect_valid = true;
+    descriptor.performance_valid = false;
   } else {
     descriptor.implementation_status = "unknown";
   }
@@ -354,6 +409,25 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
   if (!row.error_summary.empty()) {
     result.optional_metrics["sweep_note"] = row.error_summary;
   }
+  if (result.mode_descriptor.implementation_status == "surrogate") {
+    result.warnings.push_back(
+        "SURROGATE WARNING: not a real modem; not_real_modem=true; "
+        "downselect_valid=false; performance_valid=false; BER/FER are not real values");
+    result.optional_metrics["surrogate_readiness_score_synthetic"] =
+        row.surrogate_readiness_score_synthetic.empty()
+            ? "0.625"
+            : row.surrogate_readiness_score_synthetic;
+    result.optional_metrics["synthetic_metrics_label"] =
+        row.synthetic_metrics_label.empty()
+            ? "synthetic_surrogate_readiness_only"
+            : row.synthetic_metrics_label;
+    result.optional_metrics["surrogate_model_name"] =
+        result.mode_descriptor.surrogate_model_name;
+    result.optional_metrics["surrogate_model_version"] =
+        result.mode_descriptor.surrogate_model_version;
+    result.optional_metrics["surrogate_limitations"] =
+        result.mode_descriptor.surrogate_limitations;
+  }
 
   if (row.status == "skipped") {
     result.skipped_reason =
@@ -374,6 +448,7 @@ void finalize_context(LoadedReportInput &loaded,
   std::set<std::string> channels;
   std::set<std::uint64_t> seeds;
   bool saw_profile_only = false;
+  bool saw_surrogate = false;
   bool saw_descriptor_only = false;
   bool saw_skipped = false;
   bool saw_failed = false;
@@ -382,8 +457,11 @@ void finalize_context(LoadedReportInput &loaded,
     modes.insert(row.mode_id);
     channels.insert(row.condition_id);
     seeds.insert(row.seed);
+    saw_surrogate = saw_surrogate || row.implementation_status == "surrogate" ||
+                    contains(row.error_summary, "surrogate") ||
+                    starts_with(row.mode_id, "freedv700f_");
     saw_profile_only = saw_profile_only || contains(row.error_summary, "profile_only") ||
-                       starts_with(row.mode_id, "freedv700f_");
+                       row.implementation_status == "profile_only";
     saw_descriptor_only = saw_descriptor_only ||
                           contains(row.error_summary, "descriptor_only");
     saw_skipped = saw_skipped || row.status == "skipped";
@@ -396,17 +474,23 @@ void finalize_context(LoadedReportInput &loaded,
   loaded.context.sweep_status =
       saw_failed ? "loaded with failed rows" : "loaded from artifact";
   loaded.real_downselect_possible =
-      !saw_profile_only && !saw_descriptor_only && !saw_skipped && !saw_failed &&
-      !rows.empty();
+      !saw_surrogate && !saw_profile_only && !saw_descriptor_only &&
+      !saw_skipped && !saw_failed && !rows.empty();
   loaded.context.real_downselect_possible = loaded.real_downselect_possible;
   loaded.context.downselect_feasibility_summary =
       loaded.real_downselect_possible
           ? "Real downselect possible: yes; all loaded rows contain completed "
             "performance evidence."
-          : "Real downselect possible: no; skipped, profile-only, "
+          : "Real downselect possible: no; surrogate, skipped, profile-only, "
             "descriptor-only, or failed rows prevent real downselect.";
   loaded.context.known_limitations.push_back(
       loaded.context.downselect_feasibility_summary);
+  if (saw_surrogate) {
+    loaded.context.known_limitations.push_back(
+        "SURROGATE WARNING: 700F surrogate rows are synthetic readiness evidence "
+        "only; not_real_modem=true; downselect_valid=false; "
+        "performance_valid=false.");
+  }
   if (saw_profile_only) {
     loaded.context.known_limitations.push_back(
         "Profile-only rows are non-performance evidence.");
@@ -470,6 +554,23 @@ LoadedReportInput load_report_input_json(const std::string &json_payload) {
     row.skipped_reason = extract_nullable_string_field(object, "skipped_reason");
     row.error_summary = extract_nullable_string_field(object, "error_summary");
     row.simulation_digest = extract_quoted_field(object, "simulation_digest");
+    row.implementation_status =
+        extract_quoted_field(object, "implementation_status");
+    row.not_real_modem = extract_raw_field(object, "not_real_modem");
+    row.downselect_valid = extract_raw_field(object, "downselect_valid");
+    row.not_downselect_valid =
+        extract_raw_field(object, "not_downselect_valid");
+    row.performance_valid = extract_raw_field(object, "performance_valid");
+    row.surrogate_model_name =
+        extract_quoted_field(object, "surrogate_model_name");
+    row.surrogate_model_version =
+        extract_quoted_field(object, "surrogate_model_version");
+    row.surrogate_limitations =
+        extract_quoted_field(object, "surrogate_limitations");
+    row.surrogate_readiness_score_synthetic =
+        extract_quoted_field(object, "surrogate_readiness_score_synthetic");
+    row.synthetic_metrics_label =
+        extract_quoted_field(object, "synthetic_metrics_label");
     rows.push_back(std::move(row));
   }
   return loaded_from_rows(std::move(rows),
@@ -503,6 +604,39 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
     row.error_summary =
         values.contains("error_summary") ? values.at("error_summary") : "";
     row.simulation_digest = values.contains("digest") ? values.at("digest") : "";
+    row.implementation_status =
+        values.contains("implementation_status") ? values.at("implementation_status")
+                                                 : "";
+    row.not_real_modem =
+        values.contains("not_real_modem") ? values.at("not_real_modem") : "";
+    row.downselect_valid =
+        values.contains("downselect_valid") ? values.at("downselect_valid") : "";
+    row.not_downselect_valid =
+        values.contains("not_downselect_valid")
+            ? values.at("not_downselect_valid")
+            : "";
+    row.performance_valid =
+        values.contains("performance_valid") ? values.at("performance_valid") : "";
+    row.surrogate_model_name =
+        values.contains("surrogate_model_name")
+            ? values.at("surrogate_model_name")
+            : "";
+    row.surrogate_model_version =
+        values.contains("surrogate_model_version")
+            ? values.at("surrogate_model_version")
+            : "";
+    row.surrogate_limitations =
+        values.contains("surrogate_limitations")
+            ? values.at("surrogate_limitations")
+            : "";
+    row.surrogate_readiness_score_synthetic =
+        values.contains("surrogate_readiness_score_synthetic")
+            ? values.at("surrogate_readiness_score_synthetic")
+            : "";
+    row.synthetic_metrics_label =
+        values.contains("synthetic_metrics_label")
+            ? values.at("synthetic_metrics_label")
+            : "";
     rows.push_back(std::move(row));
   }
   return loaded_from_rows(std::move(rows), {});

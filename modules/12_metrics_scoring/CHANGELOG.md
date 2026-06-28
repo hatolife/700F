@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0032 surrogate guardrail fields and keep synthetic surrogate readiness
+  separate from real performance score and BER/FER availability.
 - Add ISSUE-0024 interim M2 scoring model with completed/skipped/failed aggregation,
   dropout/latency/bandwidth penalties, BER/FER availability accounting, official
   unavailable handling, future metric slots, and profile-only snapshot support.

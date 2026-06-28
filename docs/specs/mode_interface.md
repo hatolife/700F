@@ -53,10 +53,13 @@ Descriptor-only emulators must set `emulator = true`, `official_baseline = false
 an implementation status that makes unimplemented runtime behavior explicit. This
 representation does not implement or validate any official FreeDV mode.
 
-M2 700F candidate profiles may set `emulator = false`, `official_baseline = false`, and
-`implementation_status = "profile_only"` when they are selectable architecture/profile
-descriptors rather than emulator or official baseline implementations. Their encode and
-decode calls must fail clearly until follow-up implementation issues replace the stub.
+M2 700F candidate profiles set `emulator = false`, `official_baseline = false`, and
+`implementation_status = "surrogate"` when they are selectable architecture/profile
+descriptors with ISSUE-0032 surrogate sweep behavior rather than real modem,
+emulator, or official baseline implementations. Their encode and decode calls must fail
+clearly until follow-up implementation issues replace the stub. Sweep/report artifacts
+must label those rows as `not_real_modem`, `downselect_valid = false`, and
+`performance_valid = false`.
 
 ## Non-goals
 

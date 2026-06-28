@@ -56,7 +56,14 @@ existing keys must stay stable; new keys can be added to
 | `audio_bandwidth_hz` | number | Nominal audio bandwidth target. |
 | `official_baseline` | boolean | Whether this descriptor is an official baseline. |
 | `emulator` | boolean | Whether this descriptor is an emulator/skeleton. |
-| `implementation_status` | string | Runtime implementation status such as `profile_only`. |
+| `implementation_status` | string | Runtime implementation status such as `surrogate`, `profile_only`, or `emulated`. |
+| `not_real_modem` | boolean | Whether a completed row is explicitly not a real modem implementation. |
+| `downselect_valid` | boolean | Whether the row can be used for real candidate downselect. |
+| `not_downselect_valid` | boolean | Inverse guardrail for reports that need explicit not-downselect-valid text. |
+| `performance_valid` | boolean | Whether BER/FER, RF, audio, latency, and dropout fields can be used as real performance evidence. |
+| `surrogate_model_name` | string | Surrogate model identifier when `implementation_status = "surrogate"`. |
+| `surrogate_model_version` | string | Surrogate model version when `implementation_status = "surrogate"`. |
+| `surrogate_limitations` | string | Human-readable limits for surrogate rows. |
 | `supports_audio_input` | boolean | Whether mode accepts audio input. |
 | `supports_audio_output` | boolean | Whether mode produces audio output. |
 | `supports_complex_input` | boolean | Whether mode accepts complex input. |
@@ -97,6 +104,13 @@ existing keys must stay stable; new keys can be added to
     "official_baseline": false,
     "emulator": true,
     "implementation_status": "emulated",
+    "not_real_modem": false,
+    "downselect_valid": true,
+    "not_downselect_valid": false,
+    "performance_valid": true,
+    "surrogate_model_name": "",
+    "surrogate_model_version": "",
+    "surrogate_limitations": "",
     "supports_audio_input": true,
     "supports_audio_output": true,
     "supports_complex_input": false,
@@ -136,6 +150,11 @@ existing keys must stay stable; new keys can be added to
 - Optional future metrics (`asr_wer`, `stoi`, `estoi`, `pesq`, `polqa`, `mos`, ...)
   are expected to be placed in `optional_metrics` as string-typed entries until
   the schema formalizes their dedicated fields.
-- ISSUE-0024 scoring uses the append-only descriptor fields `official_baseline`,
-  `emulator`, and `implementation_status` to distinguish official-unavailable records
-  from emulator and profile-only candidate records.
+- ISSUE-0024/ISSUE-0032 scoring uses the append-only descriptor fields
+  `official_baseline`, `emulator`, `implementation_status`, `not_real_modem`,
+  `downselect_valid`, and `performance_valid` to distinguish official-unavailable
+  records from emulator, profile-only, descriptor-only, surrogate, and real
+  performance records.
+- Surrogate rows must leave `ber` and `fer` as `"N/A"`/unset. Any readiness metric
+  must be stored in `optional_metrics` with a synthetic label, such as
+  `surrogate_readiness_score_synthetic` and `synthetic_metrics_label`.

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <optional>
 #include <sstream>
 
 namespace f700f::metrics {
@@ -24,8 +25,41 @@ bool is_profile_only(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "profile_only";
 }
 
+bool is_surrogate(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.implementation_status == "surrogate" ||
+         !snapshot.surrogate_model_name.empty();
+}
+
+bool is_descriptor_only(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.implementation_status == "descriptor_only" ||
+         snapshot.implementation_status == "descriptor-only";
+}
+
+bool is_performance_valid(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.performance_valid && !is_profile_only(snapshot) &&
+         !is_surrogate(snapshot) && !is_descriptor_only(snapshot);
+}
+
 bool has_optional_slot(const ResultArtifact &result, const std::string &key) {
   return result.optional_metrics.find(key) != result.optional_metrics.end();
+}
+
+std::optional<double> optional_metric_as_double(const ResultArtifact &result,
+                                                const std::string &key) {
+  const auto it = result.optional_metrics.find(key);
+  if (it == result.optional_metrics.end()) {
+    return std::nullopt;
+  }
+  try {
+    std::size_t consumed = 0;
+    const auto value = std::stod(it->second, &consumed);
+    if (consumed != it->second.size()) {
+      return std::nullopt;
+    }
+    return value;
+  } catch (const std::exception &) {
+    return std::nullopt;
+  }
 }
 
 double clamp_score(double score) {
@@ -66,10 +100,12 @@ void ensure_profile_snapshot(M2ModeScore &score,
     score.profile_snapshot = snapshot;
   }
   score.profile_only = score.profile_only || is_profile_only(snapshot);
+  score.surrogate = score.surrogate || is_surrogate(snapshot);
 }
 
 void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   ensure_profile_snapshot(score, result.mode_descriptor);
+  const bool performance_valid = is_performance_valid(result.mode_descriptor);
   ++score.record_count;
   score.mean_dropout_rate += result.dropout_rate;
   score.mean_latency_s += result.latency_estimate_s;
@@ -78,6 +114,11 @@ void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
 
   if (is_completed(result)) {
     ++score.completed_count;
+    if (performance_valid) {
+      ++score.performance_valid_count;
+    } else {
+      ++score.performance_invalid_count;
+    }
   } else if (is_skipped(result)) {
     ++score.skipped_count;
     if (result.mode_descriptor.official_baseline) {
@@ -90,19 +131,31 @@ void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   if (is_profile_only(result.mode_descriptor)) {
     ++score.profile_only_count;
   }
-
-  if (result.ber.has_value()) {
-    ++score.ber_available_count;
-  } else if (!result.mode_descriptor.supports_bit_payload) {
-    ++score.audio_only_ber_fer_na_count;
-  } else {
-    ++score.ber_unavailable_count;
+  if (is_surrogate(result.mode_descriptor)) {
+    ++score.surrogate_count;
+    if (const auto readiness =
+            optional_metric_as_double(result,
+                                      "surrogate_readiness_score_synthetic");
+        readiness.has_value()) {
+      score.surrogate_readiness_score +=
+          std::clamp(*readiness, 0.0, 1.0) * 100.0;
+    }
   }
 
-  if (result.fer.has_value()) {
-    ++score.fer_available_count;
-  } else if (result.mode_descriptor.supports_bit_payload) {
-    ++score.fer_unavailable_count;
+  if (performance_valid) {
+    if (result.ber.has_value()) {
+      ++score.ber_available_count;
+    } else if (!result.mode_descriptor.supports_bit_payload) {
+      ++score.audio_only_ber_fer_na_count;
+    } else {
+      ++score.ber_unavailable_count;
+    }
+
+    if (result.fer.has_value()) {
+      ++score.fer_available_count;
+    } else if (result.mode_descriptor.supports_bit_payload) {
+      ++score.fer_unavailable_count;
+    }
   }
 
   if (has_optional_slot(result, "asr_wer")) {
@@ -150,12 +203,18 @@ void finalize_score(M2ModeScore &score, const M2ScorePolicy &policy) {
   }
 
   const double evidence_score =
-      score.completed_run_ratio * policy.completed_run_weight +
+      (static_cast<double>(score.performance_valid_count) / record_count) *
+          policy.completed_run_weight +
       failed_ratio * policy.failed_run_evidence_weight;
-  score.score = clamp_score(evidence_score - score.skipped_penalty_total -
-                            score.failed_penalty_total -
-                            score.dropout_penalty - score.latency_penalty -
-                            score.bandwidth_penalty);
+  score.real_performance_score =
+      clamp_score(evidence_score - score.skipped_penalty_total -
+                  score.failed_penalty_total - score.dropout_penalty -
+                  score.latency_penalty - score.bandwidth_penalty);
+  score.score = score.real_performance_score;
+  if (score.surrogate_count > 0) {
+    score.surrogate_readiness_score /=
+        static_cast<double>(score.surrogate_count);
+  }
 }
 
 } // namespace
@@ -228,6 +287,10 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
     out << "\"official_unavailable_count\":"
         << score.official_unavailable_count << ",";
     out << "\"profile_only_count\":" << score.profile_only_count << ",";
+    out << "\"surrogate_count\":" << score.surrogate_count << ",";
+    out << "\"performance_valid_count\":" << score.performance_valid_count << ",";
+    out << "\"performance_invalid_count\":" << score.performance_invalid_count
+        << ",";
     out << "\"audio_only_ber_fer_na_count\":"
         << score.audio_only_ber_fer_na_count << ",";
     out << "\"ber_available_count\":" << score.ber_available_count << ",";
@@ -247,7 +310,12 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
     out << "\"dropout_penalty\":" << score.dropout_penalty << ",";
     out << "\"latency_penalty\":" << score.latency_penalty << ",";
     out << "\"bandwidth_penalty\":" << score.bandwidth_penalty << ",";
-    out << "\"profile_only\":" << (score.profile_only ? "true" : "false");
+    out << "\"real_performance_score\":" << score.real_performance_score << ",";
+    out << "\"surrogate_readiness_score\":"
+        << score.surrogate_readiness_score << ",";
+    out << "\"profile_only\":" << (score.profile_only ? "true" : "false")
+        << ",";
+    out << "\"surrogate\":" << (score.surrogate ? "true" : "false");
     if (score.profile_snapshot.has_value()) {
       out << ",\"profile_snapshot\":{";
       out << "\"mode_id\":\"" << escape_json(score.profile_snapshot->mode_id)
@@ -264,7 +332,26 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
       out << "\"emulator\":"
           << (score.profile_snapshot->emulator ? "true" : "false") << ",";
       out << "\"implementation_status\":\""
-          << escape_json(score.profile_snapshot->implementation_status) << "\"";
+          << escape_json(score.profile_snapshot->implementation_status) << "\",";
+      out << "\"not_real_modem\":"
+          << (score.profile_snapshot->not_real_modem ? "true" : "false")
+          << ",";
+      out << "\"downselect_valid\":"
+          << (score.profile_snapshot->downselect_valid ? "true" : "false")
+          << ",";
+      out << "\"not_downselect_valid\":"
+          << (score.profile_snapshot->not_downselect_valid ? "true" : "false")
+          << ",";
+      out << "\"performance_valid\":"
+          << (score.profile_snapshot->performance_valid ? "true" : "false")
+          << ",";
+      out << "\"surrogate_model_name\":\""
+          << escape_json(score.profile_snapshot->surrogate_model_name) << "\",";
+      out << "\"surrogate_model_version\":\""
+          << escape_json(score.profile_snapshot->surrogate_model_version)
+          << "\",";
+      out << "\"surrogate_limitations\":\""
+          << escape_json(score.profile_snapshot->surrogate_limitations) << "\"";
       out << "}";
     }
     out << "}";

@@ -6,8 +6,9 @@
   run sweeps or inspect per-run audio/RF payloads.
 - Missing or blocked sweep execution must be represented through report context
   `sweep_status`.
-- The report preserves profile-only 700F candidates as non-performance evidence until
-  later implementation issues produce completed candidate runs.
+- The report preserves ISSUE-0032 700F surrogate candidates as not-real-modem,
+  not-downselect-valid, non-performance evidence until later implementation issues
+  produce waveform-capable candidate runs.
 - Descriptor-only emulator rows are also non-performance evidence and block real
   downselect.
 - Official FreeDV status is only as complete as the scored records provided by Module

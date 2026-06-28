@@ -112,21 +112,54 @@ void audio_only_na_and_digital_availability_are_represented() {
   assert(digital_score->fer_available_count == 1);
 }
 
-void profile_only_snapshot_is_carried_without_performance_evidence() {
-  const auto profile = f700f::metrics::make_mode_descriptor_snapshot(
+void surrogate_snapshot_is_carried_without_performance_evidence() {
+  const auto surrogate = f700f::metrics::make_mode_descriptor_snapshot(
       f700f::freedv700f_b_robust_descriptor());
 
   const auto report = f700f::metrics::score_m2_results(
-      {}, {profile}, f700f::metrics::make_m2_score_policy());
+      {}, {surrogate}, f700f::metrics::make_m2_score_policy());
 
   const auto *candidate = report.find_mode("freedv700f_b_robust");
   assert(candidate != nullptr);
-  assert(candidate->profile_only);
+  assert(candidate->surrogate);
   assert(candidate->completed_count == 0);
   assert(candidate->score == 0.0);
+  assert(candidate->real_performance_score == 0.0);
+  assert(candidate->surrogate_readiness_score == 0.0);
   assert(candidate->profile_snapshot.has_value());
-  assert(candidate->profile_snapshot->implementation_status == "profile_only");
+  assert(candidate->profile_snapshot->implementation_status == "surrogate");
+  assert(candidate->profile_snapshot->not_real_modem);
+  assert(!candidate->profile_snapshot->downselect_valid);
+  assert(candidate->profile_snapshot->not_downselect_valid);
+  assert(!candidate->profile_snapshot->performance_valid);
   assert(candidate->profile_snapshot->rf_bandwidth_hz == 1900.0);
+}
+
+void completed_surrogate_rows_do_not_score_as_real_performance() {
+  auto surrogate = make_result("freedv700f_a_balanced");
+  surrogate.mode_descriptor = f700f::metrics::make_mode_descriptor_snapshot(
+      f700f::freedv700f_a_balanced_descriptor());
+  surrogate.optional_metrics["surrogate_readiness_score_synthetic"] = "0.625";
+  surrogate.optional_metrics["synthetic_metrics_label"] =
+      "synthetic_surrogate_readiness_only";
+
+  const auto report = f700f::metrics::score_m2_results(
+      {surrogate}, {}, f700f::metrics::make_m2_score_policy());
+
+  const auto *candidate = report.find_mode("freedv700f_a_balanced");
+  assert(candidate != nullptr);
+  assert(candidate->completed_count == 1);
+  assert(candidate->surrogate_count == 1);
+  assert(candidate->performance_valid_count == 0);
+  assert(candidate->performance_invalid_count == 1);
+  assert(candidate->score == 0.0);
+  assert(candidate->real_performance_score == 0.0);
+  assert(candidate->surrogate_readiness_score > 62.0);
+  assert(candidate->surrogate_readiness_score < 63.0);
+  assert(candidate->ber_available_count == 0);
+  assert(candidate->fer_available_count == 0);
+  assert(candidate->ber_unavailable_count == 0);
+  assert(candidate->fer_unavailable_count == 0);
 }
 
 } // namespace
@@ -135,6 +168,7 @@ int main() {
   empty_results_are_deterministic();
   completed_failed_and_skipped_records_are_counted_and_ordered();
   audio_only_na_and_digital_availability_are_represented();
-  profile_only_snapshot_is_carried_without_performance_evidence();
+  surrogate_snapshot_is_carried_without_performance_evidence();
+  completed_surrogate_rows_do_not_score_as_real_performance();
   return 0;
 }

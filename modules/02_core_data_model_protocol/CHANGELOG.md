@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Update the 700F candidate boundary for ISSUE-0032 surrogate status and
+  not-real-modem/downselect guardrails.
 - Record the ISSUE-0018 profile-only 700F candidate descriptor boundary and
   `profile_only` implementation status contract for downstream modules.
 

@@ -22,13 +22,13 @@ The campaign mode order is stable and is used as the first expansion axis:
 9. `freedv700f_c_quality`
 
 Every entry is skip-capable. Unknown modes, unregistered official FreeDV adapters
-under `F700F_ENABLE_CODEC2=OFF`, and profile-only candidates that are not registered
-by a caller are recorded as skipped by the sweep runner.
+under `F700F_ENABLE_CODEC2=OFF`, and candidates that are not registered by a caller
+are recorded as skipped by the sweep runner.
 
-If a profile-only 700F candidate factory is registered, the run is attempted and is
-expected to fail clearly until later implementation issues replace the stub runtime.
-That failed attempted-run evidence must not be interpreted as completed performance
-evidence.
+If an ISSUE-0032 700F candidate factory is registered, the sweep row completes through
+the surrogate bridge with `implementation_status = surrogate`, `not_real_modem = true`,
+`downselect_valid = false`, and `performance_valid = false`. That completed surrogate
+evidence must not be interpreted as real performance evidence.
 
 ## Smoke Campaign
 

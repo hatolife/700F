@@ -206,6 +206,55 @@ void test_unknown_optional_metrics_survive() {
   assert(parsed.optional_metrics.at("stoi") == "0.76");
 }
 
+void test_surrogate_guardrails_survive_result_serialization() {
+  auto artifact = digital_like_result();
+  artifact.mode_descriptor.implementation_status = "surrogate";
+  artifact.mode_descriptor.not_real_modem = true;
+  artifact.mode_descriptor.downselect_valid = false;
+  artifact.mode_descriptor.not_downselect_valid = true;
+  artifact.mode_descriptor.performance_valid = false;
+  artifact.mode_descriptor.surrogate_model_name =
+      "700f_candidate_minimal_behavior";
+  artifact.mode_descriptor.surrogate_model_version = "ISSUE-0032-v1";
+  artifact.mode_descriptor.surrogate_limitations =
+      "synthetic readiness only; not a real modem; BER/FER are not emitted as real values";
+  artifact.ber.reset();
+  artifact.fer.reset();
+  artifact.optional_metrics["surrogate_readiness_score_synthetic"] = "0.625";
+  artifact.optional_metrics["synthetic_metrics_label"] =
+      "synthetic_surrogate_readiness_only";
+
+  const auto json = f700f::metrics::to_json(artifact);
+  assert(json.find("\"implementation_status\":\"surrogate\"") !=
+         std::string::npos);
+  assert(json.find("\"not_real_modem\":true") != std::string::npos);
+  assert(json.find("\"downselect_valid\":false") != std::string::npos);
+  assert(json.find("\"not_downselect_valid\":true") != std::string::npos);
+  assert(json.find("\"performance_valid\":false") != std::string::npos);
+  assert(json.find("surrogate_readiness_score_synthetic") != std::string::npos);
+  auto parsed = f700f::metrics::from_json(json);
+  assert(parsed.mode_descriptor.implementation_status == "surrogate");
+  assert(parsed.mode_descriptor.not_real_modem);
+  assert(!parsed.mode_descriptor.downselect_valid);
+  assert(parsed.mode_descriptor.not_downselect_valid);
+  assert(!parsed.mode_descriptor.performance_valid);
+  assert(parsed.mode_descriptor.surrogate_model_name ==
+         "700f_candidate_minimal_behavior");
+  assert(parsed.optional_metrics.at("synthetic_metrics_label") ==
+         "synthetic_surrogate_readiness_only");
+
+  const auto extras = f700f::metrics::metric_column_names(artifact);
+  const auto header = f700f::metrics::to_csv_header(extras);
+  const auto row = f700f::metrics::to_csv_row(artifact, extras);
+  parsed = f700f::metrics::from_csv_row(header, row);
+  assert(parsed.mode_descriptor.implementation_status == "surrogate");
+  assert(parsed.mode_descriptor.not_real_modem);
+  assert(!parsed.mode_descriptor.downselect_valid);
+  assert(!parsed.mode_descriptor.performance_valid);
+  assert(parsed.optional_metrics.at("surrogate_readiness_score_synthetic") ==
+         "0.625");
+}
+
 }  // namespace
 
 int main() {
@@ -216,5 +265,6 @@ int main() {
   test_json_is_stable();
   test_csv_minimum_columns();
   test_unknown_optional_metrics_survive();
+  test_surrogate_guardrails_survive_result_serialization();
   return 0;
 }

@@ -1,7 +1,8 @@
 # 700F Candidate Profiles v0.2.0
 
-ISSUE-0018 introduces three experimental 700F candidate profiles. They are selectable
-Mode descriptors and profile-only runtime stubs, not modem implementations.
+ISSUE-0018 introduced three experimental 700F candidate profiles. ISSUE-0032 makes
+them selectable surrogate Mode descriptors for sweep/report readiness. They are not
+modem implementations.
 
 ## Profile Table
 
@@ -17,7 +18,7 @@ All profiles set:
 
 - `official_baseline = false`
 - `emulator = false`
-- `implementation_status = "profile_only"`
+- `implementation_status = "surrogate"`
 - `rf_bandwidth_hz = 1900.0`
 - audio, complex, bit-payload, and soft-bit capabilities enabled
 - codec, FEC, modem, modulation, and pilot ids to candidate placeholder values
@@ -41,12 +42,14 @@ Profile factories are available through:
 - `register_700f_candidate_profiles(registry)`
 
 The runtime accepts default configuration or the descriptor sample rate. Encode and
-decode return `ok == false` and an error containing the mode id, `ISSUE-0018`, and
-`profile_only`.
+decode return `ok == false` and an error containing the mode id, `ISSUE-0032`,
+`surrogate`, and `not_real_modem`.
 
 ## Reporting Expectations
 
 Metrics snapshots, simulation reports, and sweep reports must preserve the canonical
-mode id. Profile-only candidate sweep records are expected to fail at encode/decode
-rather than skip once their factory is registered. Missing candidate factories may still
-be recorded as skipped by sweep infrastructure.
+mode id. ISSUE-0032 candidate sweep records complete through the surrogate bridge with
+`not_real_modem = true`, `downselect_valid = false`, and
+`performance_valid = false`. BER/FER are not emitted as real values, and synthetic
+readiness metrics must be labeled synthetic. Missing candidate factories may still be
+recorded as skipped by sweep infrastructure.

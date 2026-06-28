@@ -34,7 +34,7 @@ void assert_common_candidate_shape(const f700f::ModeDescriptor &descriptor) {
   assert(!descriptor.pilot_strategy.empty());
   assert(!descriptor.official_baseline);
   assert(!descriptor.emulator);
-  assert(descriptor.implementation_status == "profile_only");
+  assert(descriptor.implementation_status == "surrogate");
   assert(descriptor.capabilities.audio_input);
   assert(descriptor.capabilities.audio_output);
   assert(descriptor.capabilities.complex_input);
@@ -68,7 +68,7 @@ void profile_targets_are_encoded_in_descriptors() {
   assert(close_to(balanced.audio_high_hz, 3300.0));
   assert(close_to(balanced.audio_bandwidth_hz, 3000.0));
   assert(balanced.fec_id.find("medium") != std::string::npos);
-  assert(balanced.implementation_status == "profile_only");
+  assert(balanced.implementation_status == "surrogate");
 
   assert(robust.audio_high_hz >= 3000.0);
   assert(robust.audio_high_hz <= 3300.0);
@@ -99,7 +99,7 @@ void registry_selects_candidate_profiles() {
   assert(!balanced->emulator);
 }
 
-void encode_decode_report_profile_only_status() {
+void encode_decode_report_surrogate_boundary() {
   f700f::ModeRegistry registry;
   f700f::register_700f_candidate_profiles(registry);
   auto mode = registry.create("freedv700f_a_balanced");
@@ -109,17 +109,19 @@ void encode_decode_report_profile_only_status() {
   const auto encoded = mode->encode({});
   assert(!encoded.ok);
   assert(encoded.error.find("freedv700f_a_balanced") != std::string::npos);
-  assert(encoded.error.find("ISSUE-0018") != std::string::npos);
-  assert(encoded.error.find("profile_only") != std::string::npos);
+  assert(encoded.error.find("ISSUE-0032") != std::string::npos);
+  assert(encoded.error.find("surrogate") != std::string::npos);
+  assert(encoded.error.find("not_real_modem") != std::string::npos);
 
   const auto decoded = mode->decode({});
   assert(!decoded.ok);
   assert(decoded.error.find("freedv700f_a_balanced") != std::string::npos);
-  assert(decoded.error.find("ISSUE-0018") != std::string::npos);
-  assert(decoded.error.find("profile_only") != std::string::npos);
+  assert(decoded.error.find("ISSUE-0032") != std::string::npos);
+  assert(decoded.error.find("surrogate") != std::string::npos);
+  assert(decoded.error.find("not_real_modem") != std::string::npos);
 }
 
-void metrics_snapshot_and_json_report_preserve_profile() {
+void metrics_snapshot_and_json_report_preserve_surrogate_boundary() {
   const auto &descriptor = f700f::freedv700f_c_quality_descriptor();
   const auto snapshot = f700f::metrics::make_mode_descriptor_snapshot(descriptor);
 
@@ -130,6 +132,15 @@ void metrics_snapshot_and_json_report_preserve_profile() {
   assert(snapshot.fec_id == descriptor.fec_id);
   assert(snapshot.modem_id == descriptor.modem_id);
   assert(snapshot.supports_bit_payload);
+  assert(snapshot.implementation_status == "surrogate");
+  assert(snapshot.not_real_modem);
+  assert(!snapshot.downselect_valid);
+  assert(snapshot.not_downselect_valid);
+  assert(!snapshot.performance_valid);
+  assert(!snapshot.surrogate_model_name.empty());
+  assert(!snapshot.surrogate_model_version.empty());
+  assert(snapshot.surrogate_limitations.find("not a real modem") !=
+         std::string::npos);
 
   auto artifact = f700f::metrics::make_empty_result_artifact();
   artifact.project_version = "v0.2.0";
@@ -139,9 +150,16 @@ void metrics_snapshot_and_json_report_preserve_profile() {
   const auto json = f700f::metrics::to_json(artifact);
   assert(json.find("freedv700f_c_quality") != std::string::npos);
   assert(json.find("candidate-profile-snapshot") != std::string::npos);
+  assert(json.find("\"implementation_status\":\"surrogate\"") !=
+         std::string::npos);
+  assert(json.find("\"not_real_modem\":true") != std::string::npos);
+  assert(json.find("\"downselect_valid\":false") != std::string::npos);
+  assert(json.find("\"not_downselect_valid\":true") != std::string::npos);
+  assert(json.find("\"performance_valid\":false") != std::string::npos);
+  assert(json.find("surrogate_model_name") != std::string::npos);
 }
 
-void sweep_runner_reaches_profile_and_reports_profile_only_completion() {
+void sweep_runner_reaches_surrogate_and_reports_non_real_completion() {
   f700f::SweepRunner runner;
   runner.register_mode_factory(f700f::make_700f_candidate_profile_factory(
       "freedv700f_b_robust"));
@@ -165,13 +183,29 @@ void sweep_runner_reaches_profile_and_reports_profile_only_completion() {
   assert(result.records.size() == 1);
   assert(result.records[0].status == f700f::SweepRunStatus::Completed);
   assert(result.records[0].mode_id == "freedv700f_b_robust");
-  assert(result.records[0].error_summary.find("profile_only_completed") !=
+  assert(result.records[0].error_summary.find("surrogate_completed") !=
+         std::string::npos);
+  assert(result.records[0].implementation_status == "surrogate");
+  assert(result.records[0].not_real_modem);
+  assert(!result.records[0].downselect_valid);
+  assert(result.records[0].not_downselect_valid);
+  assert(!result.records[0].performance_valid);
+  assert(!result.records[0].surrogate_model_name.empty());
+  assert(!result.records[0].surrogate_model_version.empty());
+  assert(result.records[0].surrogate_limitations.find("BER/FER") !=
+         std::string::npos);
+  assert(result.records[0].synthetic_metrics_label.find("synthetic") !=
          std::string::npos);
 
   const auto json = f700f::sweep_result_to_json(result);
   assert(json.find("freedv700f_b_robust") != std::string::npos);
   assert(json.find("completed") != std::string::npos);
-  assert(json.find("profile_only_completed") != std::string::npos);
+  assert(json.find("surrogate_completed") != std::string::npos);
+  assert(json.find("\"not_real_modem\": true") != std::string::npos);
+  assert(json.find("\"downselect_valid\": false") != std::string::npos);
+  assert(json.find("\"not_downselect_valid\": true") != std::string::npos);
+  assert(json.find("\"performance_valid\": false") != std::string::npos);
+  assert(json.find("surrogate_readiness_score_synthetic") != std::string::npos);
 }
 
 } // namespace
@@ -180,8 +214,8 @@ int main() {
   descriptors_are_obtainable_and_unique();
   profile_targets_are_encoded_in_descriptors();
   registry_selects_candidate_profiles();
-  encode_decode_report_profile_only_status();
-  metrics_snapshot_and_json_report_preserve_profile();
-  sweep_runner_reaches_profile_and_reports_profile_only_completion();
+  encode_decode_report_surrogate_boundary();
+  metrics_snapshot_and_json_report_preserve_surrogate_boundary();
+  sweep_runner_reaches_surrogate_and_reports_non_real_completion();
   return 0;
 }
