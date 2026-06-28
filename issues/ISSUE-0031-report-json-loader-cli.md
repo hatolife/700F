@@ -1,7 +1,7 @@
 # ISSUE-0031: report JSON loader and CLI
 
 ## Status
-open
+closed
 
 ## Scope
 module:15,12
@@ -41,7 +41,7 @@ CLI.
 - [x] Descriptor-only rows appear in the report.
 - [x] Report states whether real downselect is possible.
 - [x] Malformed JSON/CSV fails clearly.
-- [ ] Local CI passes.
+- [x] Local CI passes.
 
 ## Test plan
 - Add red tests before implementation.
@@ -60,6 +60,9 @@ CLI.
   Full `bash ./tools/run_ci_local.sh` is blocked by unrelated
   `sweep_config_loader_contract` and `sweep_cli_missing_config` failures in the
   ISSUE-0030 sweep CLI/config-loader area.
+- 2026-06-29 JST: Integrated develop CI after ISSUE-0029/0030/0031 passed with
+  20/20 CTest tests.
 
 ## Result
-Implemented JSON/CSV report loader, `f700f-report` CLI, report/CLI tests, and docs.
+Merged locally to `develop`. Implemented JSON/CSV report loader, `f700f-report`
+CLI, report/CLI tests, and docs.

@@ -42,9 +42,9 @@
 | ISSUE-0026 | closed | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
 | ISSUE-0027 | closed | P0 | module:15 | M2 baseline comparison report generation | Module 15 + Module 12 | feature/ISSUE-0027-baseline-comparison-report | v0.2.0 | M2 | ISSUE-0018, ISSUE-0024, ISSUE-0026 | 2026-06-28 |
 | ISSUE-0028 | closed | P0 | module:13,10 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | feature/ISSUE-0028-m2-campaign-mode-registry | v0.2.0 | M2 | ISSUE-0018, ISSUE-0026 | 2026-06-28 |
-| ISSUE-0029 | open | P0 | module:10,11,15 | SSB audio export | Module 10 + Module 11 + Module 15 | feature/ISSUE-0029-ssb-audio-export | v0.2.0 target | M2-D | ISSUE-0023, ISSUE-0028 | 2026-06-29 |
-| ISSUE-0030 | open | P0 | module:13 | sweep CLI and config loader | Module 13 + Manager | feature/ISSUE-0030-sweep-cli-config-loader | v0.2.0 target | M2-D | ISSUE-0023, ISSUE-0028 | 2026-06-28 |
-| ISSUE-0031 | open | P0 | module:15,12 | report JSON loader and CLI | Module 15 + Module 12 | feature/ISSUE-0031-report-json-loader-cli | v0.2.0 target | M2-D | ISSUE-0023, ISSUE-0027, ISSUE-0028 | 2026-06-28 |
+| ISSUE-0029 | closed | P0 | module:10,11,15 | SSB audio export | Module 10 + Module 11 + Module 15 | feature/ISSUE-0029-ssb-audio-export | v0.2.0 | M2-D | ISSUE-0023, ISSUE-0028 | 2026-06-29 |
+| ISSUE-0030 | closed | P0 | module:13 | sweep CLI and config loader | Module 13 + Manager | feature/ISSUE-0030-sweep-cli-config-loader | v0.2.0 | M2-D | ISSUE-0023, ISSUE-0028 | 2026-06-29 |
+| ISSUE-0031 | closed | P0 | module:15,12 | report JSON loader and CLI | Module 15 + Module 12 | feature/ISSUE-0031-report-json-loader-cli | v0.2.0 | M2-D | ISSUE-0023, ISSUE-0027, ISSUE-0028 | 2026-06-29 |
 | ISSUE-0032 | planned | P0 | module:02,06,07,09,11,13 | 700F candidate minimal behavior bridge | Module 02 + candidate modules | feature/ISSUE-0032-700f-candidate-minimal-behavior | v0.2.0 target | M2-D | ISSUE-0029, ISSUE-0030, ISSUE-0031 | 2026-06-28 |
 | ISSUE-0033 | planned | P0 | module:10,11,13 | 700D/700E emulator minimal behavior bridge | Module 10 + Module 11 + Module 13 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | v0.2.0 target | M2-D | ISSUE-0029, ISSUE-0030, ISSUE-0031 | 2026-06-28 |
 | ISSUE-0034 | planned | P1 | module:05,10 | official FreeDV waveform roundtrip research/integration | Module 05 + Module 10 | research/ISSUE-0034-official-freedv-waveform-roundtrip | v0.2.0 target | M2-D | ISSUE-0007, ISSUE-0012 | 2026-06-28 |
@@ -138,3 +138,11 @@
 - ISSUE-0032 through ISSUE-0035 are planned follow-ups and should not be merged
   ahead of the first wave unless Manager explicitly reprioritizes.
 - M2-D dispatch plan: `docs/coordination/m2d_dispatch_plan.md`.
+
+## M2-D partial integration status
+
+- ISSUE-0029, ISSUE-0030, and ISSUE-0031 are integrated locally into `develop`.
+- Final integrated local CI passed with 20 CTest tests.
+- CLI smoke ran through `f700f-sweep`; comparison Markdown was generated through
+  `f700f-report`.
+- Real candidate downselect remains prohibited.

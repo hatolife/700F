@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2d-smoke-004-ssb-narrow-1k9-awgn-snr-6db-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_narrow_1k9",
+  "deterministic_digest": "4c2be2af7e8b20fd",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.157322}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

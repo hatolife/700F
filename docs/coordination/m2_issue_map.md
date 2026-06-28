@@ -21,9 +21,9 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0026 | M2 sweep campaign runner config | complete | Follow-up issue for requested sweep campaign path. |
 | ISSUE-0027 | M2 baseline comparison report generation | complete | Follow-up issue for requested comparison report path. |
 | ISSUE-0028 | M2-C campaign mode registry bridge | complete | M2 smoke modes register SSB/emulator/profile factories, produce completed metadata-only/profile-only rows, and keep official FreeDV explicit skips. |
-| ISSUE-0029 | M2-D SSB audio export | open | First-wave low-risk tooling/readiness issue. |
-| ISSUE-0030 | M2-D sweep CLI and config loader | open | First-wave low-risk tooling issue. |
-| ISSUE-0031 | M2-D report JSON loader and CLI | open | First-wave low-risk reporting issue. |
+| ISSUE-0029 | M2-D SSB audio export | complete | First-wave low-risk tooling/readiness issue integrated locally. |
+| ISSUE-0030 | M2-D sweep CLI and config loader | complete | First-wave low-risk tooling issue integrated locally. |
+| ISSUE-0031 | M2-D report JSON loader and CLI | complete | First-wave low-risk reporting issue integrated locally. |
 | ISSUE-0032 | M2-D 700F candidate minimal behavior bridge | planned | Requires careful surrogate/not-downselect-valid labeling. |
 | ISSUE-0033 | M2-D 700D/700E emulator minimal behavior bridge | planned | Must not imply official FreeDV behavior. |
 | ISSUE-0034 | M2-D official FreeDV waveform roundtrip | planned | Heavy Codec2/FreeDV integration/research. |
@@ -50,3 +50,8 @@ official baseline roundtrip rows are available.
 ISSUE-0023 decided `M2_GO_WITH_LIMITATIONS`. Start ISSUE-0029 through ISSUE-0031
 first. Keep ISSUE-0032 through ISSUE-0035 planned until the first-wave tooling
 path is available or Manager explicitly reprioritizes.
+
+ISSUE-0029 through ISSUE-0031 are integrated locally. ISSUE-0032, ISSUE-0033,
+ISSUE-0034, and ISSUE-0035 are now startable in priority order, but real
+candidate downselect remains prohibited until surrogate/emulator/official
+semantics are explicit in reports.

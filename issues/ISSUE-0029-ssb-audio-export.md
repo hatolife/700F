@@ -1,7 +1,7 @@
 # ISSUE-0029: SSB audio export
 
 ## Status
-open
+closed
 
 ## Scope
 module:10,11,15
@@ -37,7 +37,7 @@ path to reports without changing default Codec2 behavior.
 - [x] Export disabled records clear N/A.
 - [x] Zero-length audio does not crash.
 - [x] Invalid output directory fails with a clear error.
-- [ ] Local CI passes.
+- [x] Local CI passes.
 
 ## Test plan
 - Add red tests before implementation.
@@ -51,7 +51,9 @@ path to reports without changing default Codec2 behavior.
 
 ## Local verification
 - Targeted tests: `test_simulation_pipeline`, `test_sweep_runner` pass.
-- Project-wide `ctest` is partially blocked by unrelated `sweep_config_loader` test failures on this branch.
+- Integrated develop CI after ISSUE-0029/0030/0031 passed with 20/20 CTest tests.
 
 ## Result
-In progress.
+Merged locally to `develop`. SSB rows now propagate `audio_export_path`; disabled
+export records `N/A`. The M2-D CLI smoke used the default config with export
+disabled, so SSB audio artifacts were not generated in that smoke run.

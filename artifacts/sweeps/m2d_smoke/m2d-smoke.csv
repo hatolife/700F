@@ -1,0 +1,28 @@
+run_id,status,mode_id,condition_id,seed,simulation_ok,digest,audio_export_path,skipped_reason,error_summary
+m2d-smoke-000-ssb-standard-3k-identity-seed-1,completed,ssb_standard_3k,identity,1,true,e41b66e121e07e62,N/A,,
+m2d-smoke-001-ssb-standard-3k-awgn-snr-6db-seed-1,completed,ssb_standard_3k,awgn-snr-6db,1,true,05741620693d28d9,N/A,,
+m2d-smoke-002-ssb-standard-3k-awgn-snr-0db-seed-1,completed,ssb_standard_3k,awgn-snr-0db,1,true,9593839602b653d0,N/A,,
+m2d-smoke-003-ssb-narrow-1k9-identity-seed-1,completed,ssb_narrow_1k9,identity,1,true,091552dcf4cb4e07,N/A,,
+m2d-smoke-004-ssb-narrow-1k9-awgn-snr-6db-seed-1,completed,ssb_narrow_1k9,awgn-snr-6db,1,true,4c2be2af7e8b20fd,N/A,,
+m2d-smoke-005-ssb-narrow-1k9-awgn-snr-0db-seed-1,completed,ssb_narrow_1k9,awgn-snr-0db,1,true,b375890b34b9d1f0,N/A,,
+m2d-smoke-006-freedv700d-emulated-identity-seed-1,completed,freedv700d_emulated,identity,1,true,e96c4f0c6b16e054,N/A,,descriptor_only_completed: waveform encode/decode not run
+m2d-smoke-007-freedv700d-emulated-awgn-snr-6db-seed-1,completed,freedv700d_emulated,awgn-snr-6db,1,true,ecdbe2320b4513cc,N/A,,descriptor_only_completed: waveform encode/decode not run
+m2d-smoke-008-freedv700d-emulated-awgn-snr-0db-seed-1,completed,freedv700d_emulated,awgn-snr-0db,1,true,4b1ee4be76a430bd,N/A,,descriptor_only_completed: waveform encode/decode not run
+m2d-smoke-009-freedv700e-emulated-identity-seed-1,completed,freedv700e_emulated,identity,1,true,f4a73481a878cb45,N/A,,descriptor_only_completed: waveform encode/decode not run
+m2d-smoke-010-freedv700e-emulated-awgn-snr-6db-seed-1,completed,freedv700e_emulated,awgn-snr-6db,1,true,a46956290a7a13ba,N/A,,descriptor_only_completed: waveform encode/decode not run
+m2d-smoke-011-freedv700e-emulated-awgn-snr-0db-seed-1,completed,freedv700e_emulated,awgn-snr-0db,1,true,a6820a55edc5a459,N/A,,descriptor_only_completed: waveform encode/decode not run
+m2d-smoke-012-freedv700d-official-identity-seed-1,skipped,freedv700d_official,identity,1,false,,N/A,official_waveform_roundtrip_not_implemented: default M2 smoke keeps official FreeDV skipped until Codec2 official roundtrip is wired,
+m2d-smoke-013-freedv700d-official-awgn-snr-6db-seed-1,skipped,freedv700d_official,awgn-snr-6db,1,false,,N/A,official_waveform_roundtrip_not_implemented: default M2 smoke keeps official FreeDV skipped until Codec2 official roundtrip is wired,
+m2d-smoke-014-freedv700d-official-awgn-snr-0db-seed-1,skipped,freedv700d_official,awgn-snr-0db,1,false,,N/A,official_waveform_roundtrip_not_implemented: default M2 smoke keeps official FreeDV skipped until Codec2 official roundtrip is wired,
+m2d-smoke-015-freedv700e-official-identity-seed-1,skipped,freedv700e_official,identity,1,false,,N/A,official_waveform_roundtrip_not_implemented: default M2 smoke keeps official FreeDV skipped until Codec2 official roundtrip is wired,
+m2d-smoke-016-freedv700e-official-awgn-snr-6db-seed-1,skipped,freedv700e_official,awgn-snr-6db,1,false,,N/A,official_waveform_roundtrip_not_implemented: default M2 smoke keeps official FreeDV skipped until Codec2 official roundtrip is wired,
+m2d-smoke-017-freedv700e-official-awgn-snr-0db-seed-1,skipped,freedv700e_official,awgn-snr-0db,1,false,,N/A,official_waveform_roundtrip_not_implemented: default M2 smoke keeps official FreeDV skipped until Codec2 official roundtrip is wired,
+m2d-smoke-018-freedv700f-a-balanced-identity-seed-1,completed,freedv700f_a_balanced,identity,1,true,ee53e3455129b4af,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-019-freedv700f-a-balanced-awgn-snr-6db-seed-1,completed,freedv700f_a_balanced,awgn-snr-6db,1,true,b13f3424622caa01,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-020-freedv700f-a-balanced-awgn-snr-0db-seed-1,completed,freedv700f_a_balanced,awgn-snr-0db,1,true,fa0400da28a2bf13,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-021-freedv700f-b-robust-identity-seed-1,completed,freedv700f_b_robust,identity,1,true,8981597353bd6933,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-022-freedv700f-b-robust-awgn-snr-6db-seed-1,completed,freedv700f_b_robust,awgn-snr-6db,1,true,48e34f047d91d13f,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-023-freedv700f-b-robust-awgn-snr-0db-seed-1,completed,freedv700f_b_robust,awgn-snr-0db,1,true,4a5a612f81988bb6,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-024-freedv700f-c-quality-identity-seed-1,completed,freedv700f_c_quality,identity,1,true,b83a4560240c090e,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-025-freedv700f-c-quality-awgn-snr-6db-seed-1,completed,freedv700f_c_quality,awgn-snr-6db,1,true,ce5a7cca2f452478,N/A,,profile_only_completed: waveform encode/decode not run
+m2d-smoke-026-freedv700f-c-quality-awgn-snr-0db-seed-1,completed,freedv700f_c_quality,awgn-snr-0db,1,true,3994b8897d1b3c3b,N/A,,profile_only_completed: waveform encode/decode not run

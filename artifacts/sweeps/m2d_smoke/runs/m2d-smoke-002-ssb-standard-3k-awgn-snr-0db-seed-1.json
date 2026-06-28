@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2d-smoke-002-ssb-standard-3k-awgn-snr-0db-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_standard_3k",
+  "deterministic_digest": "9593839602b653d0",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.141332}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}
