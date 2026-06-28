@@ -255,6 +255,87 @@ void test_surrogate_guardrails_survive_result_serialization() {
          "0.625");
 }
 
+void test_real_modem_prototype_diagnostics_survive_result_serialization() {
+  auto artifact = digital_like_result();
+  artifact.mode_descriptor.mode_id = "freedv700f_a_balanced";
+  artifact.mode_descriptor.implementation_status = "real_modem_prototype";
+  artifact.mode_descriptor.implementation_classification =
+      "real_modem_prototype";
+  artifact.mode_descriptor.prototype = true;
+  artifact.mode_descriptor.not_final_modem = true;
+  artifact.mode_descriptor.downselect_valid = false;
+  artifact.mode_descriptor.not_downselect_valid = true;
+  artifact.mode_descriptor.performance_valid = false;
+  artifact.mode_descriptor.performance_validity = "limited";
+  artifact.mode_descriptor.downselect_validity = "invalid";
+  artifact.mode_descriptor.codec_family = "synthetic";
+  artifact.mode_descriptor.fec_family = "none";
+  artifact.mode_descriptor.modem_family = "minimal_qpsk_baseband";
+  artifact.mode_descriptor.prototype_limitations =
+      "minimal QPSK-like prototype; no FEC; limited sync; not final performance";
+  artifact.mode_descriptor.prototype_warning =
+      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only";
+  artifact.prototype_symbol_error_rate = 0.125;
+  artifact.prototype_frame_status = "limited";
+  artifact.prototype_sync_status = "coarse_sync_placeholder";
+  artifact.prototype_baseband_sample_count = 1920;
+  artifact.prototype_limitations =
+      "diagnostic symbol/frame/sync values are prototype-only";
+  artifact.warnings.push_back(artifact.mode_descriptor.prototype_warning);
+
+  const auto json = f700f::metrics::to_json(artifact);
+  assert(json.find("\"implementation_status\":\"real_modem_prototype\"") !=
+         std::string::npos);
+  assert(json.find("\"implementation_classification\":\"real_modem_prototype\"") !=
+         std::string::npos);
+  assert(json.find("\"performance_validity\":\"limited\"") !=
+         std::string::npos);
+  assert(json.find("\"downselect_validity\":\"invalid\"") !=
+         std::string::npos);
+  assert(json.find("\"prototype_symbol_error_rate\":0.125") !=
+         std::string::npos);
+  assert(json.find("\"prototype_frame_status\":\"limited\"") !=
+         std::string::npos);
+  assert(json.find("\"prototype_sync_status\":\"coarse_sync_placeholder\"") !=
+         std::string::npos);
+  assert(json.find("\"prototype_baseband_sample_count\":1920") !=
+         std::string::npos);
+
+  auto parsed = f700f::metrics::from_json(json);
+  assert(parsed.mode_descriptor.implementation_status ==
+         "real_modem_prototype");
+  assert(parsed.mode_descriptor.implementation_classification ==
+         "real_modem_prototype");
+  assert(!parsed.mode_descriptor.downselect_valid);
+  assert(parsed.mode_descriptor.not_downselect_valid);
+  assert(!parsed.mode_descriptor.performance_valid);
+  assert(parsed.mode_descriptor.performance_validity == "limited");
+  assert(parsed.mode_descriptor.downselect_validity == "invalid");
+  assert(parsed.mode_descriptor.modem_family == "minimal_qpsk_baseband");
+  assert(parsed.mode_descriptor.prototype_warning.find("limited diagnostics") !=
+         std::string::npos);
+  assert(parsed.prototype_symbol_error_rate.has_value());
+  assert(parsed.prototype_symbol_error_rate.value() == 0.125);
+  assert(parsed.prototype_frame_status == "limited");
+  assert(parsed.prototype_sync_status == "coarse_sync_placeholder");
+  assert(parsed.prototype_baseband_sample_count == 1920);
+  assert(parsed.prototype_limitations.find("prototype-only") !=
+         std::string::npos);
+
+  const auto extras = f700f::metrics::metric_column_names(artifact);
+  const auto header = f700f::metrics::to_csv_header(extras);
+  const auto row = f700f::metrics::to_csv_row(artifact, extras);
+  parsed = f700f::metrics::from_csv_row(header, row);
+  assert(parsed.mode_descriptor.implementation_status ==
+         "real_modem_prototype");
+  assert(parsed.mode_descriptor.performance_validity == "limited");
+  assert(parsed.prototype_symbol_error_rate.has_value());
+  assert(parsed.prototype_symbol_error_rate.value() == 0.125);
+  assert(parsed.prototype_frame_status == "limited");
+  assert(parsed.prototype_sync_status == "coarse_sync_placeholder");
+  assert(parsed.prototype_baseband_sample_count == 1920);
+}
+
 }  // namespace
 
 int main() {
@@ -266,5 +347,6 @@ int main() {
   test_csv_minimum_columns();
   test_unknown_optional_metrics_survive();
   test_surrogate_guardrails_survive_result_serialization();
+  test_real_modem_prototype_diagnostics_survive_result_serialization();
   return 0;
 }

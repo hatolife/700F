@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0044 prototype modem classification and diagnostic fields while keeping
+  waveform and real modem prototypes out of real performance scoring.
 - Add ISSUE-0032 surrogate guardrail fields and keep synthetic surrogate readiness
   separate from real performance score and BER/FER availability.
 - Add ISSUE-0024 interim M2 scoring model with completed/skipped/failed aggregation,

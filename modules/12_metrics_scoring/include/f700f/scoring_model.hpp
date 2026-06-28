@@ -33,6 +33,10 @@ struct M2ModeScore {
   std::uint64_t profile_only_count = 0;
   std::uint64_t surrogate_count = 0;
   std::uint64_t emulated_surrogate_count = 0;
+  std::uint64_t prototype_count = 0;
+  std::uint64_t waveform_prototype_count = 0;
+  std::uint64_t real_modem_prototype_count = 0;
+  std::uint64_t prototype_diagnostic_count = 0;
   std::uint64_t performance_valid_count = 0;
   std::uint64_t performance_invalid_count = 0;
   std::uint64_t audio_only_ber_fer_na_count = 0;
@@ -56,6 +60,11 @@ struct M2ModeScore {
   double score = 0.0;
   double real_performance_score = 0.0;
   double surrogate_readiness_score = 0.0;
+  std::optional<double> prototype_symbol_error_rate;
+  std::string prototype_frame_status;
+  std::string prototype_sync_status;
+  std::uint64_t prototype_baseband_sample_count = 0;
+  std::string prototype_limitations;
   bool profile_only = false;
   bool surrogate = false;
 };

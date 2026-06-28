@@ -21,8 +21,9 @@ available or has not produced artifacts.
 
 ISSUE-0031 adds a CLI path that loads sweep aggregate JSON/CSV artifacts, translates
 rows into reporting/scoring artifacts, and renders this same Markdown report. Loaded
-surrogate, waveform-prototype, profile-only, descriptor-only, emulated-surrogate,
-skipped, or failed rows must be labeled as non-performance evidence.
+surrogate, waveform-prototype, real-modem-prototype, profile-only,
+descriptor-only, emulated-surrogate, skipped, or failed rows must be labeled as
+non-performance evidence.
 
 ## Required Markdown Sections
 
@@ -38,7 +39,7 @@ Generated reports include:
 - baseline and candidate status for official FreeDV, SSB references, and 700F
   candidates;
 - explicit surrogate/prototype warnings and real-performance-vs-readiness separation
-  when surrogate or waveform-prototype rows are present;
+  when surrogate, waveform-prototype, or real-modem-prototype rows are present;
 - known limitations;
 - explicit real-downselect feasibility statement;
 - next recommendation placeholder.
@@ -75,6 +76,12 @@ such as `2026-06-28T12:34:56Z` becomes `20260628T123456Z`.
   displayed as waveform-capable but non-final prototype evidence with
   `prototype=true`, `not_final_modem=true`, `performance_valid=false`, and
   `downselect_valid=false`. They prevent real downselect.
+- 700F entries with `implementation_status = "real_modem_prototype"` are displayed
+  as limited diagnostic evidence with `performance_valid=false`,
+  `performance_validity=limited`, `downselect_valid=false`,
+  `downselect_validity=invalid`, and visible prototype diagnostics such as symbol
+  error rate, frame status, sync status, baseband sample count, and limitations.
+  They prevent real downselect.
 - `freedv700d_emulated` and `freedv700e_emulated` rows with
   `implementation_status = "emulated_surrogate"` are displayed as non-official
   FreeDV surrogates with `not_official_freedv=true`, `performance_valid=false`,

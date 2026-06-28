@@ -28,10 +28,13 @@ struct ModeDescriptorSnapshot {
   bool official_baseline = false;
   bool emulator = false;
   std::string implementation_status;
+  std::string implementation_classification;
   bool not_real_modem = false;
   bool downselect_valid = true;
   bool not_downselect_valid = false;
   bool performance_valid = true;
+  std::string performance_validity = "valid";
+  std::string downselect_validity = "valid";
   bool prototype = false;
   bool not_final_modem = false;
   bool waveform_capable = false;
@@ -39,6 +42,7 @@ struct ModeDescriptorSnapshot {
   std::string fec_family;
   std::string modem_family;
   std::string prototype_limitations;
+  std::string prototype_warning;
   std::string surrogate_model_name;
   std::string surrogate_model_version;
   std::string surrogate_limitations;
@@ -77,6 +81,11 @@ struct ResultArtifact {
   std::vector<std::string> warnings;
   std::optional<std::string> skipped_reason;
   std::optional<std::string> error_summary;
+  std::optional<double> prototype_symbol_error_rate;
+  std::string prototype_frame_status;
+  std::string prototype_sync_status;
+  std::uint64_t prototype_baseband_sample_count = 0;
+  std::string prototype_limitations;
   std::map<std::string, std::string> optional_metrics;
 };
 

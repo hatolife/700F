@@ -193,6 +193,51 @@ void completed_waveform_prototype_rows_do_not_score_as_real_performance() {
   assert(!candidate->profile_snapshot->performance_valid);
 }
 
+void completed_real_modem_prototype_rows_are_limited_diagnostics_only() {
+  auto prototype = make_result("freedv700f_a_balanced");
+  prototype.mode_descriptor.implementation_status = "real_modem_prototype";
+  prototype.mode_descriptor.implementation_classification =
+      "real_modem_prototype";
+  prototype.mode_descriptor.prototype = true;
+  prototype.mode_descriptor.not_final_modem = true;
+  prototype.mode_descriptor.downselect_valid = false;
+  prototype.mode_descriptor.not_downselect_valid = true;
+  prototype.mode_descriptor.performance_valid = false;
+  prototype.mode_descriptor.performance_validity = "limited";
+  prototype.mode_descriptor.downselect_validity = "invalid";
+  prototype.mode_descriptor.modem_family = "minimal_qpsk_baseband";
+  prototype.mode_descriptor.fec_family = "none";
+  prototype.mode_descriptor.codec_family = "synthetic";
+  prototype.mode_descriptor.prototype_warning =
+      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only";
+  prototype.prototype_symbol_error_rate = 0.25;
+  prototype.prototype_frame_status = "limited";
+  prototype.prototype_sync_status = "pilot_placeholder";
+  prototype.prototype_baseband_sample_count = 3840;
+  prototype.prototype_limitations = "not final 700F performance";
+
+  const auto report = f700f::metrics::score_m2_results(
+      {prototype}, {}, f700f::metrics::make_m2_score_policy());
+
+  const auto *candidate = report.find_mode("freedv700f_a_balanced");
+  assert(candidate != nullptr);
+  assert(candidate->completed_count == 1);
+  assert(candidate->prototype_count == 1);
+  assert(candidate->real_modem_prototype_count == 1);
+  assert(candidate->prototype_diagnostic_count == 1);
+  assert(candidate->performance_valid_count == 0);
+  assert(candidate->performance_invalid_count == 1);
+  assert(candidate->completed_run_ratio == 0.0);
+  assert(candidate->score == 0.0);
+  assert(candidate->real_performance_score == 0.0);
+  assert(candidate->profile_snapshot.has_value());
+  assert(candidate->profile_snapshot->implementation_status ==
+         "real_modem_prototype");
+  assert(candidate->profile_snapshot->performance_validity == "limited");
+  assert(candidate->profile_snapshot->downselect_validity == "invalid");
+  assert(!candidate->profile_snapshot->downselect_valid);
+}
+
 void emulated_surrogate_completed_rows_are_not_performance_evidence() {
   auto surrogate = make_result("freedv700d_emulated");
   surrogate.mode_descriptor.implementation_status = "emulated_surrogate";
@@ -225,6 +270,7 @@ int main() {
   surrogate_snapshot_is_carried_without_performance_evidence();
   completed_surrogate_rows_do_not_score_as_real_performance();
   completed_waveform_prototype_rows_do_not_score_as_real_performance();
+  completed_real_modem_prototype_rows_are_limited_diagnostics_only();
   emulated_surrogate_completed_rows_are_not_performance_evidence();
   return 0;
 }

@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0044 report warnings and artifact loading for real modem prototype
+  diagnostics with real downselect kept blocked.
 - Add ISSUE-0032 surrogate row loading and Markdown warnings with real-performance
   score separated from synthetic surrogate readiness.
 - Add ISSUE-0027 M2 baseline comparison Markdown renderer over Module 12 scoring output.

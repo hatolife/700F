@@ -239,37 +239,71 @@ bool is_surrogate_status(const std::string &status) {
   return status == "surrogate";
 }
 
+bool is_prototype_status(const std::string &status) {
+  return status == "waveform_prototype" || status == "real_modem_prototype";
+}
+
 bool is_non_performance_status(const std::string &status) {
   return status == "surrogate" || status == "profile_only" ||
          status == "descriptor_only" || status == "descriptor-only" ||
-         status == "waveform_prototype";
+         status == "toy" || status == "waveform_prototype" ||
+         status == "real_modem_prototype" ||
+         status == "emulated_surrogate";
 }
 
 void apply_surrogate_snapshot_defaults(
     f700f::metrics::ModeDescriptorSnapshot &snapshot) {
+  if (snapshot.implementation_classification.empty()) {
+    snapshot.implementation_classification =
+        snapshot.implementation_status.empty()
+            ? (snapshot.official_baseline ? "official" : "unknown")
+            : snapshot.implementation_status;
+  }
   if (is_non_performance_status(snapshot.implementation_status)) {
     snapshot.downselect_valid = false;
     snapshot.not_downselect_valid = true;
     snapshot.performance_valid = false;
   }
+  snapshot.downselect_validity =
+      snapshot.downselect_valid ? "valid" : "invalid";
+  if (snapshot.performance_valid) {
+    snapshot.performance_validity = "valid";
+  } else if (snapshot.performance_validity.empty() ||
+             snapshot.performance_validity == "valid") {
+    snapshot.performance_validity =
+        is_prototype_status(snapshot.implementation_status) ? "limited"
+                                                           : "invalid";
+  }
 
   if (!is_surrogate_status(snapshot.implementation_status)) {
-    if (snapshot.implementation_status == "waveform_prototype") {
+    if (is_prototype_status(snapshot.implementation_status)) {
       snapshot.prototype = true;
       snapshot.not_final_modem = true;
-      snapshot.waveform_capable = true;
+      if (snapshot.implementation_status == "waveform_prototype") {
+        snapshot.waveform_capable = true;
+        if (snapshot.modem_family.empty()) {
+          snapshot.modem_family = "toy_audio_waveform";
+        }
+      } else if (snapshot.modem_family.empty()) {
+        snapshot.modem_family = "minimal_qpsk_baseband";
+      }
       if (snapshot.codec_family.empty()) {
         snapshot.codec_family = "synthetic";
       }
       if (snapshot.fec_family.empty()) {
         snapshot.fec_family = "none";
       }
-      if (snapshot.modem_family.empty()) {
-        snapshot.modem_family = "toy_audio_waveform";
-      }
       if (snapshot.prototype_limitations.empty()) {
         snapshot.prototype_limitations =
-            "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect";
+            snapshot.implementation_status == "real_modem_prototype"
+                ? "limited real modem prototype diagnostics only; no final FEC/sync/codec claims; not valid for real downselect"
+                : "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect";
+      }
+      if (snapshot.prototype_warning.empty()) {
+        snapshot.prototype_warning =
+            snapshot.implementation_status == "real_modem_prototype"
+                ? "REAL MODEM PROTOTYPE WARNING: limited diagnostics only; not real performance; downselect_valid=false"
+                : "WAVEFORM PROTOTYPE WARNING: readiness evidence only; not real performance; downselect_valid=false";
       }
     }
     return;
@@ -334,6 +368,16 @@ std::string extract_quoted_field(const std::string &json,
     out.push_back(json[i]);
   }
   return {};
+}
+
+std::string extract_quoted_field_after(const std::string &json,
+                                      const std::string &key,
+                                      const std::string &after_key) {
+  const auto after_pos = json.find("\"" + after_key + "\"");
+  if (after_pos == std::string::npos) {
+    return extract_quoted_field(json, key);
+  }
+  return extract_quoted_field(json.substr(after_pos), key);
 }
 
 std::string find_object_for_key(const std::string &json, const std::string &key) {
@@ -666,6 +710,9 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
   append_json_key_value(out, "implementation_status",
                         snapshot.implementation_status);
   out.push_back(',');
+  append_json_key_value(out, "implementation_classification",
+                        snapshot.implementation_classification);
+  out.push_back(',');
   out += "\"not_real_modem\":" + bool_to_json(snapshot.not_real_modem);
   out.push_back(',');
   out += "\"downselect_valid\":" + bool_to_json(snapshot.downselect_valid);
@@ -674,6 +721,12 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
          bool_to_json(snapshot.not_downselect_valid);
   out.push_back(',');
   out += "\"performance_valid\":" + bool_to_json(snapshot.performance_valid);
+  out.push_back(',');
+  append_json_key_value(out, "performance_validity",
+                        snapshot.performance_validity);
+  out.push_back(',');
+  append_json_key_value(out, "downselect_validity",
+                        snapshot.downselect_validity);
   out.push_back(',');
   out += "\"prototype\":" + bool_to_json(snapshot.prototype);
   out.push_back(',');
@@ -689,6 +742,9 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
   out.push_back(',');
   append_json_key_value(out, "prototype_limitations",
                         snapshot.prototype_limitations);
+  out.push_back(',');
+  append_json_key_value(out, "prototype_warning",
+                        snapshot.prototype_warning);
   out.push_back(',');
   append_json_key_value(out, "surrogate_model_name",
                         snapshot.surrogate_model_name);
@@ -791,6 +847,21 @@ std::string to_json(const ResultArtifact &result) {
     out += "\"error_summary\":null";
   }
   out.push_back(',');
+  out += "\"prototype_symbol_error_rate\":" +
+         optional_to_json(result.prototype_symbol_error_rate);
+  out.push_back(',');
+  append_json_key_value(out, "prototype_frame_status",
+                        result.prototype_frame_status);
+  out.push_back(',');
+  append_json_key_value(out, "prototype_sync_status",
+                        result.prototype_sync_status);
+  out.push_back(',');
+  out += "\"prototype_baseband_sample_count\":" +
+         std::to_string(result.prototype_baseband_sample_count);
+  out.push_back(',');
+  append_json_key_value(out, "prototype_limitations",
+                        result.prototype_limitations);
+  out.push_back(',');
   out += "\"optional_metrics\":";
   out += json_string_map(result.optional_metrics);
   out.push_back('}');
@@ -803,7 +874,10 @@ std::vector<std::string> required_csv_columns() {
       "mode_descriptor_snapshot", "channel_id", "channel_parameters", "seed",
       "snr_db", "freq_offset_hz", "frame_count", "sample_count", "ber", "fer",
       "sync_loss_count", "dropout_rate", "latency_estimate_s",
-      "audio_export_path", "warnings", "skipped_reason", "error_summary"};
+      "audio_export_path", "warnings", "skipped_reason", "error_summary",
+      "prototype_symbol_error_rate", "prototype_frame_status",
+      "prototype_sync_status", "prototype_baseband_sample_count",
+      "prototype_limitations"};
 }
 
 std::string to_csv_header(const std::vector<std::string> &extra_columns) {
@@ -850,6 +924,14 @@ std::string to_csv_row(const ResultArtifact &result,
   fields.push_back(csv_quote(join_warning_list(result.warnings)));
   fields.push_back(csv_quote(result.skipped_reason.value_or("")));
   fields.push_back(csv_quote(result.error_summary.value_or("")));
+  fields.push_back(csv_quote(result.prototype_symbol_error_rate
+                                 ? to_string_with_precision(
+                                       *result.prototype_symbol_error_rate)
+                                 : "N/A"));
+  fields.push_back(csv_quote(result.prototype_frame_status));
+  fields.push_back(csv_quote(result.prototype_sync_status));
+  fields.push_back(std::to_string(result.prototype_baseband_sample_count));
+  fields.push_back(csv_quote(result.prototype_limitations));
   for (const auto &col : extra_columns) {
     if (starts_with(col, "opt.")) {
       const auto key = col.substr(4);
@@ -909,6 +991,18 @@ ResultArtifact from_json(const std::string &json_payload) {
   if (!error_raw.empty()) {
     result.error_summary = error_raw;
   }
+  result.prototype_symbol_error_rate = parse_optional_double(
+      extract_raw_numeric_or_null(json_payload, "prototype_symbol_error_rate"));
+  result.prototype_frame_status =
+      extract_quoted_field(json_payload, "prototype_frame_status");
+  result.prototype_sync_status =
+      extract_quoted_field(json_payload, "prototype_sync_status");
+  result.prototype_baseband_sample_count = parse_u64(
+      extract_raw_numeric_or_null(json_payload,
+                                  "prototype_baseband_sample_count"));
+  result.prototype_limitations =
+      extract_quoted_field_after(json_payload, "prototype_limitations",
+                                 "prototype_baseband_sample_count");
 
   const auto channel_blob = find_object_for_key(json_payload, "channel_parameters");
   result.channel_parameters = parse_string_map(channel_blob);
@@ -987,6 +1081,10 @@ ResultArtifact from_json(const std::string &json_payload) {
         it != descriptor_map.end()) {
       result.mode_descriptor.implementation_status = it->second;
     }
+    if (const auto it = descriptor_map.find("implementation_classification");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.implementation_classification = it->second;
+    }
     if (const auto it = descriptor_map.find("not_real_modem");
         it != descriptor_map.end()) {
       result.mode_descriptor.not_real_modem = parse_bool(it->second);
@@ -1002,6 +1100,14 @@ ResultArtifact from_json(const std::string &json_payload) {
     if (const auto it = descriptor_map.find("performance_valid");
         it != descriptor_map.end()) {
       result.mode_descriptor.performance_valid = parse_bool(it->second, true);
+    }
+    if (const auto it = descriptor_map.find("performance_validity");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.performance_validity = it->second;
+    }
+    if (const auto it = descriptor_map.find("downselect_validity");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.downselect_validity = it->second;
     }
     if (const auto it = descriptor_map.find("prototype");
         it != descriptor_map.end()) {
@@ -1030,6 +1136,10 @@ ResultArtifact from_json(const std::string &json_payload) {
     if (const auto it = descriptor_map.find("prototype_limitations");
         it != descriptor_map.end()) {
       result.mode_descriptor.prototype_limitations = it->second;
+    }
+    if (const auto it = descriptor_map.find("prototype_warning");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.prototype_warning = it->second;
     }
     if (const auto it = descriptor_map.find("surrogate_model_name");
         it != descriptor_map.end()) {
@@ -1127,6 +1237,16 @@ ResultArtifact from_csv_row(const std::string &header_line,
       if (!value.empty()) {
         result.error_summary = value;
       }
+    } else if (name == "prototype_symbol_error_rate") {
+      result.prototype_symbol_error_rate = parse_optional_double(value);
+    } else if (name == "prototype_frame_status") {
+      result.prototype_frame_status = value;
+    } else if (name == "prototype_sync_status") {
+      result.prototype_sync_status = value;
+    } else if (name == "prototype_baseband_sample_count") {
+      result.prototype_baseband_sample_count = parse_u64(value);
+    } else if (name == "prototype_limitations") {
+      result.prototype_limitations = value;
     } else if (name == "channel_parameters") {
       result.channel_parameters = parse_string_map(value);
     } else if (name == "mode_descriptor_snapshot") {
@@ -1192,6 +1312,11 @@ ResultArtifact from_csv_row(const std::string &header_line,
           it_status != descriptor_map.end()) {
         result.mode_descriptor.implementation_status = it_status->second;
       }
+      if (const auto it_class =
+              descriptor_map.find("implementation_classification");
+          it_class != descriptor_map.end()) {
+        result.mode_descriptor.implementation_classification = it_class->second;
+      }
       if (const auto it_not_real = descriptor_map.find("not_real_modem");
           it_not_real != descriptor_map.end()) {
         result.mode_descriptor.not_real_modem = parse_bool(it_not_real->second);
@@ -1211,6 +1336,17 @@ ResultArtifact from_csv_row(const std::string &header_line,
           it_performance != descriptor_map.end()) {
         result.mode_descriptor.performance_valid =
             parse_bool(it_performance->second, true);
+      }
+      if (const auto it_perf_validity =
+              descriptor_map.find("performance_validity");
+          it_perf_validity != descriptor_map.end()) {
+        result.mode_descriptor.performance_validity = it_perf_validity->second;
+      }
+      if (const auto it_downselect_validity =
+              descriptor_map.find("downselect_validity");
+          it_downselect_validity != descriptor_map.end()) {
+        result.mode_descriptor.downselect_validity =
+            it_downselect_validity->second;
       }
       if (const auto it_prototype = descriptor_map.find("prototype");
           it_prototype != descriptor_map.end()) {
@@ -1244,6 +1380,12 @@ ResultArtifact from_csv_row(const std::string &header_line,
           it_prototype_limitations != descriptor_map.end()) {
         result.mode_descriptor.prototype_limitations =
             it_prototype_limitations->second;
+      }
+      if (const auto it_prototype_warning =
+              descriptor_map.find("prototype_warning");
+          it_prototype_warning != descriptor_map.end()) {
+        result.mode_descriptor.prototype_warning =
+            it_prototype_warning->second;
       }
       if (const auto it_surrogate_name =
               descriptor_map.find("surrogate_model_name");

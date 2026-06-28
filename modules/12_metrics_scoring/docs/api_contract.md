@@ -27,3 +27,12 @@ ISSUE-0032 extends descriptor snapshots append-only with surrogate guardrail fie
 Completed surrogate rows can carry `surrogate_readiness_score_synthetic`, but real
 performance score remains separate and excludes rows whose `performance_valid` is
 false.
+
+ISSUE-0044 extends descriptor snapshots and result artifacts append-only with
+prototype classification fields: `implementation_classification`,
+`performance_validity`, `downselect_validity`, `prototype_warning`,
+`prototype_symbol_error_rate`, `prototype_frame_status`, `prototype_sync_status`,
+`prototype_baseband_sample_count`, and `prototype_limitations`. Real modem
+prototype rows are limited diagnostics only: `performance_valid=false`,
+`performance_validity=limited`, `downselect_valid=false`, and
+`downselect_validity=invalid`.

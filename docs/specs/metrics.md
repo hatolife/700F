@@ -34,6 +34,11 @@ existing keys must stay stable; new keys can be added to
 | `warnings` | array\<string\> | Runtime warnings generated for this run. |
 | `skipped_reason` | string \| null | Human reason when the run was skipped. |
 | `error_summary` | string \| null | Human summary if the run ended in error. |
+| `prototype_symbol_error_rate` | number or string | Prototype-only symbol error diagnostic, or `"N/A"` when absent. |
+| `prototype_frame_status` | string | Prototype-only frame status diagnostic. |
+| `prototype_sync_status` | string | Prototype-only sync status diagnostic. |
+| `prototype_baseband_sample_count` | number | Prototype-only baseband sample count diagnostic. |
+| `prototype_limitations` | string | Prototype-only limitations for result-level diagnostics. |
 | `optional_metrics` | object | Extendable metrics dictionary (`string` values). |
 
 ### `mode_descriptor` object
@@ -57,10 +62,13 @@ existing keys must stay stable; new keys can be added to
 | `official_baseline` | boolean | Whether this descriptor is an official baseline. |
 | `emulator` | boolean | Whether this descriptor is an emulator/skeleton. |
 | `implementation_status` | string | Runtime implementation status such as `surrogate`, `waveform_prototype`, `profile_only`, or `emulated`. |
+| `implementation_classification` | string | Normalized class such as `surrogate`, `waveform_prototype`, `real_modem_prototype`, `descriptor_only`, `profile_only`, `toy`, or `official`. |
 | `not_real_modem` | boolean | Whether a completed row is explicitly not a real modem implementation. |
 | `downselect_valid` | boolean | Whether the row can be used for real candidate downselect. |
 | `not_downselect_valid` | boolean | Inverse guardrail for reports that need explicit not-downselect-valid text. |
 | `performance_valid` | boolean | Whether BER/FER, RF, audio, latency, and dropout fields can be used as real performance evidence. |
+| `performance_validity` | string | Classification value: `valid`, `limited`, or `invalid`. Prototype rows use `limited` while keeping `performance_valid=false`. |
+| `downselect_validity` | string | Classification value: `valid` or `invalid`; all current prototype rows use `invalid`. |
 | `prototype` | boolean | Whether the row is an experimental prototype rather than a final modem. |
 | `not_final_modem` | boolean | Explicit guardrail for prototype rows that are not final modem implementations. |
 | `waveform_capable` | boolean | Whether the row exercised a waveform encode/decode path. |
@@ -68,6 +76,7 @@ existing keys must stay stable; new keys can be added to
 | `fec_family` | string | Prototype FEC family label, such as `none`. |
 | `modem_family` | string | Prototype modem family label, such as `toy_audio_waveform`. |
 | `prototype_limitations` | string | Human-readable limitations for prototype rows. |
+| `prototype_warning` | string | Human-readable warning that prototype diagnostics are not final performance evidence. |
 | `surrogate_model_name` | string | Surrogate model identifier when `implementation_status = "surrogate"`. |
 | `surrogate_model_version` | string | Surrogate model version when `implementation_status = "surrogate"`. |
 | `surrogate_limitations` | string | Human-readable limits for surrogate rows. |
@@ -79,7 +88,7 @@ existing keys must stay stable; new keys can be added to
 
 ## Required CSV columns (minimum)
 
-`project_version,module_version,run_id,mode_id,mode_descriptor_snapshot,channel_id,channel_parameters,seed,snr_db,freq_offset_hz,frame_count,sample_count,ber,fer,sync_loss_count,dropout_rate,latency_estimate_s,audio_export_path,warnings,skipped_reason,error_summary`
+`project_version,module_version,run_id,mode_id,mode_descriptor_snapshot,channel_id,channel_parameters,seed,snr_db,freq_offset_hz,frame_count,sample_count,ber,fer,sync_loss_count,dropout_rate,latency_estimate_s,audio_export_path,warnings,skipped_reason,error_summary,prototype_symbol_error_rate,prototype_frame_status,prototype_sync_status,prototype_baseband_sample_count,prototype_limitations`
 
 - Unknown/optional metrics appear in additional columns with names prefixed by
   `opt.<metric_name>`.
@@ -159,10 +168,14 @@ existing keys must stay stable; new keys can be added to
   the schema formalizes their dedicated fields.
 - ISSUE-0024/ISSUE-0032/ISSUE-0039 scoring uses the append-only descriptor fields
   `official_baseline`, `emulator`, `implementation_status`, `not_real_modem`,
-  `downselect_valid`, `performance_valid`, `prototype`, `not_final_modem`, and
-  `waveform_capable` to distinguish official-unavailable records from emulator,
-  profile-only, descriptor-only, surrogate, waveform-prototype, and real
-  performance records.
+  `implementation_classification`, `downselect_valid`, `downselect_validity`,
+  `performance_valid`, `performance_validity`, `prototype`, `not_final_modem`, and
+  `waveform_capable` to distinguish official-unavailable records from toy,
+  emulator, profile-only, descriptor-only, surrogate, waveform-prototype,
+  real-modem-prototype, and real performance records.
 - Surrogate rows must leave `ber` and `fer` as `"N/A"`/unset. Any readiness metric
   must be stored in `optional_metrics` with a synthetic label, such as
   `surrogate_readiness_score_synthetic` and `synthetic_metrics_label`.
+- Real modem prototype rows may carry prototype diagnostics, but must keep
+  `performance_valid=false`, `performance_validity=limited`,
+  `downselect_valid=false`, and `downselect_validity=invalid`.

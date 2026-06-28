@@ -9,6 +9,8 @@
 - The report preserves ISSUE-0032 700F surrogate candidates as not-real-modem,
   not-downselect-valid, non-performance evidence until later implementation issues
   produce waveform-capable candidate runs.
+- ISSUE-0044 real modem prototype rows are displayed as limited diagnostics with
+  warnings and continue to block real downselect.
 - Descriptor-only emulator rows are also non-performance evidence and block real
   downselect.
 - Official FreeDV status is only as complete as the scored records provided by Module

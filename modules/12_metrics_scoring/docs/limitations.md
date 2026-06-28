@@ -7,3 +7,6 @@
 - ISSUE-0032 700F surrogate rows may appear in score output with real performance
   score `0.0` and a separate synthetic readiness score; they are not real performance
   evidence until later implementation issues produce waveform-capable runs.
+- ISSUE-0044 waveform and real modem prototype rows may appear with prototype
+  diagnostics, but they remain excluded from real performance scoring and cannot
+  enable downselect until a later audit authorizes performance-valid evidence.

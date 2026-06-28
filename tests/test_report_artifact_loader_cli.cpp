@@ -101,6 +101,40 @@ void sample_sweep_csv_generates_markdown() {
   assert(contains(markdown, "Real downselect possible: no"));
 }
 
+void real_modem_prototype_json_is_loaded_as_limited_diagnostics() {
+  const std::string json = R"json({
+  "ok": true,
+  "run_id_prefix": "issue0044-real-prototype",
+  "error": "",
+  "records": [
+    {"run_id": "proto-a", "status": "completed", "mode_id": "freedv700f_a_balanced", "condition_id": "awgn-snr-6db", "seed": 7, "skipped_reason": null, "error_summary": "real_modem_prototype_completed: limited diagnostics only", "simulation_digest": "proto", "implementation_status": "real_modem_prototype", "implementation_classification": "real_modem_prototype", "prototype": true, "not_final_modem": true, "downselect_valid": false, "not_downselect_valid": true, "performance_valid": false, "performance_validity": "limited", "downselect_validity": "invalid", "codec_family": "synthetic", "fec_family": "none", "modem_family": "minimal_qpsk_baseband", "prototype_limitations": "diagnostics only", "prototype_warning": "REAL MODEM PROTOTYPE WARNING: limited diagnostics only", "prototype_symbol_error_rate": 0.25, "prototype_frame_status": "limited", "prototype_sync_status": "pilot_placeholder", "prototype_baseband_sample_count": 3840}
+  ]
+})json";
+
+  const auto loaded = f700f::reporting::load_report_input_json(json);
+  assert(loaded.results.size() == 1);
+  assert(!loaded.real_downselect_possible);
+  const auto &prototype = loaded.results.front();
+  assert(prototype.mode_descriptor.implementation_status ==
+         "real_modem_prototype");
+  assert(prototype.mode_descriptor.implementation_classification ==
+         "real_modem_prototype");
+  assert(prototype.mode_descriptor.performance_validity == "limited");
+  assert(prototype.mode_descriptor.downselect_validity == "invalid");
+  assert(!prototype.mode_descriptor.downselect_valid);
+  assert(prototype.prototype_symbol_error_rate.has_value());
+  assert(prototype.prototype_symbol_error_rate.value() == 0.25);
+  assert(prototype.prototype_frame_status == "limited");
+  assert(prototype.prototype_sync_status == "pilot_placeholder");
+  assert(prototype.prototype_baseband_sample_count == 3840);
+
+  const auto markdown = f700f::reporting::render_report_from_loaded_input(loaded);
+  assert(contains(markdown, "REAL MODEM PROTOTYPE WARNING"));
+  assert(contains(markdown, "performance_validity=limited"));
+  assert(contains(markdown, "prototype_symbol_error_rate=0.25"));
+  assert(contains(markdown, "Real downselect possible: no"));
+}
+
 void malformed_inputs_fail_clearly() {
   try {
     (void)f700f::reporting::load_report_input_json("{ not json");
@@ -130,6 +164,7 @@ void file_loader_uses_extension() {
 int main() {
   sample_sweep_json_generates_markdown_with_all_row_types();
   sample_sweep_csv_generates_markdown();
+  real_modem_prototype_json_is_loaded_as_limited_diagnostics();
   malformed_inputs_fail_clearly();
   file_loader_uses_extension();
   return 0;
