@@ -106,6 +106,26 @@ void codec2_enabled_smoke_test_is_guarded_test() {
   if (f700f::freedv_official_codec2_available()) {
     assert(f700f::freedv_official_codec2_mode_id("freedv700d_official") == 7);
     assert(f700f::freedv_official_codec2_mode_id("freedv700e_official") == 13);
+
+    f700f::ModeRegistry registry;
+    f700f::register_freedv_official_modes(registry);
+    auto mode = registry.create("freedv700d_official");
+    assert(mode != nullptr);
+    assert(contains(mode->descriptor().implementation_status, "available"));
+    assert(contains(mode->descriptor().implementation_status, "ISSUE-0034"));
+    assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
+
+    const auto encoded = mode->encode({});
+    assert(!encoded.ok);
+    assert(contains(encoded.error, "freedv700d_official"));
+    assert(contains(encoded.error, "ISSUE-0034"));
+    assert(contains(encoded.error, "roundtrip binding is not implemented yet"));
+
+    const auto decoded = mode->decode({});
+    assert(!decoded.ok);
+    assert(contains(decoded.error, "freedv700d_official"));
+    assert(contains(decoded.error, "ISSUE-0034"));
+    assert(contains(decoded.error, "roundtrip binding is not implemented yet"));
   }
 }
 

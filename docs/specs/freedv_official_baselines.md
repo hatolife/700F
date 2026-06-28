@@ -29,6 +29,10 @@ Descriptor constants are derived from the pinned `external/codec2` submodule at
 not authoritative for these constants unless a future issue links them back to pinned
 source files and symbols.
 
+`docs/specs/freedv_official_waveform_roundtrip.md` records the ISSUE-0034
+source-level roundtrip API findings, local upstream CLI 700D/700E manual probe, and
+the remaining F700F Codec2 runtime blockers.
+
 ## Availability behavior
 
 Default builds keep `F700F_ENABLE_CODEC2=OFF`. In that configuration the official modes

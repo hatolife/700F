@@ -37,8 +37,8 @@ std::string codec2_runtime_status() {
   if (!codec2_available()) {
     return codec2_unavailable_reason();
   }
-  return "available: Codec2 FreeDV API headers detected; ISSUE-0012 runtime "
-         "waveform binding is a guarded skeleton";
+  return "available: Codec2 FreeDV API headers detected; ISSUE-0034 runtime "
+         "waveform roundtrip binding remains guarded pending Codec2 linkage";
 }
 
 ModeDescriptor make_common_descriptor() {
@@ -154,8 +154,8 @@ private:
       }
       return descriptor_.mode_id + " not configured";
     }
-    return descriptor_.mode_id + " runtime failure: ISSUE-0012 official " +
-           operation + " waveform binding is not implemented yet";
+    return descriptor_.mode_id + " runtime failure: ISSUE-0034 official " +
+           operation + " waveform roundtrip binding is not implemented yet";
   }
 
   ModeDescriptor descriptor_;
