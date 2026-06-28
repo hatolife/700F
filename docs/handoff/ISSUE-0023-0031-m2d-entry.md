@@ -35,6 +35,8 @@ Real candidate downselect remains prohibited.
 - 700D/700E emulator rows remain descriptor-only.
 - Official FreeDV waveform roundtrip remains incomplete.
 - Clock-skew warnings remain non-blocking.
+- ISSUE-0035 source cause is documented as WSL/`/mnt/c` drvfs-generated build
+  metadata timestamp skew (non-blocking).
 
 ## Next Startable Issues
 

@@ -16,5 +16,6 @@
 |---|---|---|---|---|---|---|---|
 | ISSUE-0005 | open | P0 | github actions ci introduction | Module 01 | see root ISSUE-0005 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0006 | open | P0 | docs issues reports governance structure | Module 01 | see root ISSUE-0006 | v0.1.0 target as applicable | 2026-06-27 |
-| ISSUE-0035 | planned | P2 | clock-skew warning investigation | Module 01 + Manager | chore/ISSUE-0035-clock-skew-warning-investigation | v0.2.0 target | 2026-06-28 |
+| ISSUE-0035 | in_progress | P2 | clock-skew warning investigation | Module 01 + Manager | chore/ISSUE-0035-clock-skew-warning-investigation | v0.2.0 target | 2026-06-29 |
+
 

@@ -1,7 +1,7 @@
 # ISSUE-0035: clock-skew warning investigation
 
 ## Status
-planned
+in_progress
 
 ## Scope
 module:01,build
@@ -31,12 +31,18 @@ Investigate recurring local build clock-skew warnings. This is low priority
 because build and tests pass.
 
 ## Acceptance criteria
-- [ ] Warning source is documented.
-- [ ] No risky build-system churn is introduced.
-- [ ] Local CI passes.
+- [x] Warning source is documented.
+- [x] No risky build-system churn is introduced.
+- [x] Local CI passes.
 
 ## TDD record
 - TDD exception: investigation/documentation issue unless code changes are made.
 
 ## Result
-Pending.
+- Warning source is reproducible on this worktree with `./tools/run_ci_local.sh`,
+  on CMake-generated files under `build/CMakeFiles/*`.
+- Causes are consistent with WSL `/mnt/c` + `drvfs` timestamp behavior and
+  generated build metadata order effects.
+- Warnings are non-blocking and CI still passes (`100% tests`, version and
+governance checks passing).
+- Supporting note added: `docs/troubleshooting/clock_skew_warnings.md`.
