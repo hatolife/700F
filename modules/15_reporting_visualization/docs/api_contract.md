@@ -31,7 +31,8 @@ Public entry points:
 - `render_report_from_loaded_input(loaded)`: scores loaded rows and renders Markdown.
 
 The loader maps sweep rows into reporting/scoring artifacts and labels
-`surrogate`, `profile_only`, `descriptor_only`, skipped, and failed rows as
-non-performance evidence. The generated report states whether real downselect is
-possible, prints a surrogate warning for 700F surrogate rows, and keeps real
-performance score separate from synthetic surrogate readiness score.
+`surrogate`, `waveform_prototype`, `real_modem_prototype`, `profile_only`,
+`descriptor_only`, skipped, and failed rows as non-performance evidence. The
+generated report states whether real downselect is possible, prints surrogate and
+prototype warnings for 700F rows, and keeps real performance score separate from
+synthetic surrogate readiness or limited prototype diagnostics.

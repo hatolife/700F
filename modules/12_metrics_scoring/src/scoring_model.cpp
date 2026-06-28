@@ -38,6 +38,15 @@ bool is_waveform_prototype(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "waveform_prototype";
 }
 
+bool is_real_modem_prototype(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.implementation_status == "real_modem_prototype";
+}
+
+bool is_prototype(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.prototype || is_waveform_prototype(snapshot) ||
+         is_real_modem_prototype(snapshot);
+}
+
 bool is_descriptor_only(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "descriptor_only" ||
          snapshot.implementation_status == "descriptor-only";
@@ -47,6 +56,7 @@ bool is_performance_valid(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.performance_valid && !is_profile_only(snapshot) &&
          !is_surrogate(snapshot) && !is_emulated_surrogate(snapshot) &&
          !is_waveform_prototype(snapshot) &&
+         !is_real_modem_prototype(snapshot) &&
          !is_descriptor_only(snapshot);
 }
 
@@ -123,6 +133,14 @@ void ensure_profile_snapshot(M2ModeScore &score,
   score.surrogate = score.surrogate || is_surrogate(snapshot);
 }
 
+bool has_prototype_diagnostics(const ResultArtifact &result) {
+  return result.prototype_symbol_error_rate.has_value() ||
+         !result.prototype_frame_status.empty() ||
+         !result.prototype_sync_status.empty() ||
+         result.prototype_baseband_sample_count != 0 ||
+         !result.prototype_limitations.empty();
+}
+
 void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   ensure_profile_snapshot(score, result.mode_descriptor);
   const bool performance_valid = result_performance_valid(result);
@@ -163,6 +181,24 @@ void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   }
   if (is_emulated_surrogate(result.mode_descriptor)) {
     ++score.emulated_surrogate_count;
+  }
+  if (is_prototype(result.mode_descriptor)) {
+    ++score.prototype_count;
+    if (is_waveform_prototype(result.mode_descriptor)) {
+      ++score.waveform_prototype_count;
+    }
+    if (is_real_modem_prototype(result.mode_descriptor)) {
+      ++score.real_modem_prototype_count;
+    }
+    if (has_prototype_diagnostics(result)) {
+      ++score.prototype_diagnostic_count;
+      score.prototype_symbol_error_rate = result.prototype_symbol_error_rate;
+      score.prototype_frame_status = result.prototype_frame_status;
+      score.prototype_sync_status = result.prototype_sync_status;
+      score.prototype_baseband_sample_count =
+          result.prototype_baseband_sample_count;
+      score.prototype_limitations = result.prototype_limitations;
+    }
   }
 
   if (performance_valid) {
@@ -317,6 +353,13 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
     out << "\"surrogate_count\":" << score.surrogate_count << ",";
     out << "\"emulated_surrogate_count\":" << score.emulated_surrogate_count
         << ",";
+    out << "\"prototype_count\":" << score.prototype_count << ",";
+    out << "\"waveform_prototype_count\":" << score.waveform_prototype_count
+        << ",";
+    out << "\"real_modem_prototype_count\":"
+        << score.real_modem_prototype_count << ",";
+    out << "\"prototype_diagnostic_count\":"
+        << score.prototype_diagnostic_count << ",";
     out << "\"performance_valid_count\":" << score.performance_valid_count << ",";
     out << "\"performance_invalid_count\":" << score.performance_invalid_count
         << ",";
@@ -342,6 +385,20 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
     out << "\"real_performance_score\":" << score.real_performance_score << ",";
     out << "\"surrogate_readiness_score\":"
         << score.surrogate_readiness_score << ",";
+    if (score.prototype_symbol_error_rate.has_value()) {
+      out << "\"prototype_symbol_error_rate\":"
+          << *score.prototype_symbol_error_rate << ",";
+    } else {
+      out << "\"prototype_symbol_error_rate\":\"N/A\",";
+    }
+    out << "\"prototype_frame_status\":\""
+        << escape_json(score.prototype_frame_status) << "\",";
+    out << "\"prototype_sync_status\":\""
+        << escape_json(score.prototype_sync_status) << "\",";
+    out << "\"prototype_baseband_sample_count\":"
+        << score.prototype_baseband_sample_count << ",";
+    out << "\"prototype_limitations\":\""
+        << escape_json(score.prototype_limitations) << "\",";
     out << "\"profile_only\":" << (score.profile_only ? "true" : "false")
         << ",";
     out << "\"surrogate\":" << (score.surrogate ? "true" : "false");
@@ -362,6 +419,9 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
           << (score.profile_snapshot->emulator ? "true" : "false") << ",";
       out << "\"implementation_status\":\""
           << escape_json(score.profile_snapshot->implementation_status) << "\",";
+      out << "\"implementation_classification\":\""
+          << escape_json(score.profile_snapshot->implementation_classification)
+          << "\",";
       out << "\"not_real_modem\":"
           << (score.profile_snapshot->not_real_modem ? "true" : "false")
           << ",";
@@ -374,6 +434,10 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
       out << "\"performance_valid\":"
           << (score.profile_snapshot->performance_valid ? "true" : "false")
           << ",";
+      out << "\"performance_validity\":\""
+          << escape_json(score.profile_snapshot->performance_validity) << "\",";
+      out << "\"downselect_validity\":\""
+          << escape_json(score.profile_snapshot->downselect_validity) << "\",";
       out << "\"prototype\":"
           << (score.profile_snapshot->prototype ? "true" : "false") << ",";
       out << "\"not_final_modem\":"
@@ -390,6 +454,8 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
           << escape_json(score.profile_snapshot->modem_family) << "\",";
       out << "\"prototype_limitations\":\""
           << escape_json(score.profile_snapshot->prototype_limitations) << "\",";
+      out << "\"prototype_warning\":\""
+          << escape_json(score.profile_snapshot->prototype_warning) << "\",";
       out << "\"surrogate_model_name\":\""
           << escape_json(score.profile_snapshot->surrogate_model_name) << "\",";
       out << "\"surrogate_model_version\":\""

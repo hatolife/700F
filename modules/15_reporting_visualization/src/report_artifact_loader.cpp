@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <map>
+#include <optional>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -27,10 +28,13 @@ struct SweepRow {
   std::string error_summary;
   std::string simulation_digest;
   std::string implementation_status;
+  std::string implementation_classification;
   std::string not_real_modem;
   std::string downselect_valid;
   std::string not_downselect_valid;
   std::string performance_valid;
+  std::string performance_validity;
+  std::string downselect_validity;
   std::string prototype;
   std::string not_final_modem;
   std::string waveform_capable;
@@ -38,6 +42,11 @@ struct SweepRow {
   std::string fec_family;
   std::string modem_family;
   std::string prototype_limitations;
+  std::string prototype_warning;
+  std::string prototype_symbol_error_rate;
+  std::string prototype_frame_status;
+  std::string prototype_sync_status;
+  std::string prototype_baseband_sample_count;
   std::string surrogate_model_name;
   std::string surrogate_model_version;
   std::string surrogate_limitations;
@@ -104,6 +113,23 @@ bool parse_bool_or(const std::string &value, bool fallback) {
     return false;
   }
   return fallback;
+}
+
+std::optional<double> parse_optional_double_or_empty(const std::string &value) {
+  const auto cleaned = trim(value);
+  if (cleaned.empty() || cleaned == "N/A" || cleaned == "null") {
+    return std::nullopt;
+  }
+  try {
+    std::size_t consumed = 0;
+    const auto parsed = std::stod(cleaned, &consumed);
+    if (consumed != cleaned.size()) {
+      return std::nullopt;
+    }
+    return parsed;
+  } catch (const std::exception &) {
+    return std::nullopt;
+  }
 }
 
 std::string unescape_json_string(const std::string &value) {
@@ -390,9 +416,13 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
   const bool row_marks_waveform_prototype =
       row.implementation_status == "waveform_prototype" ||
       contains(row.error_summary, "waveform_prototype_completed");
+  const bool row_marks_real_modem_prototype =
+      row.implementation_status == "real_modem_prototype" ||
+      contains(row.error_summary, "real_modem_prototype_completed");
   const bool row_marks_surrogate =
       row.implementation_status == "surrogate" ||
-      (starts_with(row.mode_id, "freedv700f_") && !row_marks_waveform_prototype);
+      (starts_with(row.mode_id, "freedv700f_") && !row_marks_waveform_prototype &&
+       !row_marks_real_modem_prototype);
   const bool row_marks_profile_only =
       contains(row.error_summary, "profile_only") ||
       row.implementation_status == "profile_only";
@@ -408,6 +438,10 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
         is_official_runtime_row(row) ? "official_runtime" : "unavailable";
   } else if (row_marks_waveform_prototype) {
     descriptor.implementation_status = "waveform_prototype";
+    descriptor.implementation_classification =
+        row.implementation_classification.empty()
+            ? "waveform_prototype"
+            : row.implementation_classification;
     descriptor.prototype = parse_bool_or(row.prototype, true);
     descriptor.not_final_modem = parse_bool_or(row.not_final_modem, true);
     descriptor.waveform_capable = parse_bool_or(row.waveform_capable, true);
@@ -424,6 +458,39 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
         row.prototype_limitations.empty()
             ? "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect"
             : row.prototype_limitations;
+    descriptor.prototype_warning =
+        row.prototype_warning.empty()
+            ? "WAVEFORM PROTOTYPE WARNING: readiness evidence only; not real performance; downselect_valid=false"
+            : row.prototype_warning;
+  } else if (row_marks_real_modem_prototype) {
+    descriptor.implementation_status = "real_modem_prototype";
+    descriptor.implementation_classification =
+        row.implementation_classification.empty()
+            ? "real_modem_prototype"
+            : row.implementation_classification;
+    descriptor.prototype = parse_bool_or(row.prototype, true);
+    descriptor.not_final_modem = parse_bool_or(row.not_final_modem, true);
+    descriptor.downselect_valid = parse_bool_or(row.downselect_valid, false);
+    descriptor.not_downselect_valid =
+        parse_bool_or(row.not_downselect_valid, !descriptor.downselect_valid);
+    descriptor.performance_valid = parse_bool_or(row.performance_valid, false);
+    descriptor.performance_validity =
+        row.performance_validity.empty() ? "limited" : row.performance_validity;
+    descriptor.downselect_validity =
+        row.downselect_validity.empty() ? "invalid" : row.downselect_validity;
+    descriptor.codec_family =
+        row.codec_family.empty() ? "synthetic" : row.codec_family;
+    descriptor.fec_family = row.fec_family.empty() ? "none" : row.fec_family;
+    descriptor.modem_family =
+        row.modem_family.empty() ? "minimal_qpsk_baseband" : row.modem_family;
+    descriptor.prototype_limitations =
+        row.prototype_limitations.empty()
+            ? "limited real modem prototype diagnostics only; not final 700F performance"
+            : row.prototype_limitations;
+    descriptor.prototype_warning =
+        row.prototype_warning.empty()
+            ? "REAL MODEM PROTOTYPE WARNING: limited diagnostics only; not real performance; downselect_valid=false"
+            : row.prototype_warning;
   } else if (row_marks_surrogate) {
     descriptor.implementation_status = "surrogate";
     descriptor.not_real_modem = parse_bool_or(row.not_real_modem, true);
@@ -527,6 +594,38 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
     result.optional_metrics["downselect_valid"] = "false";
     result.optional_metrics["performance_valid"] = "false";
   }
+  if (result.mode_descriptor.implementation_status == "real_modem_prototype") {
+    result.warnings.push_back(result.mode_descriptor.prototype_warning);
+    result.prototype_symbol_error_rate =
+        parse_optional_double_or_empty(row.prototype_symbol_error_rate);
+    result.prototype_frame_status = row.prototype_frame_status.empty()
+                                        ? "limited"
+                                        : row.prototype_frame_status;
+    result.prototype_sync_status = row.prototype_sync_status;
+    result.prototype_baseband_sample_count =
+        row.prototype_baseband_sample_count.empty()
+            ? 0
+            : parse_u64(row.prototype_baseband_sample_count,
+                        "prototype_baseband_sample_count");
+    result.prototype_limitations =
+        row.prototype_limitations.empty()
+            ? result.mode_descriptor.prototype_limitations
+            : row.prototype_limitations;
+    result.optional_metrics["prototype"] =
+        result.mode_descriptor.prototype ? "true" : "false";
+    result.optional_metrics["not_final_modem"] =
+        result.mode_descriptor.not_final_modem ? "true" : "false";
+    result.optional_metrics["downselect_valid"] = "false";
+    result.optional_metrics["performance_valid"] = "false";
+    result.optional_metrics["performance_validity"] =
+        result.mode_descriptor.performance_validity;
+    result.optional_metrics["downselect_validity"] =
+        result.mode_descriptor.downselect_validity;
+    result.optional_metrics["modem_family"] =
+        result.mode_descriptor.modem_family;
+    result.optional_metrics["prototype_limitations"] =
+        result.prototype_limitations;
+  }
   if (is_emulated_surrogate_row(row)) {
     const auto values = parse_semicolon_key_values(row.error_summary);
     const auto lookup = [&](const std::string &key, const std::string &fallback) {
@@ -589,6 +688,7 @@ void finalize_context(LoadedReportInput &loaded,
   bool saw_profile_only = false;
   bool saw_surrogate = false;
   bool saw_waveform_prototype = false;
+  bool saw_real_modem_prototype = false;
   bool saw_descriptor_only = false;
   bool saw_emulated_surrogate = false;
   bool saw_skipped = false;
@@ -601,10 +701,16 @@ void finalize_context(LoadedReportInput &loaded,
     const bool row_is_waveform_prototype =
         row.implementation_status == "waveform_prototype" ||
         contains(row.error_summary, "waveform_prototype_completed");
+    const bool row_is_real_modem_prototype =
+        row.implementation_status == "real_modem_prototype" ||
+        contains(row.error_summary, "real_modem_prototype_completed");
     saw_waveform_prototype = saw_waveform_prototype || row_is_waveform_prototype;
+    saw_real_modem_prototype =
+        saw_real_modem_prototype || row_is_real_modem_prototype;
     saw_surrogate =
         saw_surrogate || row.implementation_status == "surrogate" ||
-        (starts_with(row.mode_id, "freedv700f_") && !row_is_waveform_prototype);
+        (starts_with(row.mode_id, "freedv700f_") && !row_is_waveform_prototype &&
+         !row_is_real_modem_prototype);
     saw_profile_only = saw_profile_only || contains(row.error_summary, "profile_only") ||
                        row.implementation_status == "profile_only";
     saw_descriptor_only = saw_descriptor_only ||
@@ -622,16 +728,16 @@ void finalize_context(LoadedReportInput &loaded,
       saw_failed ? "loaded with failed rows" : "loaded from artifact";
   loaded.real_downselect_possible =
       !saw_surrogate && !saw_waveform_prototype && !saw_profile_only &&
-      !saw_descriptor_only && !saw_emulated_surrogate && !saw_skipped &&
-      !saw_failed && !rows.empty();
+      !saw_real_modem_prototype && !saw_descriptor_only &&
+      !saw_emulated_surrogate && !saw_skipped && !saw_failed && !rows.empty();
   loaded.context.real_downselect_possible = loaded.real_downselect_possible;
   loaded.context.downselect_feasibility_summary =
       loaded.real_downselect_possible
           ? "Real downselect possible: yes; all loaded rows contain completed "
             "performance evidence."
           : "Real downselect possible: no; surrogate, waveform-prototype, skipped, "
-            "profile-only, descriptor-only, emulated-surrogate, or failed rows "
-            "prevent real downselect.";
+            "real-modem-prototype, profile-only, descriptor-only, "
+            "emulated-surrogate, or failed rows prevent real downselect.";
   loaded.context.known_limitations.push_back(
       loaded.context.downselect_feasibility_summary);
   if (saw_surrogate) {
@@ -645,6 +751,12 @@ void finalize_context(LoadedReportInput &loaded,
         "WAVEFORM PROTOTYPE WARNING: 700F prototype rows are experimental "
         "readiness evidence only; prototype=true; not_final_modem=true; "
         "downselect_valid=false; performance_valid=false.");
+  }
+  if (saw_real_modem_prototype) {
+    loaded.context.known_limitations.push_back(
+        "REAL MODEM PROTOTYPE WARNING: prototype diagnostics are limited "
+        "engineering evidence only; performance_validity=limited; "
+        "downselect_valid=false; downselect_validity=invalid.");
   }
   if (saw_profile_only) {
     loaded.context.known_limitations.push_back(
@@ -719,11 +831,17 @@ LoadedReportInput load_report_input_json(const std::string &json_payload) {
     row.simulation_digest = extract_quoted_field(object, "simulation_digest");
     row.implementation_status =
         extract_quoted_field(object, "implementation_status");
+    row.implementation_classification =
+        extract_quoted_field(object, "implementation_classification");
     row.not_real_modem = extract_raw_field(object, "not_real_modem");
     row.downselect_valid = extract_raw_field(object, "downselect_valid");
     row.not_downselect_valid =
         extract_raw_field(object, "not_downselect_valid");
     row.performance_valid = extract_raw_field(object, "performance_valid");
+    row.performance_validity =
+        extract_quoted_field(object, "performance_validity");
+    row.downselect_validity =
+        extract_quoted_field(object, "downselect_validity");
     row.prototype = extract_raw_field(object, "prototype");
     row.not_final_modem = extract_raw_field(object, "not_final_modem");
     row.waveform_capable = extract_raw_field(object, "waveform_capable");
@@ -732,6 +850,16 @@ LoadedReportInput load_report_input_json(const std::string &json_payload) {
     row.modem_family = extract_quoted_field(object, "modem_family");
     row.prototype_limitations =
         extract_quoted_field(object, "prototype_limitations");
+    row.prototype_warning =
+        extract_quoted_field(object, "prototype_warning");
+    row.prototype_symbol_error_rate =
+        extract_raw_field(object, "prototype_symbol_error_rate");
+    row.prototype_frame_status =
+        extract_quoted_field(object, "prototype_frame_status");
+    row.prototype_sync_status =
+        extract_quoted_field(object, "prototype_sync_status");
+    row.prototype_baseband_sample_count =
+        extract_raw_field(object, "prototype_baseband_sample_count");
     row.surrogate_model_name =
         extract_quoted_field(object, "surrogate_model_name");
     row.surrogate_model_version =
@@ -778,6 +906,10 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
     row.implementation_status =
         values.contains("implementation_status") ? values.at("implementation_status")
                                                  : "";
+    row.implementation_classification =
+        values.contains("implementation_classification")
+            ? values.at("implementation_classification")
+            : "";
     row.not_real_modem =
         values.contains("not_real_modem") ? values.at("not_real_modem") : "";
     row.downselect_valid =
@@ -788,6 +920,12 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
             : "";
     row.performance_valid =
         values.contains("performance_valid") ? values.at("performance_valid") : "";
+    row.performance_validity =
+        values.contains("performance_validity") ? values.at("performance_validity")
+                                                : "";
+    row.downselect_validity =
+        values.contains("downselect_validity") ? values.at("downselect_validity")
+                                               : "";
     row.prototype =
         values.contains("prototype") ? values.at("prototype") : "";
     row.not_final_modem =
@@ -803,6 +941,25 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
     row.prototype_limitations =
         values.contains("prototype_limitations")
             ? values.at("prototype_limitations")
+            : "";
+    row.prototype_warning =
+        values.contains("prototype_warning") ? values.at("prototype_warning")
+                                             : "";
+    row.prototype_symbol_error_rate =
+        values.contains("prototype_symbol_error_rate")
+            ? values.at("prototype_symbol_error_rate")
+            : "";
+    row.prototype_frame_status =
+        values.contains("prototype_frame_status")
+            ? values.at("prototype_frame_status")
+            : "";
+    row.prototype_sync_status =
+        values.contains("prototype_sync_status")
+            ? values.at("prototype_sync_status")
+            : "";
+    row.prototype_baseband_sample_count =
+        values.contains("prototype_baseband_sample_count")
+            ? values.at("prototype_baseband_sample_count")
             : "";
     row.surrogate_model_name =
         values.contains("surrogate_model_name")

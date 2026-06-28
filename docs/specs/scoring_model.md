@@ -20,6 +20,11 @@ of truth:
 - ISSUE-0039 waveform-prototype rows use `prototype`, `not_final_modem`,
   `waveform_capable`, `codec_family`, `fec_family`, `modem_family`, and
   `prototype_limitations`;
+- ISSUE-0044 real-modem-prototype rows use `implementation_classification`,
+  `performance_validity=limited`, `downselect_validity=invalid`,
+  `prototype_symbol_error_rate`, `prototype_frame_status`,
+  `prototype_sync_status`, `prototype_baseband_sample_count`, and
+  `prototype_limitations`;
 - future ASR WER, STOI, ESTOI, and subjective notes use `optional_metrics` keys
   `asr_wer`, `stoi`, `estoi`, and `subjective_note`.
 
@@ -49,6 +54,12 @@ complete encode/channel/decode/metrics, but `performance_valid=false` and
 `downselect_valid=false` keep them out of real performance scoring and real
 downselect feasibility.
 
+ISSUE-0044 reserves `implementation_status = real_modem_prototype` for future
+limited modem diagnostics. These rows must use `performance_valid=false`,
+`performance_validity=limited`, `downselect_valid=false`, and
+`downselect_validity=invalid`. They may increase prototype diagnostic counters, but
+they are not real performance evidence and cannot enable candidate downselect.
+
 ISSUE-0033 `freedv700d_emulated` and `freedv700e_emulated` rows may be operationally
 completed with `implementation_status = emulated_surrogate`. These rows are
 counted as completed run records for sweep health, but `performance_valid=false`
@@ -63,7 +74,9 @@ For each mode, the scorer computes:
 
 - completed run ratio;
 - completed, failed, skipped, official-unavailable, and profile-only counts;
-- surrogate count, performance-valid count, performance-invalid count;
+- surrogate count, prototype count, waveform-prototype count,
+  real-modem-prototype count, prototype diagnostic count, performance-valid count,
+  performance-invalid count;
 - BER/FER available, unavailable, and audio-only N/A counts;
 - future metric slot counts for ASR WER, STOI, ESTOI, and subjective notes;
 - mean dropout rate, mean latency, max RF bandwidth;
@@ -116,6 +129,10 @@ Rows with `implementation_status = waveform_prototype` are also scored with zero
 completed-run performance evidence until a later audit explicitly permits
 performance-valid prototype or final-modem rows.
 
+Rows with `implementation_status = real_modem_prototype` are scored the same way:
+zero completed-run performance evidence, `real_performance_score = 0.0`, no BER/FER
+availability credit, and separate prototype diagnostic counters only.
+
 ## Comparison Policy
 
 Reports should sort by score descending with `mode_id` as the deterministic tie-breaker.
@@ -125,6 +142,9 @@ be traced to availability, failure, dropout, latency, or bandwidth.
 Human reports must also display surrogate/prototype warnings and keep real
 performance score separate from synthetic surrogate readiness or prototype
 readiness evidence.
+
+See `docs/specs/prototype_modem_metrics_separation.md` for the complete
+classification table and prototype diagnostic field policy.
 
 SSB/audio-only modes may legitimately carry BER/FER as `N/A`; this is counted as
 audio-only N/A rather than an unavailable digital metric. Digital modes with bit-payload

@@ -1,6 +1,6 @@
 # ISSUE-0044: prototype modem metrics separation
 
-- Status: open
+- Status: done
 - Priority: P0
 - Scope: module:12,15,13
 - Owner: Module 12 + Module 15 + Module 13
@@ -19,16 +19,32 @@ prototype diagnostics and performance-valid downselect data.
 
 ## Acceptance Criteria
 
-- [ ] Add or reserve fields for prototype modem diagnostics such as symbol error
+- [x] Add or reserve fields for prototype modem diagnostics such as symbol error
   rate, frame status, sync status, and limitations.
-- [ ] Keep `downselect_valid = false` for prototype rows.
-- [ ] Keep `performance_valid = limited` separate from final performance scores.
-- [ ] Update report rendering to show prototype diagnostics without ranking.
-- [ ] Keep Codec2 OFF and Codec2 ON local CI green.
+- [x] Keep `downselect_valid = false` for prototype rows.
+- [x] Keep `performance_valid = limited` separate from final performance scores.
+- [x] Update report rendering to show prototype diagnostics without ranking.
+- [x] Keep Codec2 OFF and Codec2 ON local CI green.
 
 ## TDD Record
 
-- Pending. Start with metrics/report loader contract tests.
+- 2026-06-29: Started on
+  `feature/ISSUE-0044-prototype-modem-metrics-separation` in worktree
+  `C:/Users/user/Documents/700F-ISSUE-0044`.
+- Planned first failing tests: metrics artifact prototype diagnostic round-trip,
+  scoring separation for `real_modem_prototype` rows, and report warnings that
+  show prototype diagnostics without ranking them as real performance.
+- 2026-06-29: Added and passed metrics artifact, scoring, report renderer, and
+  report loader contract tests for `real_modem_prototype` limited diagnostics.
+
+## Validation
+
+- 2026-06-29: `bash ./tools/run_ci_local.sh` passed: build, 20/20 CTest,
+  version check, and governance check.
+- 2026-06-29: `bash ./tools/run_codec2_on_ci_local.sh` passed with explicit WSL
+  `GIT_DIR`/`GIT_COMMON_DIR` worktree environment: 20/20 CTest, 27/27 smoke rows,
+  and 6 official FreeDV rows validated. Generated `build-codec2` and transient
+  ISSUE-0037 report artifacts were cleaned afterward.
 
 ## Notes
 

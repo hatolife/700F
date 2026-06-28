@@ -90,6 +90,9 @@ std::string descriptor_status(const f700f::metrics::M2ModeScore &score) {
   if (snapshot.implementation_status == "waveform_prototype") {
     return "waveform_prototype";
   }
+  if (snapshot.implementation_status == "real_modem_prototype") {
+    return "real_modem_prototype";
+  }
   if (!snapshot.implementation_status.empty()) {
     return snapshot.implementation_status;
   }
@@ -123,6 +126,11 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
       score.profile_snapshot->implementation_status == "waveform_prototype") {
     return "WAVEFORM PROTOTYPE WARNING: prototype=true not_final_modem=true "
            "downselect_valid=false performance_valid=false";
+  }
+  if (score.profile_snapshot.has_value() &&
+      score.profile_snapshot->implementation_status == "real_modem_prototype") {
+    return "REAL MODEM PROTOTYPE WARNING: performance_validity=limited "
+           "downselect_valid=false downselect_validity=invalid";
   }
   if (score.performance_invalid_count > 0) {
     return "performance invalid; not_official_freedv=true";
@@ -236,6 +244,32 @@ std::vector<std::string> candidate_summary_lines(
         line += snapshot.performance_valid ? "true" : "false";
         if (!snapshot.modem_family.empty()) {
           line += " modem_family=" + snapshot.modem_family;
+        }
+      } else if (score.profile_snapshot.has_value() &&
+                 score.profile_snapshot->implementation_status ==
+                     "real_modem_prototype") {
+        const auto &snapshot = *score.profile_snapshot;
+        line += " REAL MODEM PROTOTYPE WARNING";
+        line += " prototype=";
+        line += snapshot.prototype ? "true" : "false";
+        line += " not_final_modem=";
+        line += snapshot.not_final_modem ? "true" : "false";
+        line += " downselect_valid=";
+        line += snapshot.downselect_valid ? "true" : "false";
+        line += " downselect_validity=" + snapshot.downselect_validity;
+        line += " performance_validity=" + snapshot.performance_validity;
+        if (!snapshot.modem_family.empty()) {
+          line += " modem_family=" + snapshot.modem_family;
+        }
+        if (score.prototype_symbol_error_rate.has_value()) {
+          line += " prototype_symbol_error_rate=" +
+                  format_double(*score.prototype_symbol_error_rate);
+        }
+        if (!score.prototype_frame_status.empty()) {
+          line += " prototype_frame_status=" + score.prototype_frame_status;
+        }
+        if (!score.prototype_sync_status.empty()) {
+          line += " prototype_sync_status=" + score.prototype_sync_status;
         }
       }
       lines.push_back(line);

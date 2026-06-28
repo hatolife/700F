@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0044 prototype modem metrics separation with explicit
+  `real_modem_prototype` limited diagnostics, append-only artifact fields,
+  scoring counters, report warnings, and downselect-invalid guardrails.
 - Record final Manager handoff/report for the ISSUE-0040 M2 audit update and
   ISSUE-0041 real 700F modem RFC pass, including follow-up dispatch and local
   OFF/ON CI evidence.

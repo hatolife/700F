@@ -136,6 +136,44 @@ void markdown_includes_scores_statuses_and_raw_metric_summary() {
   assert(contains(markdown, "## Known Limitations"));
 }
 
+void markdown_includes_real_modem_prototype_warning_without_ranking() {
+  auto prototype = make_result("freedv700f_a_balanced");
+  prototype.mode_descriptor.implementation_status = "real_modem_prototype";
+  prototype.mode_descriptor.implementation_classification =
+      "real_modem_prototype";
+  prototype.mode_descriptor.prototype = true;
+  prototype.mode_descriptor.not_final_modem = true;
+  prototype.mode_descriptor.downselect_valid = false;
+  prototype.mode_descriptor.not_downselect_valid = true;
+  prototype.mode_descriptor.performance_valid = false;
+  prototype.mode_descriptor.performance_validity = "limited";
+  prototype.mode_descriptor.downselect_validity = "invalid";
+  prototype.mode_descriptor.modem_family = "minimal_qpsk_baseband";
+  prototype.mode_descriptor.prototype_warning =
+      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only";
+  prototype.prototype_symbol_error_rate = 0.25;
+  prototype.prototype_frame_status = "limited";
+  prototype.prototype_sync_status = "pilot_placeholder";
+  prototype.prototype_baseband_sample_count = 3840;
+  prototype.prototype_limitations = "not final 700F performance";
+
+  const auto score_report =
+      f700f::metrics::score_m2_results({prototype}, {});
+  const auto markdown = f700f::reporting::render_m2_baseline_comparison_report(
+      make_context(), score_report);
+
+  assert(contains(markdown, "`freedv700f_a_balanced` real_modem_prototype"));
+  assert(contains(markdown, "REAL MODEM PROTOTYPE WARNING"));
+  assert(contains(markdown, "performance_validity=limited"));
+  assert(contains(markdown, "downselect_valid=false"));
+  assert(contains(markdown, "downselect_validity=invalid"));
+  assert(contains(markdown, "modem_family=minimal_qpsk_baseband"));
+  assert(contains(markdown, "prototype_symbol_error_rate=0.25"));
+  assert(contains(markdown, "prototype_frame_status=limited"));
+  assert(contains(markdown, "prototype_sync_status=pilot_placeholder"));
+  assert(contains(markdown, "real score 0"));
+}
+
 void timestamped_filename_is_supported() {
   const auto filename = f700f::reporting::make_m2_baseline_report_filename(
       "m2 smoke/run", "2026-06-28T12:34:56Z");
@@ -147,6 +185,7 @@ void timestamped_filename_is_supported() {
 int main() {
   empty_report_is_deterministic_and_describes_missing_sweep();
   markdown_includes_scores_statuses_and_raw_metric_summary();
+  markdown_includes_real_modem_prototype_warning_without_ranking();
   timestamped_filename_is_supported();
   return 0;
 }
