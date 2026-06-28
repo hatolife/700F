@@ -87,6 +87,9 @@ is ISSUE-0043 protocol first, ISSUE-0044 metrics in parallel when decoupled,
 ISSUE-0042 prototype implementation after the protocol boundary, and ISSUE-0045
 planning after the real prototype path is clearer.
 
+The Manager handoff for ISSUE-0040 and ISSUE-0041 is
+`docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.
+
 ## M1 Limitations Carried Into M2
 
 - SSB received-audio WAV/raw float export is incomplete.

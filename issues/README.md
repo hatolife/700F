@@ -125,6 +125,8 @@
 - ISSUE-0042 through ISSUE-0045 are the follow-up dispatch set. Start ISSUE-0043
   first when possible; ISSUE-0044 may run in parallel if decoupled from source
   protocol types. ISSUE-0042 should wait for the minimal protocol boundary.
+- Final Manager handoff for this audit/RFC pass is
+  `docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.
 - 700F-B and 700F-C remain ISSUE-0032 surrogate rows until later issues upgrade
   them explicitly.
 - Real 700F candidate downselect remains prohibited after ISSUE-0040 until a

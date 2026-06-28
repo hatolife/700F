@@ -84,3 +84,5 @@ metrics separation, and M3 OFDM/FEC/sync planning.
 
 Dispatch is recorded in `docs/coordination/real_700f_modem_dispatch_plan.md`.
 Real 700F downselect remains prohibited across ISSUE-0042 through ISSUE-0045.
+Manager handoff for ISSUE-0040/0041 is recorded in
+`docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.

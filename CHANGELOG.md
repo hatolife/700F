@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Record final Manager handoff/report for the ISSUE-0040 M2 audit update and
+  ISSUE-0041 real 700F modem RFC pass, including follow-up dispatch and local
+  OFF/ON CI evidence.
 - Expand ISSUE-0041 follow-up work into ISSUE-0042 through ISSUE-0045 and add
   `docs/coordination/real_700f_modem_dispatch_plan.md` for protocol, metrics,
   minimal QPSK baseband prototype, and M3 OFDM/FEC/sync planning.
