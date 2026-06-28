@@ -53,6 +53,7 @@
 | ISSUE-0037 | closed | P1 | module:01,05,10,13 | Codec2-on CI and official regression smoke | Module 01 + Module 05 + Module 10 + Module 13 | chore/ISSUE-0037-codec2-on-ci-official-regression-smoke | v0.2.0 target | M2 follow-up | ISSUE-0036 | 2026-06-29 |
 | ISSUE-0038 | closed | P0 | module:02,07,11,12,13,15 | 700F waveform-capable prototype RFC | Module 02 + Module 07 + Module 13 + Module 15 | docs/ISSUE-0038-700f-waveform-prototype-rfc | v0.2.0 target | M2 follow-up | ISSUE-0032, ISSUE-0036, ISSUE-0037 | 2026-06-29 |
 | ISSUE-0039 | closed | P0 | module:02,07,11,12,13,15 | 700F-A minimal waveform-capable prototype | Module 02 + Module 07 + Module 13 + Module 15 | feature/ISSUE-0039-700f-a-minimal-waveform-prototype | v0.2.0 target | M2-G waveform prototype | ISSUE-0038 | 2026-06-29 |
+| ISSUE-0040 | closed | P0 | qa,project | M2 audit update after 700F-A prototype | Manager + QA | chore/ISSUE-0040-m2-audit-update-after-700f-a-prototype | v0.2.0 target | M2 real modem RFC gate | ISSUE-0037, ISSUE-0038, ISSUE-0039 | 2026-06-29 |
 
 ## M1-A integration status
 
@@ -111,10 +112,12 @@
   waveform-capable as an experimental prototype.
 - ISSUE-0039 implements that first minimal 700F-A toy waveform prototype while
   preserving 700F-B/C surrogate semantics.
+- ISSUE-0040 audits the post-700F-A state and records
+  `M2_GO_TO_REAL_MODEM_RFC`.
 - 700F-B and 700F-C remain ISSUE-0032 surrogate rows until later issues upgrade
   them explicitly.
-- Real 700F candidate downselect remains prohibited after ISSUE-0038 and any
-  first minimal prototype until a later audit authorizes performance-valid rows.
+- Real 700F candidate downselect remains prohibited after ISSUE-0040 until a
+  later audit authorizes performance-valid real modem rows.
 
 ## M2-B integration status
 

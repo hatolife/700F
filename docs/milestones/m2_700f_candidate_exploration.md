@@ -38,6 +38,7 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0028 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | `feature/ISSUE-0028-m2-campaign-mode-registry` | 13, 10, 02 |
 | ISSUE-0038 | 700F waveform-capable prototype RFC | Module 02 + Module 07 + Module 13 + Module 15 | `docs/ISSUE-0038-700f-waveform-prototype-rfc` | 02, 07, 11, 12, 13, 15 |
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | Module 02 + Module 07 + Module 13 + Module 15 | `feature/ISSUE-0039-700f-a-minimal-waveform-prototype` | 02, 07, 11, 12, 13, 15 |
+| ISSUE-0040 | M2 audit update after 700F-A prototype | Manager + QA | `chore/ISSUE-0040-m2-audit-update-after-700f-a-prototype` | 16, project |
 
 ## M2-A Gate
 
@@ -67,6 +68,10 @@ and downselect-invalid.
 
 ISSUE-0039 implements the first guarded 700F-A toy waveform prototype. It keeps
 700F-B/C surrogate and still blocks real downselect.
+
+ISSUE-0040 audits the post-prototype state. The decision is
+`M2_GO_TO_REAL_MODEM_RFC`: M2 may proceed to a real modem architecture RFC, but
+real candidate downselect remains prohibited.
 
 ## M1 Limitations Carried Into M2
 
