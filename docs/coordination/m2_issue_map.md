@@ -16,10 +16,11 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0021 | sync and impairment estimator prototype | open | Existing issue file is source of truth; do not redefine as sweep campaign work. |
 | ISSUE-0022 | AI-assisted sweep triage | open | Existing issue file is source of truth; do not redefine as baseline report work. |
 | ISSUE-0023 | M2 audit and candidate downselect | hold | Hold until M2-B work is complete or explicitly marked blocked. |
-| ISSUE-0024 | M2 scoring model and comparison policy | open | Follow-up issue for requested scoring path. |
-| ISSUE-0025 | M2 expanded channel condition matrix | open | Follow-up issue for requested channel matrix path. |
+| ISSUE-0024 | M2 scoring model and comparison policy | complete | Follow-up issue for requested scoring path. |
+| ISSUE-0025 | M2 expanded channel condition matrix | complete | Follow-up issue for requested channel matrix path. |
 | ISSUE-0026 | M2 sweep campaign runner config | complete | Follow-up issue for requested sweep campaign path. |
-| ISSUE-0027 | M2 baseline comparison report generation | open | Follow-up issue for requested comparison report path. |
+| ISSUE-0027 | M2 baseline comparison report generation | complete | Follow-up issue for requested comparison report path. |
+| ISSUE-0028 | M2-C campaign mode registry bridge | open | Follow-up from M2-B smoke: campaign modes are configured but not registered in the smoke runner. |
 
 ## Collision Rule
 
@@ -32,4 +33,4 @@ When issue number meaning conflicts:
 
 ## M2-B Dispatch Direction
 
-For the scoring/channel/report path, dispatch ISSUE-0024 and ISSUE-0025 first. If both integrate cleanly, dispatch ISSUE-0026 and ISSUE-0027. ISSUE-0023 remains held until these issues are complete or explicitly blocked.
+For the scoring/channel/report path, ISSUE-0024 through ISSUE-0027 are integrated. ISSUE-0028 is the next bridge issue before a useful M2 candidate downselect. ISSUE-0023 remains held unless the project wants an audit of the skipped-only M2-B state.

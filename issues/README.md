@@ -37,10 +37,11 @@
 | ISSUE-0021 | open | P0 | module:09 | sync and impairment estimator prototype | Module 09 + Module 07 | feature/ISSUE-0021-sync-impairment-estimator | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0020 | 2026-06-28 |
 | ISSUE-0022 | open | P1 | module:14 | AI-assisted sweep triage | Module 14 + Module 13 | research/ISSUE-0022-ai-sweep-triage | v0.2.0 target | M2 | ISSUE-0015, ISSUE-0018 | 2026-06-28 |
 | ISSUE-0023 | open | P0 | qa | M2 audit and candidate downselect | Manager + QA | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 target | M2 | ISSUE-0018 through ISSUE-0022 | 2026-06-28 |
-| ISSUE-0024 | open | P0 | module:12 | M2 scoring model and comparison policy | Module 12 + Module 13 | feature/ISSUE-0024-scoring-model | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
+| ISSUE-0024 | closed | P0 | module:12 | M2 scoring model and comparison policy | Module 12 + Module 13 | feature/ISSUE-0024-scoring-model | v0.2.0 | M2 | ISSUE-0018 | 2026-06-28 |
 | ISSUE-0025 | closed | P0 | module:08 | M2 expanded channel condition matrix | Module 08 + Module 13 | feature/ISSUE-0025-expanded-channel-matrix | v0.2.0 | M2 | ISSUE-0018, ISSUE-0010 | 2026-06-28 |
 | ISSUE-0026 | closed | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
-| ISSUE-0027 | open | P0 | module:15 | M2 baseline comparison report generation | Module 15 + Module 12 | feature/ISSUE-0027-baseline-comparison-report | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0024, ISSUE-0026 | 2026-06-28 |
+| ISSUE-0027 | closed | P0 | module:15 | M2 baseline comparison report generation | Module 15 + Module 12 | feature/ISSUE-0027-baseline-comparison-report | v0.2.0 | M2 | ISSUE-0018, ISSUE-0024, ISSUE-0026 | 2026-06-28 |
+| ISSUE-0028 | open | P0 | module:13,10 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | feature/ISSUE-0028-m2-campaign-mode-registry | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0026 | 2026-06-28 |
 
 ## M1-A integration status
 
@@ -92,3 +93,12 @@
 
 - `docs/coordination/m2_issue_map.md` records the canonical M2 issue-number mapping.
 - Future requests that conflict with existing issue meaning should create new follow-up issues rather than redefining existing issue files.
+
+## M2-B integration status
+
+- ISSUE-0024, ISSUE-0025, ISSUE-0026, and ISSUE-0027 are integrated locally into `develop`.
+- Merge commits: ISSUE-0024 `bcad913`, ISSUE-0025 `8a2714e`, ISSUE-0026 `4ce1e3f`, ISSUE-0027 `088b7e0`.
+- Final M2-B local CI passed with 12 CTest tests.
+- M2-B smoke produced JSON/CSV artifacts, but all 30 campaign rows were skipped because campaign modes are not registered in the smoke runner.
+- ISSUE-0028 tracks the mode registry bridge needed before M2 audit can make a useful candidate downselect.
+- ISSUE-0023 may start only as a limited audit; candidate downselect should wait for ISSUE-0028 or an explicit decision to audit the skipped-only M2-B state.

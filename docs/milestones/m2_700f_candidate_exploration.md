@@ -35,6 +35,7 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0025 | M2 expanded channel condition matrix | Module 08 + Module 13 | `feature/ISSUE-0025-expanded-channel-matrix` | 08, 13 |
 | ISSUE-0026 | M2 sweep campaign runner config | Module 13 + Module 11 | `feature/ISSUE-0026-m2-sweep-campaign-config` | 13, 11 |
 | ISSUE-0027 | M2 baseline comparison report generation | Module 15 + Module 12 | `feature/ISSUE-0027-baseline-comparison-report` | 15, 12 |
+| ISSUE-0028 | M2-C campaign mode registry bridge | Module 13 + Module 10 + Module 02 | `feature/ISSUE-0028-m2-campaign-mode-registry` | 13, 10, 02 |
 
 ## M2-A Gate
 
@@ -45,6 +46,8 @@ ISSUE-0019 through ISSUE-0022 may prepare research notes and red-test plans, but
 ISSUE-0024 through ISSUE-0027 cover scoring, channel-matrix, sweep-campaign, and baseline-comparison report work requested after ISSUE-0018. They exist because ISSUE-0019 through ISSUE-0022 were already assigned to FEC/OFDM/sync/AI triage in the repository issue tracker.
 
 The canonical issue-number mapping is recorded in `docs/coordination/m2_issue_map.md`. If a later instruction collides with an existing issue number, keep the existing issue and create a new follow-up issue for the new work.
+
+M2-B integrated ISSUE-0024 through ISSUE-0027 and produced smoke JSON/CSV artifacts. The smoke campaign currently records all rows as skipped because campaign modes are not registered in the smoke runner. ISSUE-0028 is the bridge from profile/config descriptors to registered mode factories.
 
 ## M1 Limitations Carried Into M2
 

@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Integrate M2-B scoring/channel/sweep/report path and record smoke/comparison reports
+  with all campaign modes skipped pending mode-factory registration.
 - Add ISSUE-0026 M2 700F candidate smoke/full sweep campaign configs over the M2
   channel matrices with stable ordering and skip-capable unavailable modes.
 - Add ISSUE-0027 M2 baseline comparison report generation with deterministic Markdown

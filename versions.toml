@@ -49,7 +49,7 @@ target_project = "v0.2.0"
 compatibility_minor = 2
 merge_target = "develop"
 status = "planned"
-issue_range = "ISSUE-0017..ISSUE-0027"
+issue_range = "ISSUE-0017..ISSUE-0028"
 affected_modules = [
   "02_core_data_model_protocol",
   "05_codec_adapter",
