@@ -30,8 +30,11 @@
 
 ## Push And PR
 
-Remote publication is attempted after local merge. PR creation is optional and may
-be skipped when `develop` is pushed directly after the local no-ff merge.
+- Work branch push: succeeded,
+  `chore/ISSUE-0037-codec2-on-ci-official-regression-smoke`.
+- Develop push: succeeded, `3d0c976..307e803 develop -> develop`.
+- PR: not created because the branch was merged locally with `--no-ff` and
+  `develop` was pushed directly after local CI.
 
 ## Still Blocked
 

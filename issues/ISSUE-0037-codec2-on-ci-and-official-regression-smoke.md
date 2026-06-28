@@ -59,3 +59,7 @@ configures `build-codec2`, runs CTest, runs the M2 smoke sweep, validates offici
 FreeDV 700D/700E completion metadata, and generates a comparison report.
 
 Real downselect remains prohibited because 700F rows are still surrogate rows.
+
+Remote publication succeeded for both the work branch and `develop`. No PR was
+created because the branch was merged locally with `--no-ff` and `develop` was
+pushed directly.

@@ -30,8 +30,11 @@ build, CTest, version, and governance checks passed.
 
 ## Push And PR
 
-Push and PR are attempted after local commit and develop merge. Results are
-recorded in the final Manager summary and handoff.
+- Work branch push: succeeded,
+  `chore/ISSUE-0037-codec2-on-ci-official-regression-smoke`.
+- Develop push: succeeded, `3d0c976..307e803 develop -> develop`.
+- PR: not created because local `develop` already contains the no-ff merge and
+  was pushed directly.
 
 ## Downselect
 
