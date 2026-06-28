@@ -1,5 +1,5 @@
-# ISSUE-0025 smoke channel matrix. TOML parsing is deferred; this file records the
-# intended config shape mirrored by make_m2_channel_matrix_smoke_sweep_config().
+# ISSUE-0025 smoke channel matrix. This remains a planned shared fragment shape;
+# ISSUE-0030 loads standalone sweep configs, not channel includes.
 
 run_id_prefix = "m2-channel-matrix-smoke"
 output_directory = "reports/sweeps/m2-channel-matrix-smoke"

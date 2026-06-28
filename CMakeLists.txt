@@ -34,6 +34,8 @@ add_executable(f700f-info src/apps/f700f-info.cpp)
 target_link_libraries(f700f-info PRIVATE f700f_core)
 add_subdirectory(modules/11_pipeline_runner)
 add_subdirectory(modules/13_sweep_optimization)
+add_executable(f700f-sweep src/apps/f700f-sweep.cpp)
+target_link_libraries(f700f-sweep PRIVATE f700f_core f700f_sweep_runner)
 add_executable(test_mode_interface tests/test_mode_interface.cpp)
 target_link_libraries(test_mode_interface PRIVATE f700f_core)
 add_executable(test_metrics_result_artifacts
@@ -76,6 +78,8 @@ add_executable(test_simulation_pipeline tests/test_simulation_pipeline.cpp)
 target_link_libraries(test_simulation_pipeline PRIVATE f700f_core f700f_pipeline_runner f700f_freedv_emulator)
 add_executable(test_sweep_runner tests/test_sweep_runner.cpp)
 target_link_libraries(test_sweep_runner PRIVATE f700f_core f700f_sweep_runner)
+add_executable(test_sweep_config_loader tests/test_sweep_config_loader.cpp)
+target_link_libraries(test_sweep_config_loader PRIVATE f700f_core f700f_sweep_runner)
 add_executable(test_700f_candidate_profiles tests/test_700f_candidate_profiles.cpp)
 target_link_libraries(test_700f_candidate_profiles
   PRIVATE
@@ -95,4 +99,18 @@ add_test(NAME ssb_reference_emulator_contract COMMAND test_ssb_reference_emulato
 add_test(NAME freedv_official_adapter_contract COMMAND test_freedv_official_adapter)
 add_test(NAME simulation_pipeline_contract COMMAND test_simulation_pipeline)
 add_test(NAME sweep_runner_contract COMMAND test_sweep_runner)
+add_test(NAME sweep_config_loader_contract COMMAND test_sweep_config_loader)
+add_test(NAME sweep_cli_help COMMAND f700f-sweep --help)
+set_tests_properties(sweep_cli_help PROPERTIES
+  PASS_REGULAR_EXPRESSION "Usage: f700f-sweep")
+add_test(NAME sweep_cli_missing_config
+  COMMAND ${CMAKE_COMMAND}
+    -DF700F_SWEEP_EXE=$<TARGET_FILE:f700f-sweep>
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/sweep_cli_missing_config_test.cmake)
+add_test(NAME sweep_cli_smoke
+  COMMAND ${CMAKE_COMMAND}
+    -DF700F_SWEEP_EXE=$<TARGET_FILE:f700f-sweep>
+    -DF700F_REPO_ROOT=${CMAKE_CURRENT_SOURCE_DIR}
+    -DF700F_OUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}/test-artifacts/cli-smoke
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/sweep_cli_smoke_test.cmake)
 add_test(NAME candidate_700f_profiles_contract COMMAND test_700f_candidate_profiles)

@@ -1,5 +1,5 @@
-# ISSUE-0026 full campaign axes. TOML parsing is deferred; this file records the
-# intended config shape mirrored by make_m2_700f_candidate_full_sweep_config().
+# ISSUE-0026 full campaign axes. This remains a planned TOML schema example for
+# matrix expansion; ISSUE-0030 loads explicit sweep rows, not matrix axes.
 
 run_id_prefix = "m2-700f-candidate-full"
 output_directory = "reports/sweeps/m2-700f-candidate-full"

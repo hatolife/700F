@@ -8,3 +8,4 @@ Current helpers include:
 - M1 baseline smoke sweep config.
 - ISSUE-0025 M2 smoke/full channel matrix config fragments.
 - ISSUE-0026 M2 700F candidate smoke/full campaign configs.
+- ISSUE-0030 sweep TOML loader and `f700f-sweep` CLI for smoke execution.
