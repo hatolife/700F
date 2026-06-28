@@ -53,6 +53,11 @@ artifacts. ISSUE-0028 bridges the campaign modes to registered SSB, emulator, an
 descriptor/profile-only completed rows are readiness evidence only; they are not
 waveform performance or a candidate downselect.
 
+ISSUE-0023 completed a limited M2 audit with decision `M2_GO_WITH_LIMITATIONS`.
+M2-D follow-up work is tracked in
+`docs/milestones/m2d_waveform_and_tooling_unblock.md`. Real candidate downselect
+remains prohibited until waveform-capable rows and clear reporting semantics exist.
+
 ## M1 Limitations Carried Into M2
 
 - SSB received-audio WAV/raw float export is incomplete.
