@@ -40,6 +40,10 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | Module 02 + Module 07 + Module 13 + Module 15 | `feature/ISSUE-0039-700f-a-minimal-waveform-prototype` | 02, 07, 11, 12, 13, 15 |
 | ISSUE-0040 | M2 audit update after 700F-A prototype | Manager + QA | `chore/ISSUE-0040-m2-audit-update-after-700f-a-prototype` | 16, project |
 | ISSUE-0041 | real 700F modem architecture RFC | Module 02 + Module 07 + Module 13 + Module 15 | `docs/ISSUE-0041-real-700f-modem-architecture-rfc` | 02, 07, 11, 12, 13, 15 |
+| ISSUE-0042 | 700F-A minimal QPSK baseband prototype | Module 07 + Module 02 + Module 13 + Module 15 | `feature/ISSUE-0042-700f-a-minimal-qpsk-baseband-prototype` | 07, 02, 11, 12, 13, 15 |
+| ISSUE-0043 | modem frame and symbol protocol | Module 02 + Module 07 + Module 11 + Module 13 | `feature/ISSUE-0043-modem-frame-symbol-protocol` | 02, 07, 11, 13 |
+| ISSUE-0044 | prototype modem metrics separation | Module 12 + Module 15 + Module 13 | `feature/ISSUE-0044-prototype-modem-metrics-separation` | 12, 15, 13 |
+| ISSUE-0045 | M3 planning for OFDM/FEC/sync | Manager + QA + Module 06 + Module 07 + Module 09 | `docs/ISSUE-0045-m3-planning-ofdm-fec-sync` | 16, 06, 07, 09 |
 
 ## M2-A Gate
 
@@ -77,6 +81,14 @@ real candidate downselect remains prohibited.
 ISSUE-0041 defines that RFC. The selected architecture is Option B followed by
 Option C: a minimal QPSK-like baseband prototype first, then OFDM/FEC/sync
 expansion after frame/status boundaries are stable.
+
+ISSUE-0042 through ISSUE-0045 are expanded from ISSUE-0041. The preferred order
+is ISSUE-0043 protocol first, ISSUE-0044 metrics in parallel when decoupled,
+ISSUE-0042 prototype implementation after the protocol boundary, and ISSUE-0045
+planning after the real prototype path is clearer.
+
+The Manager handoff for ISSUE-0040 and ISSUE-0041 is
+`docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`.
 
 ## M1 Limitations Carried Into M2
 

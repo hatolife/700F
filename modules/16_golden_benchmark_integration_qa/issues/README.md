@@ -19,4 +19,5 @@
 | ISSUE-0016 | closed | P0 | m1 audit report | Module 16 | see root ISSUE-0016 | v0.1.0 | 2026-06-28 |
 | ISSUE-0023 | closed | P0 | limited m2 audit | Module 16 | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 | 2026-06-28 |
 | ISSUE-0040 | closed | P0 | m2 audit update after 700F-A prototype | Module 16 | chore/ISSUE-0040-m2-audit-update-after-700f-a-prototype | v0.2.0 target | 2026-06-29 |
+| ISSUE-0045 | open | P1 | M3 planning for OFDM/FEC/sync | Manager + QA | docs/ISSUE-0045-m3-planning-ofdm-fec-sync | v0.3.0 target | 2026-06-29 |
 

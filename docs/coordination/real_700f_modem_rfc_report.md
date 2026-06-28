@@ -36,3 +36,12 @@ Create implementation and governance issues for:
 - ISSUE-0043 modem frame and symbol protocol.
 - ISSUE-0044 prototype modem metrics separation.
 - ISSUE-0045 M3 planning for OFDM/FEC/sync.
+
+## Manager Handoff
+
+- Final Manager handoff:
+  `docs/handoff/ISSUE-0040-0041-real-700f-modem-rfc.md`
+- Final Manager report:
+  `reports/20260629_062002_real_700f_modem_rfc.md`
+- Dispatch plan:
+  `docs/coordination/real_700f_modem_dispatch_plan.md`
