@@ -37,6 +37,10 @@
 | ISSUE-0021 | open | P0 | module:09 | sync and impairment estimator prototype | Module 09 + Module 07 | feature/ISSUE-0021-sync-impairment-estimator | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0020 | 2026-06-28 |
 | ISSUE-0022 | open | P1 | module:14 | AI-assisted sweep triage | Module 14 + Module 13 | research/ISSUE-0022-ai-sweep-triage | v0.2.0 target | M2 | ISSUE-0015, ISSUE-0018 | 2026-06-28 |
 | ISSUE-0023 | open | P0 | qa | M2 audit and candidate downselect | Manager + QA | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 target | M2 | ISSUE-0018 through ISSUE-0022 | 2026-06-28 |
+| ISSUE-0024 | open | P0 | module:12 | M2 scoring model and comparison policy | Module 12 + Module 13 | feature/ISSUE-0024-scoring-model | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
+| ISSUE-0025 | open | P0 | module:08 | M2 expanded channel condition matrix | Module 08 + Module 13 | feature/ISSUE-0025-expanded-channel-matrix | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0010 | 2026-06-28 |
+| ISSUE-0026 | open | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
+| ISSUE-0027 | open | P0 | module:15 | M2 baseline comparison report generation | Module 15 + Module 12 | feature/ISSUE-0027-baseline-comparison-report | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0024, ISSUE-0026 | 2026-06-28 |
 
 ## M1-A integration status
 
@@ -75,3 +79,11 @@
 - M2-A startable planning/design work: ISSUE-0018 after ISSUE-0017 is merged.
 - M2 implementation issues ISSUE-0019, ISSUE-0020, ISSUE-0021, and ISSUE-0022 must not begin candidate code until ISSUE-0018 defines boundaries and test expectations.
 - ISSUE-0023 remains held until M2 candidate work completes.
+
+## M2-A integration status
+
+- ISSUE-0018 is integrated locally into `develop` as merge commit `59629d4`.
+- Local CI after ISSUE-0018 passed with 10 CTest tests.
+- A later manager request asked to use ISSUE-0019 through ISSUE-0022 for scoring/channel/sweep/report, but those issue numbers already exist as FEC/OFDM/sync/AI triage. Existing issue files remain source of truth.
+- Requested scoring/channel/sweep/report work is split into ISSUE-0024 through ISSUE-0027.
+- ISSUE-0023 remains held until the current M2 implementation issue set and follow-up comparison/report issue set are resolved or explicitly reprioritized.

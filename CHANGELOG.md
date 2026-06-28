@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Record M2-A ISSUE-0018 integration and split requested scoring/channel/sweep/report
+  work into follow-up issues because existing ISSUE-0019 through ISSUE-0022 are already
+  assigned to FEC/OFDM/sync/AI triage.
 - Define ISSUE-0018 M2-A 700F candidate architecture/profile boundary with
   descriptor-only profile stubs for balanced, robust, and quality candidates.
 - Add profile registry/factory helpers and contract tests for descriptor retrieval,

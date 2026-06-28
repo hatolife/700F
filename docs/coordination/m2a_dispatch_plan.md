@@ -27,6 +27,35 @@
 4. ISSUE-0022: may prepare research notes after ISSUE-0018, but should not drive candidate selection before candidate artifacts exist.
 5. ISSUE-0023: hold until M2 implementation issues complete.
 
+## Manager Dispatch Note 2026-06-28
+
+ISSUE-0018 is integrated locally into `develop` as `59629d4`.
+
+A later M2-A manager instruction requested the following mapping:
+
+- ISSUE-0019: scoring model and comparison policy
+- ISSUE-0020: expanded channel condition matrix
+- ISSUE-0021: M2 sweep campaign runner config
+- ISSUE-0022: M2 baseline comparison report generation
+
+This conflicts with the existing issue files, which are the repository source of truth:
+
+- ISSUE-0019: FEC UEP engine prototype
+- ISSUE-0020: OFDM waveform candidate prototype
+- ISSUE-0021: sync and impairment estimator prototype
+- ISSUE-0022: AI-assisted sweep triage
+
+Do not overwrite those issue meanings. The requested scoring/channel/sweep/report work is now tracked as ISSUE-0024 through ISSUE-0027.
+
+## M2-A Follow-Up Dispatch Table
+
+| Issue | Recommended model | Branch | Worktree | Owner module | Prerequisite |
+|---|---|---|---|---|---|
+| ISSUE-0024 | gpt-5.5-medium; escalate to gpt-5.5-xhigh for scoring policy tradeoffs | `feature/ISSUE-0024-scoring-model` | `../f700f-wt-issue-0024` | Module 12 + Module 13 | ISSUE-0018 |
+| ISSUE-0025 | GPT-5.3-Codex-Spark; gpt-5.5-medium for channel edge cases | `feature/ISSUE-0025-expanded-channel-matrix` | `../f700f-wt-issue-0025` | Module 08 + Module 13 | ISSUE-0018, ISSUE-0010 |
+| ISSUE-0026 | gpt-5.5-medium; escalate to gpt-5.5-xhigh for runner/report boundary choices | `feature/ISSUE-0026-m2-sweep-campaign-config` | `../f700f-wt-issue-0026` | Module 13 + Module 11 | ISSUE-0018, ISSUE-0025 |
+| ISSUE-0027 | gpt-5.5-medium; escalate to gpt-5.5-xhigh for report/downselect policy | `feature/ISSUE-0027-baseline-comparison-report` | `../f700f-wt-issue-0027` | Module 15 + Module 12 | ISSUE-0018, ISSUE-0024, ISSUE-0026 |
+
 ## Hold Line
 
 - Do not implement final 700F modem claims in M2-A planning.

@@ -31,12 +31,18 @@ M2 must preserve clear separation between official baselines, parameterized emul
 | ISSUE-0021 | sync and impairment estimator prototype | Module 09 + Module 07 | `feature/ISSUE-0021-sync-impairment-estimator` | 09, 07 |
 | ISSUE-0022 | AI-assisted sweep triage | Module 14 + Module 13 | `research/ISSUE-0022-ai-sweep-triage` | 14, 13 |
 | ISSUE-0023 | M2 audit and candidate downselect | Manager + QA | `docs/ISSUE-0023-m2-audit-downselect` | 16, project |
+| ISSUE-0024 | M2 scoring model and comparison policy | Module 12 + Module 13 | `feature/ISSUE-0024-scoring-model` | 12, 13 |
+| ISSUE-0025 | M2 expanded channel condition matrix | Module 08 + Module 13 | `feature/ISSUE-0025-expanded-channel-matrix` | 08, 13 |
+| ISSUE-0026 | M2 sweep campaign runner config | Module 13 + Module 11 | `feature/ISSUE-0026-m2-sweep-campaign-config` | 13, 11 |
+| ISSUE-0027 | M2 baseline comparison report generation | Module 15 + Module 12 | `feature/ISSUE-0027-baseline-comparison-report` | 15, 12 |
 
 ## M2-A Gate
 
 ISSUE-0018 is the first M2-A issue. It must define the candidate-mode boundary, minimal data contracts, test expectations, and baseline comparison rules before M2 implementation branches start.
 
 ISSUE-0019 through ISSUE-0022 may prepare research notes and red-test plans, but should not implement candidate behavior until ISSUE-0018 is integrated.
+
+ISSUE-0024 through ISSUE-0027 cover scoring, channel-matrix, sweep-campaign, and baseline-comparison report work requested after ISSUE-0018. They exist because ISSUE-0019 through ISSUE-0022 were already assigned to FEC/OFDM/sync/AI triage in the repository issue tracker.
 
 ## M1 Limitations Carried Into M2
 
