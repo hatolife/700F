@@ -1,4 +1,4 @@
-add_library(f700f_codec_adapter
+add_library(f700f_codec_adapter STATIC
   src/freedv_official.cpp
 )
 

@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+issue0037-codec2-on-016-freedv700e-official-awgn-snr-6db-seed-1,1,freedv700e_official,awgn,259c6e6519071d52,N/A,dummy.metric,0.157604,true

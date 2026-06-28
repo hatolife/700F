@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+issue0037-codec2-on-012-freedv700d-official-identity-seed-1,1,freedv700d_official,identity,539675f602bcc64a,N/A,dummy.metric,0.150985,true

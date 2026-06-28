@@ -1,4 +1,4 @@
-add_library(f700f_pipeline_runner
+add_library(f700f_pipeline_runner STATIC
   src/simulation_pipeline.cpp
 )
 

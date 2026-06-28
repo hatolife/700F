@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "issue0037-codec2-on-012-freedv700d-official-identity-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700d_official",
+  "deterministic_digest": "539675f602bcc64a",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.150985}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

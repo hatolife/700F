@@ -25,7 +25,7 @@ downselect.
 | ISSUE-0034 | official FreeDV waveform roundtrip | complete-local | Module 05 + Module 10 | `research/ISSUE-0034-official-freedv-waveform-roundtrip` |
 | ISSUE-0035 | clock-skew warning investigation | complete-local | Module 01 + Manager | `chore/ISSUE-0035-clock-skew-warning-investigation` |
 | ISSUE-0036 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | complete-local | Module 05 + Module 10 + Module 11 + Module 13 | `feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip` |
-| ISSUE-0037 | Codec2-on CI and official regression smoke | planned | Module 01 + Module 05 + Module 10 + Module 13 | `chore/ISSUE-0037-codec2-on-ci-official-regression-smoke` |
+| ISSUE-0037 | Codec2-on CI and official regression smoke | complete-local | Module 01 + Module 05 + Module 10 + Module 13 | `chore/ISSUE-0037-codec2-on-ci-official-regression-smoke` |
 
 ## Downselect Rule
 
@@ -51,7 +51,8 @@ the default Codec2-off smoke.
 
 ## M2-F Codec2 Runtime Follow-up
 
-ISSUE-0036 is integrated locally. Default Codec2-off CI remains green. Optional
-Codec2-on builds import/link the pinned `external/codec2` runtime and complete
-official 700D/700E Mode-boundary smoke rows. ISSUE-0037 tracks making this
-non-default Codec2-on path recurring.
+ISSUE-0036 and ISSUE-0037 are integrated locally. Default Codec2-off CI remains
+green and submodule-independent. Optional Codec2-on builds import/link the pinned
+`external/codec2` runtime, complete official 700D/700E Mode-boundary smoke rows,
+and are repeatable through `tools/run_codec2_on_ci_local.sh` plus the Linux
+Codec2-on Actions job.
