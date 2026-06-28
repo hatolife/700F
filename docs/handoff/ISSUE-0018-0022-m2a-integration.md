@@ -26,6 +26,7 @@
 - ISSUE-0025: M2 expanded channel condition matrix
 - ISSUE-0026: M2 sweep campaign runner config
 - ISSUE-0027: M2 baseline comparison report generation
+- The canonical M2 issue-number map is recorded in `docs/coordination/m2_issue_map.md`.
 
 ## Known Blockers
 

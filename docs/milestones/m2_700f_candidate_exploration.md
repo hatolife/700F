@@ -44,6 +44,8 @@ ISSUE-0019 through ISSUE-0022 may prepare research notes and red-test plans, but
 
 ISSUE-0024 through ISSUE-0027 cover scoring, channel-matrix, sweep-campaign, and baseline-comparison report work requested after ISSUE-0018. They exist because ISSUE-0019 through ISSUE-0022 were already assigned to FEC/OFDM/sync/AI triage in the repository issue tracker.
 
+The canonical issue-number mapping is recorded in `docs/coordination/m2_issue_map.md`. If a later instruction collides with an existing issue number, keep the existing issue and create a new follow-up issue for the new work.
+
 ## M1 Limitations Carried Into M2
 
 - SSB received-audio WAV/raw float export is incomplete.

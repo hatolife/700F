@@ -87,3 +87,8 @@
 - A later manager request asked to use ISSUE-0019 through ISSUE-0022 for scoring/channel/sweep/report, but those issue numbers already exist as FEC/OFDM/sync/AI triage. Existing issue files remain source of truth.
 - Requested scoring/channel/sweep/report work is split into ISSUE-0024 through ISSUE-0027.
 - ISSUE-0023 remains held until the current M2 implementation issue set and follow-up comparison/report issue set are resolved or explicitly reprioritized.
+
+## M2 issue map
+
+- `docs/coordination/m2_issue_map.md` records the canonical M2 issue-number mapping.
+- Future requests that conflict with existing issue meaning should create new follow-up issues rather than redefining existing issue files.
