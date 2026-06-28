@@ -33,6 +33,7 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0038 | 700F waveform-capable prototype RFC | complete | Defines the guarded metadata and reporting boundary for upgrading only `freedv700f_a_balanced` to a first waveform-capable prototype while keeping B/C surrogate and downselect prohibited. |
 | ISSUE-0039 | 700F-A minimal waveform-capable prototype | complete | Implements a toy waveform-capable 700F-A path with prototype metadata while keeping 700F-B/C surrogate and real downselect prohibited. |
 | ISSUE-0040 | M2 audit update after 700F-A prototype | complete | Audits the post-ISSUE-0039 state, confirms Codec2 OFF/ON local CI, keeps real downselect prohibited, and authorizes a real modem architecture RFC. |
+| ISSUE-0041 | real 700F modem architecture RFC | complete | Defines the real modem prototype boundary and selects Option B then Option C; implementation and downselect remain follow-up-gated. |
 
 ## Collision Rule
 
@@ -72,3 +73,7 @@ not turn prototype rows into real performance or downselect evidence.
 ISSUE-0040 records decision `M2_GO_TO_REAL_MODEM_RFC`. The next work should be
 architecture/RFC only; real modem implementation and candidate downselect remain
 blocked until explicit follow-up gates.
+
+ISSUE-0041 completes that RFC and authorizes follow-up issue expansion for a
+minimal QPSK-like baseband prototype, modem frame/symbol protocol, prototype
+metrics separation, and M3 OFDM/FEC/sync planning.

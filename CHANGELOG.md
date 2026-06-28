@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Complete ISSUE-0041 real 700F modem architecture RFC with explicit modem frame,
+  symbol, baseband, status, metadata, and metrics boundaries. Selected path is
+  Option B followed by Option C: minimal QPSK-like baseband prototype first,
+  then OFDM/FEC/sync expansion after boundaries stabilize.
 - Complete ISSUE-0040 M2 audit update after the 700F-A prototype: Codec2 OFF and
   Codec2 ON local CI are green, official 700D/700E regression smoke remains
   available, 700F-B/C remain surrogate, and the decision is
