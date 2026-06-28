@@ -7,7 +7,9 @@ add_library(f700f_core INTERFACE)
 target_include_directories(f700f_core INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(f700f_candidate_profiles src/candidate_profiles.cpp)
 target_link_libraries(f700f_candidate_profiles PUBLIC f700f_core)
-add_library(f700f_metrics OBJECT modules/12_metrics_scoring/src/metrics_artifacts.cpp)
+add_library(f700f_metrics OBJECT
+  modules/12_metrics_scoring/src/metrics_artifacts.cpp
+  modules/12_metrics_scoring/src/scoring_model.cpp)
 target_include_directories(f700f_metrics PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include)
@@ -33,6 +35,13 @@ add_executable(test_metrics_result_artifacts
   $<TARGET_OBJECTS:f700f_metrics>)
 target_link_libraries(test_metrics_result_artifacts PRIVATE f700f_core)
 target_include_directories(test_metrics_result_artifacts PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(test_scoring_model
+  tests/test_scoring_model.cpp
+  $<TARGET_OBJECTS:f700f_metrics>)
+target_link_libraries(test_scoring_model PRIVATE f700f_core f700f_candidate_profiles)
+target_include_directories(test_scoring_model PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(test_channel_models tests/test_channel_models.cpp)
@@ -62,6 +71,7 @@ enable_testing()
 add_test(NAME f700f_info_version COMMAND f700f-info)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
 add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
+add_test(NAME scoring_model_contract COMMAND test_scoring_model)
 add_test(NAME channel_model_contract COMMAND test_channel_models)
 add_test(NAME freedv_emulator_contract COMMAND test_freedv_emulator)
 add_test(NAME ssb_reference_emulator_contract COMMAND test_ssb_reference_emulator)

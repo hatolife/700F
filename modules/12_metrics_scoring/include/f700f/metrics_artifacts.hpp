@@ -24,6 +24,10 @@ struct ModeDescriptorSnapshot {
   std::string codec_id;
   std::string fec_id;
   std::string modem_id;
+  double audio_bandwidth_hz = 0.0;
+  bool official_baseline = false;
+  bool emulator = false;
+  std::string implementation_status;
   bool supports_audio_input = false;
   bool supports_audio_output = false;
   bool supports_complex_input = false;

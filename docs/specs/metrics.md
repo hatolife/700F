@@ -53,6 +53,10 @@ existing keys must stay stable; new keys can be added to
 | `codec_id` | string | Codec identifier. |
 | `fec_id` | string | FEC identifier. |
 | `modem_id` | string | Modem identifier. |
+| `audio_bandwidth_hz` | number | Nominal audio bandwidth target. |
+| `official_baseline` | boolean | Whether this descriptor is an official baseline. |
+| `emulator` | boolean | Whether this descriptor is an emulator/skeleton. |
+| `implementation_status` | string | Runtime implementation status such as `profile_only`. |
 | `supports_audio_input` | boolean | Whether mode accepts audio input. |
 | `supports_audio_output` | boolean | Whether mode produces audio output. |
 | `supports_complex_input` | boolean | Whether mode accepts complex input. |
@@ -89,6 +93,10 @@ existing keys must stay stable; new keys can be added to
     "codec_id": "analog-voice",
     "fec_id": "none",
     "modem_id": "ssb",
+    "audio_bandwidth_hz": 2700.0,
+    "official_baseline": false,
+    "emulator": true,
+    "implementation_status": "emulated",
     "supports_audio_input": true,
     "supports_audio_output": true,
     "supports_complex_input": false,
@@ -128,3 +136,6 @@ existing keys must stay stable; new keys can be added to
 - Optional future metrics (`asr_wer`, `stoi`, `estoi`, `pesq`, `polqa`, `mos`, ...)
   are expected to be placed in `optional_metrics` as string-typed entries until
   the schema formalizes their dedicated fields.
+- ISSUE-0024 scoring uses the append-only descriptor fields `official_baseline`,
+  `emulator`, and `implementation_status` to distinguish official-unavailable records
+  from emulator and profile-only candidate records.
