@@ -14,6 +14,7 @@
 - [Module contracts](module_contracts.md)
 - [M2 channel condition matrix](specs/channel_condition_matrix.md)
 - [700F waveform-capable prototype RFC](specs/700f_waveform_prototype_rfc.md)
+- [700F-A minimal waveform prototype](specs/700f_a_minimal_waveform_prototype.md)
 - [Submodule policy](submodule_policy.md)
 - [CI and workflow policy](ci.md), [Git workflow](git_workflow.md)
 

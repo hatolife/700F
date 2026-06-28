@@ -110,16 +110,23 @@ M2 baseline/candidate mode list:
   `1`, `2`, and `3`, and run id prefix `m2-700f-candidate-full`.
 
 Both helpers use stable mode ordering: SSB standard/narrow, 700D/700E emulated,
-700D/700E official skip-capable entries, and 700F-A/B/C surrogate candidates.
+700D/700E official skip-capable entries, 700F-A, 700F-B, and 700F-C.
 The campaign details are specified in `docs/specs/m2_sweep_campaign.md`, with
 TOML-friendly shapes under `configs/sweeps/`.
 
 ISSUE-0028 adds `register_m2_campaign_mode_factories()` for the default M2 smoke
 bridge. It registers SSB reference factories, 700D/700E emulator factories, and
-700F-A/B/C candidate factories. ISSUE-0032 marks 700F candidate records completed
-with `surrogate_completed` notes plus `implementation_status = surrogate`,
+700F-A/B/C candidate factories. ISSUE-0032 marks 700F-B/C candidate records
+completed with `surrogate_completed` notes plus `implementation_status = surrogate`,
 `not_real_modem = true`, `downselect_valid = false`,
 `not_downselect_valid = true`, and `performance_valid = false`.
+ISSUE-0039 changes only 700F-A to a minimal waveform-capable prototype. 700F-A
+rows run through encode/channel/decode and complete with
+`waveform_prototype_completed`, `implementation_status = waveform_prototype`,
+`prototype = true`, `not_final_modem = true`, `waveform_capable = true`,
+`codec_family = synthetic`, `fec_family = none`,
+`modem_family = toy_audio_waveform`, `downselect_valid = false`, and
+`performance_valid = false`.
 ISSUE-0033 moves the 700D/700E emulator rows from descriptor-only completion into
 deterministic `emulated_surrogate` runtime completion. These rows are marked
 completed with an
@@ -127,16 +134,20 @@ completed with an
 `official=false`, `not_official_freedv=true`, `downselect_valid=false`,
 `performance_valid=false`, `emulator_model_name`, `emulator_model_version`, and
 `emulator_limitations`. They do not claim official FreeDV behavior or valid
-performance evidence. 700F surrogate rows do not claim waveform encode/decode or
-real performance metrics. Official FreeDV 700D/700E entries remain skipped in
+performance evidence. 700F-B/C surrogate rows do not claim waveform encode/decode
+or real performance metrics. The 700F-A prototype claims only toy waveform
+capability and remains non-final, performance-invalid, and downselect-invalid.
+Official FreeDV 700D/700E entries remain skipped in
 default Codec2-disabled smoke runs with an
 `official_freedv_codec2_unavailable` reason that records
 `official=true`, `codec2_enabled=false`, `codec2_available=false`,
 `roundtrip_available=false`, `not_emulator=true`, and `not_surrogate=true`.
 
-ISSUE-0032 appends these aggregate row fields to JSON/CSV outputs while keeping
+ISSUE-0032 and ISSUE-0039 append these aggregate row fields to JSON/CSV outputs while keeping
 existing columns stable: `implementation_status`, `not_real_modem`,
 `downselect_valid`, `not_downselect_valid`, `performance_valid`,
+`prototype`, `not_final_modem`, `waveform_capable`, `codec_family`,
+`fec_family`, `modem_family`, `prototype_limitations`,
 `surrogate_model_name`, `surrogate_model_version`, `surrogate_limitations`,
 `surrogate_readiness_score_synthetic`, and `synthetic_metrics_label`.
 

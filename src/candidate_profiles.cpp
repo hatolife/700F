@@ -41,8 +41,12 @@ ModeDescriptor make_balanced_descriptor() {
   descriptor.display_name = "FreeDV 700F candidate A balanced profile";
   descriptor.audio_high_hz = 3300.0;
   descriptor.audio_bandwidth_hz = 3000.0;
-  descriptor.fec_id = "700f-candidate-medium-fec-policy";
+  descriptor.codec_id = "synthetic-700f-a-prototype";
+  descriptor.fec_id = "none";
+  descriptor.modem_id = "toy_audio_waveform-700f-a";
+  descriptor.modulation_family = "toy_audio_waveform";
   descriptor.pilot_strategy = "medium-density candidate pilots";
+  descriptor.implementation_status = "waveform_prototype";
   return descriptor;
 }
 
@@ -140,6 +144,72 @@ private:
   std::uint64_t frame_index_ = 0;
 };
 
+class BalancedPrototypeMode final : public IMode {
+public:
+  explicit BalancedPrototypeMode(ModeDescriptor descriptor)
+      : descriptor_(std::move(descriptor)) {}
+
+  const ModeDescriptor &descriptor() const noexcept override {
+    return descriptor_;
+  }
+
+  bool configure(const ModeRuntimeConfig &config) override {
+    configured_ =
+        config.sample_rate_hz == 0 || config.sample_rate_hz == descriptor_.sample_rate_hz;
+    return configured_;
+  }
+
+  EncodeResult encode(const AudioBlock &audio) override {
+    EncodeResult result;
+    result.status.frame_index = frame_index_++;
+    result.symbols.sample_rate_hz =
+        audio.sample_rate_hz == 0 ? descriptor_.sample_rate_hz : audio.sample_rate_hz;
+    result.symbols.start_time_s = audio.start_time_s;
+    if (!configured_) {
+      result.error = descriptor_.mode_id + " not configured";
+      return result;
+    }
+    result.ok = true;
+    result.status.sync = true;
+    result.status.fec_ok = true;
+    result.status.confidence = 0.75F;
+    result.symbols.iq.reserve(audio.mono.size());
+    for (const auto sample : audio.mono) {
+      result.symbols.iq.push_back({sample, -sample});
+    }
+    return result;
+  }
+
+  DecodeResult decode(const ComplexBlock &symbols) override {
+    DecodeResult result;
+    result.status.frame_index = frame_index_++;
+    result.audio.sample_rate_hz = descriptor_.sample_rate_hz;
+    result.audio.start_time_s = symbols.start_time_s;
+    if (!configured_) {
+      result.error = descriptor_.mode_id + " not configured";
+      return result;
+    }
+    result.ok = true;
+    result.status.sync = true;
+    result.status.fec_ok = true;
+    result.status.confidence = 0.75F;
+    result.audio.mono.reserve(symbols.iq.size());
+    for (const auto &sample : symbols.iq) {
+      result.audio.mono.push_back(sample.re);
+    }
+    return result;
+  }
+
+  void reset() noexcept override {
+    frame_index_ = 0;
+  }
+
+private:
+  ModeDescriptor descriptor_;
+  bool configured_ = false;
+  std::uint64_t frame_index_ = 0;
+};
+
 class CandidateProfileFactory final : public IModeFactory {
 public:
   explicit CandidateProfileFactory(ModeDescriptor descriptor)
@@ -150,6 +220,9 @@ public:
   }
 
   std::unique_ptr<IMode> create() const override {
+    if (descriptor_.mode_id == "freedv700f_a_balanced") {
+      return std::make_unique<BalancedPrototypeMode>(descriptor_);
+    }
     return std::make_unique<CandidateProfileMode>(descriptor_);
   }
 

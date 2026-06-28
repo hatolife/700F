@@ -136,9 +136,9 @@ void surrogate_snapshot_is_carried_without_performance_evidence() {
 }
 
 void completed_surrogate_rows_do_not_score_as_real_performance() {
-  auto surrogate = make_result("freedv700f_a_balanced");
+  auto surrogate = make_result("freedv700f_b_robust");
   surrogate.mode_descriptor = f700f::metrics::make_mode_descriptor_snapshot(
-      f700f::freedv700f_a_balanced_descriptor());
+      f700f::freedv700f_b_robust_descriptor());
   surrogate.optional_metrics["surrogate_readiness_score_synthetic"] = "0.625";
   surrogate.optional_metrics["synthetic_metrics_label"] =
       "synthetic_surrogate_readiness_only";
@@ -146,7 +146,7 @@ void completed_surrogate_rows_do_not_score_as_real_performance() {
   const auto report = f700f::metrics::score_m2_results(
       {surrogate}, {}, f700f::metrics::make_m2_score_policy());
 
-  const auto *candidate = report.find_mode("freedv700f_a_balanced");
+  const auto *candidate = report.find_mode("freedv700f_b_robust");
   assert(candidate != nullptr);
   assert(candidate->completed_count == 1);
   assert(candidate->surrogate_count == 1);
@@ -160,6 +160,37 @@ void completed_surrogate_rows_do_not_score_as_real_performance() {
   assert(candidate->fer_available_count == 0);
   assert(candidate->ber_unavailable_count == 0);
   assert(candidate->fer_unavailable_count == 0);
+}
+
+void completed_waveform_prototype_rows_do_not_score_as_real_performance() {
+  auto prototype = make_result("freedv700f_a_balanced");
+  prototype.mode_descriptor = f700f::metrics::make_mode_descriptor_snapshot(
+      f700f::freedv700f_a_balanced_descriptor());
+  prototype.optional_metrics["prototype"] = "true";
+  prototype.optional_metrics["not_final_modem"] = "true";
+  prototype.optional_metrics["waveform_capable"] = "true";
+  prototype.optional_metrics["downselect_valid"] = "false";
+  prototype.optional_metrics["performance_valid"] = "false";
+
+  const auto report = f700f::metrics::score_m2_results(
+      {prototype}, {}, f700f::metrics::make_m2_score_policy());
+
+  const auto *candidate = report.find_mode("freedv700f_a_balanced");
+  assert(candidate != nullptr);
+  assert(candidate->completed_count == 1);
+  assert(candidate->surrogate_count == 0);
+  assert(candidate->performance_valid_count == 0);
+  assert(candidate->performance_invalid_count == 1);
+  assert(candidate->score == 0.0);
+  assert(candidate->real_performance_score == 0.0);
+  assert(candidate->profile_snapshot.has_value());
+  assert(candidate->profile_snapshot->implementation_status ==
+         "waveform_prototype");
+  assert(candidate->profile_snapshot->prototype);
+  assert(candidate->profile_snapshot->not_final_modem);
+  assert(candidate->profile_snapshot->waveform_capable);
+  assert(!candidate->profile_snapshot->downselect_valid);
+  assert(!candidate->profile_snapshot->performance_valid);
 }
 
 void emulated_surrogate_completed_rows_are_not_performance_evidence() {
@@ -193,6 +224,7 @@ int main() {
   audio_only_na_and_digital_availability_are_represented();
   surrogate_snapshot_is_carried_without_performance_evidence();
   completed_surrogate_rows_do_not_score_as_real_performance();
+  completed_waveform_prototype_rows_do_not_score_as_real_performance();
   emulated_surrogate_completed_rows_are_not_performance_evidence();
   return 0;
 }

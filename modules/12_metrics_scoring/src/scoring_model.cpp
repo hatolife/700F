@@ -34,6 +34,10 @@ bool is_emulated_surrogate(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "emulated_surrogate";
 }
 
+bool is_waveform_prototype(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.implementation_status == "waveform_prototype";
+}
+
 bool is_descriptor_only(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "descriptor_only" ||
          snapshot.implementation_status == "descriptor-only";
@@ -42,6 +46,7 @@ bool is_descriptor_only(const ModeDescriptorSnapshot &snapshot) {
 bool is_performance_valid(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.performance_valid && !is_profile_only(snapshot) &&
          !is_surrogate(snapshot) && !is_emulated_surrogate(snapshot) &&
+         !is_waveform_prototype(snapshot) &&
          !is_descriptor_only(snapshot);
 }
 
@@ -369,6 +374,22 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
       out << "\"performance_valid\":"
           << (score.profile_snapshot->performance_valid ? "true" : "false")
           << ",";
+      out << "\"prototype\":"
+          << (score.profile_snapshot->prototype ? "true" : "false") << ",";
+      out << "\"not_final_modem\":"
+          << (score.profile_snapshot->not_final_modem ? "true" : "false")
+          << ",";
+      out << "\"waveform_capable\":"
+          << (score.profile_snapshot->waveform_capable ? "true" : "false")
+          << ",";
+      out << "\"codec_family\":\""
+          << escape_json(score.profile_snapshot->codec_family) << "\",";
+      out << "\"fec_family\":\""
+          << escape_json(score.profile_snapshot->fec_family) << "\",";
+      out << "\"modem_family\":\""
+          << escape_json(score.profile_snapshot->modem_family) << "\",";
+      out << "\"prototype_limitations\":\""
+          << escape_json(score.profile_snapshot->prototype_limitations) << "\",";
       out << "\"surrogate_model_name\":\""
           << escape_json(score.profile_snapshot->surrogate_model_name) << "\",";
       out << "\"surrogate_model_version\":\""

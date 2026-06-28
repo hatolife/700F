@@ -241,7 +241,8 @@ bool is_surrogate_status(const std::string &status) {
 
 bool is_non_performance_status(const std::string &status) {
   return status == "surrogate" || status == "profile_only" ||
-         status == "descriptor_only" || status == "descriptor-only";
+         status == "descriptor_only" || status == "descriptor-only" ||
+         status == "waveform_prototype";
 }
 
 void apply_surrogate_snapshot_defaults(
@@ -253,6 +254,24 @@ void apply_surrogate_snapshot_defaults(
   }
 
   if (!is_surrogate_status(snapshot.implementation_status)) {
+    if (snapshot.implementation_status == "waveform_prototype") {
+      snapshot.prototype = true;
+      snapshot.not_final_modem = true;
+      snapshot.waveform_capable = true;
+      if (snapshot.codec_family.empty()) {
+        snapshot.codec_family = "synthetic";
+      }
+      if (snapshot.fec_family.empty()) {
+        snapshot.fec_family = "none";
+      }
+      if (snapshot.modem_family.empty()) {
+        snapshot.modem_family = "toy_audio_waveform";
+      }
+      if (snapshot.prototype_limitations.empty()) {
+        snapshot.prototype_limitations =
+            "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect";
+      }
+    }
     return;
   }
 
@@ -656,6 +675,21 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
   out.push_back(',');
   out += "\"performance_valid\":" + bool_to_json(snapshot.performance_valid);
   out.push_back(',');
+  out += "\"prototype\":" + bool_to_json(snapshot.prototype);
+  out.push_back(',');
+  out += "\"not_final_modem\":" + bool_to_json(snapshot.not_final_modem);
+  out.push_back(',');
+  out += "\"waveform_capable\":" + bool_to_json(snapshot.waveform_capable);
+  out.push_back(',');
+  append_json_key_value(out, "codec_family", snapshot.codec_family);
+  out.push_back(',');
+  append_json_key_value(out, "fec_family", snapshot.fec_family);
+  out.push_back(',');
+  append_json_key_value(out, "modem_family", snapshot.modem_family);
+  out.push_back(',');
+  append_json_key_value(out, "prototype_limitations",
+                        snapshot.prototype_limitations);
+  out.push_back(',');
   append_json_key_value(out, "surrogate_model_name",
                         snapshot.surrogate_model_name);
   out.push_back(',');
@@ -969,6 +1003,34 @@ ResultArtifact from_json(const std::string &json_payload) {
         it != descriptor_map.end()) {
       result.mode_descriptor.performance_valid = parse_bool(it->second, true);
     }
+    if (const auto it = descriptor_map.find("prototype");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.prototype = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("not_final_modem");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.not_final_modem = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("waveform_capable");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.waveform_capable = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("codec_family");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.codec_family = it->second;
+    }
+    if (const auto it = descriptor_map.find("fec_family");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.fec_family = it->second;
+    }
+    if (const auto it = descriptor_map.find("modem_family");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.modem_family = it->second;
+    }
+    if (const auto it = descriptor_map.find("prototype_limitations");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.prototype_limitations = it->second;
+    }
     if (const auto it = descriptor_map.find("surrogate_model_name");
         it != descriptor_map.end()) {
       result.mode_descriptor.surrogate_model_name = it->second;
@@ -1149,6 +1211,39 @@ ResultArtifact from_csv_row(const std::string &header_line,
           it_performance != descriptor_map.end()) {
         result.mode_descriptor.performance_valid =
             parse_bool(it_performance->second, true);
+      }
+      if (const auto it_prototype = descriptor_map.find("prototype");
+          it_prototype != descriptor_map.end()) {
+        result.mode_descriptor.prototype = parse_bool(it_prototype->second);
+      }
+      if (const auto it_not_final =
+              descriptor_map.find("not_final_modem");
+          it_not_final != descriptor_map.end()) {
+        result.mode_descriptor.not_final_modem =
+            parse_bool(it_not_final->second);
+      }
+      if (const auto it_waveform = descriptor_map.find("waveform_capable");
+          it_waveform != descriptor_map.end()) {
+        result.mode_descriptor.waveform_capable =
+            parse_bool(it_waveform->second);
+      }
+      if (const auto it_codec_family = descriptor_map.find("codec_family");
+          it_codec_family != descriptor_map.end()) {
+        result.mode_descriptor.codec_family = it_codec_family->second;
+      }
+      if (const auto it_fec_family = descriptor_map.find("fec_family");
+          it_fec_family != descriptor_map.end()) {
+        result.mode_descriptor.fec_family = it_fec_family->second;
+      }
+      if (const auto it_modem_family = descriptor_map.find("modem_family");
+          it_modem_family != descriptor_map.end()) {
+        result.mode_descriptor.modem_family = it_modem_family->second;
+      }
+      if (const auto it_prototype_limitations =
+              descriptor_map.find("prototype_limitations");
+          it_prototype_limitations != descriptor_map.end()) {
+        result.mode_descriptor.prototype_limitations =
+            it_prototype_limitations->second;
       }
       if (const auto it_surrogate_name =
               descriptor_map.find("surrogate_model_name");

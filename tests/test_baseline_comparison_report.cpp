@@ -122,12 +122,14 @@ void markdown_includes_scores_statuses_and_raw_metric_summary() {
   assert(contains(markdown, "unavailable/skipped: 1"));
   assert(contains(markdown, "SSB reference status"));
   assert(contains(markdown, "700F candidate summary"));
-  assert(contains(markdown, "`freedv700f_a_balanced` surrogate"));
-  assert(contains(markdown, "not_real_modem=true"));
+  assert(contains(markdown, "`freedv700f_a_balanced` waveform_prototype"));
+  assert(contains(markdown, "prototype=true"));
+  assert(contains(markdown, "not_final_modem=true"));
+  assert(contains(markdown, "waveform_capable=true"));
   assert(contains(markdown, "downselect_valid=false"));
   assert(contains(markdown, "performance_valid=false"));
+  assert(contains(markdown, "modem_family=toy_audio_waveform"));
   assert(contains(markdown, "real score 0"));
-  assert(contains(markdown, "surrogate readiness 0"));
   assert(contains(markdown, "## Raw Metrics Summary"));
   assert(contains(markdown, "mean dropout"));
   assert(contains(markdown, "ASR WER slots"));

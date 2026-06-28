@@ -34,7 +34,8 @@ void assert_common_candidate_shape(const f700f::ModeDescriptor &descriptor) {
   assert(!descriptor.pilot_strategy.empty());
   assert(!descriptor.official_baseline);
   assert(!descriptor.emulator);
-  assert(descriptor.implementation_status == "surrogate");
+  assert(descriptor.implementation_status == "surrogate" ||
+         descriptor.implementation_status == "waveform_prototype");
   assert(descriptor.capabilities.audio_input);
   assert(descriptor.capabilities.audio_output);
   assert(descriptor.capabilities.complex_input);
@@ -67,8 +68,11 @@ void profile_targets_are_encoded_in_descriptors() {
 
   assert(close_to(balanced.audio_high_hz, 3300.0));
   assert(close_to(balanced.audio_bandwidth_hz, 3000.0));
-  assert(balanced.fec_id.find("medium") != std::string::npos);
-  assert(balanced.implementation_status == "surrogate");
+  assert(balanced.implementation_status == "waveform_prototype");
+  assert(balanced.codec_id == "synthetic-700f-a-prototype");
+  assert(balanced.fec_id == "none");
+  assert(balanced.modem_id == "toy_audio_waveform-700f-a");
+  assert(balanced.modulation_family == "toy_audio_waveform");
 
   assert(robust.audio_high_hz >= 3000.0);
   assert(robust.audio_high_hz <= 3300.0);
@@ -76,12 +80,14 @@ void profile_targets_are_encoded_in_descriptors() {
   assert(robust.audio_bandwidth_hz <= 3000.0);
   assert(robust.fec_id.find("strong") != std::string::npos);
   assert(robust.nominal_latency_s >= balanced.nominal_latency_s);
+  assert(robust.implementation_status == "surrogate");
 
   assert(quality.audio_high_hz >= 3600.0);
   assert(quality.audio_high_hz <= 4300.0);
   assert(quality.audio_bandwidth_hz >= 3300.0);
   assert(quality.audio_bandwidth_hz <= 4000.0);
   assert(quality.fec_id.find("light") != std::string::npos);
+  assert(quality.implementation_status == "surrogate");
 }
 
 void registry_selects_candidate_profiles() {
@@ -102,23 +108,56 @@ void registry_selects_candidate_profiles() {
 void encode_decode_report_surrogate_boundary() {
   f700f::ModeRegistry registry;
   f700f::register_700f_candidate_profiles(registry);
-  auto mode = registry.create("freedv700f_a_balanced");
+  auto mode = registry.create("freedv700f_b_robust");
   assert(mode != nullptr);
   assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
 
   const auto encoded = mode->encode({});
   assert(!encoded.ok);
-  assert(encoded.error.find("freedv700f_a_balanced") != std::string::npos);
+  assert(encoded.error.find("freedv700f_b_robust") != std::string::npos);
   assert(encoded.error.find("ISSUE-0032") != std::string::npos);
   assert(encoded.error.find("surrogate") != std::string::npos);
   assert(encoded.error.find("not_real_modem") != std::string::npos);
 
   const auto decoded = mode->decode({});
   assert(!decoded.ok);
-  assert(decoded.error.find("freedv700f_a_balanced") != std::string::npos);
+  assert(decoded.error.find("freedv700f_b_robust") != std::string::npos);
   assert(decoded.error.find("ISSUE-0032") != std::string::npos);
   assert(decoded.error.find("surrogate") != std::string::npos);
   assert(decoded.error.find("not_real_modem") != std::string::npos);
+}
+
+void balanced_candidate_runs_minimal_waveform_prototype() {
+  f700f::ModeRegistry registry;
+  f700f::register_700f_candidate_profiles(registry);
+  auto mode = registry.create("freedv700f_a_balanced");
+  assert(mode != nullptr);
+  assert(mode->descriptor().implementation_status == "waveform_prototype");
+  assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
+
+  f700f::AudioBlock empty;
+  empty.sample_rate_hz = mode->descriptor().sample_rate_hz;
+  const auto empty_encoded = mode->encode(empty);
+  assert(empty_encoded.ok);
+  assert(empty_encoded.symbols.sample_rate_hz == empty.sample_rate_hz);
+  assert(empty_encoded.symbols.iq.empty());
+  const auto empty_decoded = mode->decode(empty_encoded.symbols);
+  assert(empty_decoded.ok);
+  assert(empty_decoded.audio.sample_rate_hz == empty.sample_rate_hz);
+  assert(empty_decoded.audio.mono.empty());
+
+  f700f::AudioBlock short_audio;
+  short_audio.sample_rate_hz = mode->descriptor().sample_rate_hz;
+  short_audio.mono = {0.25F, -0.125F, 0.0F, 0.5F};
+  const auto encoded = mode->encode(short_audio);
+  assert(encoded.ok);
+  assert(encoded.symbols.iq.size() == short_audio.mono.size());
+  assert(encoded.status.sync);
+  assert(encoded.status.fec_ok);
+  const auto decoded = mode->decode(encoded.symbols);
+  assert(decoded.ok);
+  assert(decoded.audio.sample_rate_hz == short_audio.sample_rate_hz);
+  assert(decoded.audio.mono.size() == short_audio.mono.size());
 }
 
 void metrics_snapshot_and_json_report_preserve_surrogate_boundary() {
@@ -215,6 +254,7 @@ int main() {
   profile_targets_are_encoded_in_descriptors();
   registry_selects_candidate_profiles();
   encode_decode_report_surrogate_boundary();
+  balanced_candidate_runs_minimal_waveform_prototype();
   metrics_snapshot_and_json_report_preserve_surrogate_boundary();
   sweep_runner_reaches_surrogate_and_reports_non_real_completion();
   return 0;
