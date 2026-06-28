@@ -284,8 +284,11 @@ void apply_surrogate_snapshot_defaults(
         if (snapshot.modem_family.empty()) {
           snapshot.modem_family = "toy_audio_waveform";
         }
-      } else if (snapshot.modem_family.empty()) {
-        snapshot.modem_family = "minimal_qpsk_baseband";
+      } else {
+        snapshot.waveform_capable = true;
+        if (snapshot.modem_family.empty()) {
+          snapshot.modem_family = "minimal_qpsk";
+        }
       }
       if (snapshot.codec_family.empty()) {
         snapshot.codec_family = "synthetic";
@@ -293,16 +296,21 @@ void apply_surrogate_snapshot_defaults(
       if (snapshot.fec_family.empty()) {
         snapshot.fec_family = "none";
       }
+      if (snapshot.sync_family.empty()) {
+        snapshot.sync_family =
+            snapshot.implementation_status == "real_modem_prototype" ? "none"
+                                                                      : "";
+      }
       if (snapshot.prototype_limitations.empty()) {
         snapshot.prototype_limitations =
             snapshot.implementation_status == "real_modem_prototype"
-                ? "limited real modem prototype diagnostics only; no final FEC/sync/codec claims; not valid for real downselect"
+                ? "ISSUE-0042 minimal QPSK-like baseband prototype; synthetic codec; no FEC; no final synchronization; not final modem; not official FreeDV; not valid for real downselect"
                 : "toy audio waveform; synthetic codec; no FEC; not final modem; not official FreeDV; not valid for real downselect";
       }
       if (snapshot.prototype_warning.empty()) {
         snapshot.prototype_warning =
             snapshot.implementation_status == "real_modem_prototype"
-                ? "REAL MODEM PROTOTYPE WARNING: limited diagnostics only; not real performance; downselect_valid=false"
+                ? "REAL MODEM PROTOTYPE WARNING: limited diagnostics only; performance_valid=limited; not real performance; downselect_valid=false"
                 : "WAVEFORM PROTOTYPE WARNING: readiness evidence only; not real performance; downselect_valid=false";
       }
     }
@@ -738,6 +746,8 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
   out.push_back(',');
   append_json_key_value(out, "fec_family", snapshot.fec_family);
   out.push_back(',');
+  append_json_key_value(out, "sync_family", snapshot.sync_family);
+  out.push_back(',');
   append_json_key_value(out, "modem_family", snapshot.modem_family);
   out.push_back(',');
   append_json_key_value(out, "prototype_limitations",
@@ -1129,6 +1139,10 @@ ResultArtifact from_json(const std::string &json_payload) {
         it != descriptor_map.end()) {
       result.mode_descriptor.fec_family = it->second;
     }
+    if (const auto it = descriptor_map.find("sync_family");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.sync_family = it->second;
+    }
     if (const auto it = descriptor_map.find("modem_family");
         it != descriptor_map.end()) {
       result.mode_descriptor.modem_family = it->second;
@@ -1370,6 +1384,10 @@ ResultArtifact from_csv_row(const std::string &header_line,
       if (const auto it_fec_family = descriptor_map.find("fec_family");
           it_fec_family != descriptor_map.end()) {
         result.mode_descriptor.fec_family = it_fec_family->second;
+      }
+      if (const auto it_sync_family = descriptor_map.find("sync_family");
+          it_sync_family != descriptor_map.end()) {
+        result.mode_descriptor.sync_family = it_sync_family->second;
       }
       if (const auto it_modem_family = descriptor_map.find("modem_family");
           it_modem_family != descriptor_map.end()) {

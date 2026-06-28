@@ -76,7 +76,7 @@ diagnostics. It does not mean the row is valid for final candidate ranking.
 
 The first allowed real prototype family is:
 
-- `minimal_qpsk_baseband`
+- `minimal_qpsk`
 
 Later RFC or planning work may introduce:
 

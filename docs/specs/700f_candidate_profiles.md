@@ -2,8 +2,9 @@
 
 ISSUE-0018 introduced three experimental 700F candidate profiles. ISSUE-0032 made
 them selectable surrogate Mode descriptors for sweep/report readiness. ISSUE-0039
-upgrades only 700F-A to a minimal waveform-capable prototype. They are not final
-modem implementations.
+upgraded only 700F-A to a toy waveform-capable prototype. ISSUE-0042 moves only
+700F-A to a minimal QPSK-like baseband prototype. They are not final modem
+implementations.
 
 ## Profile Table
 
@@ -25,10 +26,10 @@ All profiles set:
 
 Implementation status by profile:
 
-- `freedv700f_a_balanced`: `implementation_status = "waveform_prototype"`,
+- `freedv700f_a_balanced`: `implementation_status = "real_modem_prototype"`,
   `codec_id = "synthetic-700f-a-prototype"`, `fec_id = "none"`,
-  `modem_id = "toy_audio_waveform-700f-a"`, and
-  `modulation_family = "toy_audio_waveform"`.
+  `modem_id = "minimal-qpsk-baseband-700f-a"`, and
+  `modulation_family = "qpsk"`.
 - `freedv700f_b_robust`: `implementation_status = "surrogate"`.
 - `freedv700f_c_quality`: `implementation_status = "surrogate"`.
 
@@ -50,20 +51,24 @@ Profile factories are available through:
 - `make_700f_candidate_profile_factory(mode_id)`
 - `register_700f_candidate_profiles(registry)`
 
-The runtime accepts default configuration or the descriptor sample rate.
-`freedv700f_a_balanced` performs deterministic toy audio-to-complex encode and
-complex-to-audio decode so the existing pipeline can exercise a waveform-capable
-prototype path. `freedv700f_b_robust` and `freedv700f_c_quality` return
+The runtime accepts the descriptor sample rate.
+`freedv700f_a_balanced` performs deterministic synthetic PCM-byte to QPSK-like
+symbol/baseband encode and hard-decision decode so the existing pipeline can
+exercise a waveform-capable real modem prototype path. `freedv700f_b_robust`
+and `freedv700f_c_quality` return
 `ok == false` and an error containing the mode id, `ISSUE-0032`, `surrogate`,
 and `not_real_modem`.
 
 ## Reporting Expectations
 
 Metrics snapshots, simulation reports, and sweep reports must preserve the canonical
-mode id. ISSUE-0039 700F-A rows complete through the pipeline with
+mode id. ISSUE-0042 700F-A rows complete through the pipeline with
 `prototype = true`, `not_final_modem = true`, `waveform_capable = true`,
-`downselect_valid = false`, and `performance_valid = false`. ISSUE-0032 B/C
-candidate sweep records complete through the surrogate bridge with
+`downselect_valid = false`, `performance_valid = false`,
+`performance_validity = limited`, `codec_family = synthetic`,
+`fec_family = none`, `sync_family = none`, and
+`modem_family = minimal_qpsk`. ISSUE-0032 B/C candidate sweep records complete
+through the surrogate bridge with
 `not_real_modem = true`, `downselect_valid = false`, and
 `performance_valid = false`. BER/FER are not emitted as real 700F performance
 values, and any synthetic readiness metrics must be labeled synthetic. Missing

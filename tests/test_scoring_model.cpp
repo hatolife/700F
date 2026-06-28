@@ -163,9 +163,19 @@ void completed_surrogate_rows_do_not_score_as_real_performance() {
 }
 
 void completed_waveform_prototype_rows_do_not_score_as_real_performance() {
-  auto prototype = make_result("freedv700f_a_balanced");
-  prototype.mode_descriptor = f700f::metrics::make_mode_descriptor_snapshot(
-      f700f::freedv700f_a_balanced_descriptor());
+  auto prototype = make_result("manual_waveform_prototype");
+  prototype.mode_descriptor.implementation_status = "waveform_prototype";
+  prototype.mode_descriptor.implementation_classification =
+      "waveform_prototype";
+  prototype.mode_descriptor.prototype = true;
+  prototype.mode_descriptor.not_final_modem = true;
+  prototype.mode_descriptor.waveform_capable = true;
+  prototype.mode_descriptor.downselect_valid = false;
+  prototype.mode_descriptor.not_downselect_valid = true;
+  prototype.mode_descriptor.performance_valid = false;
+  prototype.mode_descriptor.performance_validity = "limited";
+  prototype.mode_descriptor.downselect_validity = "invalid";
+  prototype.mode_descriptor.modem_family = "toy_audio_waveform";
   prototype.optional_metrics["prototype"] = "true";
   prototype.optional_metrics["not_final_modem"] = "true";
   prototype.optional_metrics["waveform_capable"] = "true";
@@ -175,7 +185,7 @@ void completed_waveform_prototype_rows_do_not_score_as_real_performance() {
   const auto report = f700f::metrics::score_m2_results(
       {prototype}, {}, f700f::metrics::make_m2_score_policy());
 
-  const auto *candidate = report.find_mode("freedv700f_a_balanced");
+  const auto *candidate = report.find_mode("manual_waveform_prototype");
   assert(candidate != nullptr);
   assert(candidate->completed_count == 1);
   assert(candidate->surrogate_count == 0);
@@ -195,24 +205,11 @@ void completed_waveform_prototype_rows_do_not_score_as_real_performance() {
 
 void completed_real_modem_prototype_rows_are_limited_diagnostics_only() {
   auto prototype = make_result("freedv700f_a_balanced");
-  prototype.mode_descriptor.implementation_status = "real_modem_prototype";
-  prototype.mode_descriptor.implementation_classification =
-      "real_modem_prototype";
-  prototype.mode_descriptor.prototype = true;
-  prototype.mode_descriptor.not_final_modem = true;
-  prototype.mode_descriptor.downselect_valid = false;
-  prototype.mode_descriptor.not_downselect_valid = true;
-  prototype.mode_descriptor.performance_valid = false;
-  prototype.mode_descriptor.performance_validity = "limited";
-  prototype.mode_descriptor.downselect_validity = "invalid";
-  prototype.mode_descriptor.modem_family = "minimal_qpsk_baseband";
-  prototype.mode_descriptor.fec_family = "none";
-  prototype.mode_descriptor.codec_family = "synthetic";
-  prototype.mode_descriptor.prototype_warning =
-      "REAL MODEM PROTOTYPE WARNING: limited diagnostics only";
+  prototype.mode_descriptor = f700f::metrics::make_mode_descriptor_snapshot(
+      f700f::freedv700f_a_balanced_descriptor());
   prototype.prototype_symbol_error_rate = 0.25;
-  prototype.prototype_frame_status = "limited";
-  prototype.prototype_sync_status = "pilot_placeholder";
+  prototype.prototype_frame_status = "completed";
+  prototype.prototype_sync_status = "none";
   prototype.prototype_baseband_sample_count = 3840;
   prototype.prototype_limitations = "not final 700F performance";
 
@@ -236,6 +233,8 @@ void completed_real_modem_prototype_rows_are_limited_diagnostics_only() {
   assert(candidate->profile_snapshot->performance_validity == "limited");
   assert(candidate->profile_snapshot->downselect_validity == "invalid");
   assert(!candidate->profile_snapshot->downselect_valid);
+  assert(candidate->profile_snapshot->modem_family == "minimal_qpsk");
+  assert(candidate->profile_snapshot->sync_family == "none");
 }
 
 void emulated_surrogate_completed_rows_are_not_performance_evidence() {

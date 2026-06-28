@@ -40,6 +40,7 @@ struct SweepRow {
   std::string waveform_capable;
   std::string codec_family;
   std::string fec_family;
+  std::string sync_family;
   std::string modem_family;
   std::string prototype_limitations;
   std::string prototype_warning;
@@ -470,6 +471,7 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
             : row.implementation_classification;
     descriptor.prototype = parse_bool_or(row.prototype, true);
     descriptor.not_final_modem = parse_bool_or(row.not_final_modem, true);
+    descriptor.waveform_capable = parse_bool_or(row.waveform_capable, true);
     descriptor.downselect_valid = parse_bool_or(row.downselect_valid, false);
     descriptor.not_downselect_valid =
         parse_bool_or(row.not_downselect_valid, !descriptor.downselect_valid);
@@ -481,8 +483,10 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
     descriptor.codec_family =
         row.codec_family.empty() ? "synthetic" : row.codec_family;
     descriptor.fec_family = row.fec_family.empty() ? "none" : row.fec_family;
+    descriptor.sync_family =
+        row.sync_family.empty() ? "none" : row.sync_family;
     descriptor.modem_family =
-        row.modem_family.empty() ? "minimal_qpsk_baseband" : row.modem_family;
+        row.modem_family.empty() ? "minimal_qpsk" : row.modem_family;
     descriptor.prototype_limitations =
         row.prototype_limitations.empty()
             ? "limited real modem prototype diagnostics only; not final 700F performance"
@@ -621,6 +625,8 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
         result.mode_descriptor.performance_validity;
     result.optional_metrics["downselect_validity"] =
         result.mode_descriptor.downselect_validity;
+    result.optional_metrics["sync_family"] =
+        result.mode_descriptor.sync_family;
     result.optional_metrics["modem_family"] =
         result.mode_descriptor.modem_family;
     result.optional_metrics["prototype_limitations"] =
@@ -847,6 +853,7 @@ LoadedReportInput load_report_input_json(const std::string &json_payload) {
     row.waveform_capable = extract_raw_field(object, "waveform_capable");
     row.codec_family = extract_quoted_field(object, "codec_family");
     row.fec_family = extract_quoted_field(object, "fec_family");
+    row.sync_family = extract_quoted_field(object, "sync_family");
     row.modem_family = extract_quoted_field(object, "modem_family");
     row.prototype_limitations =
         extract_quoted_field(object, "prototype_limitations");
@@ -936,6 +943,8 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
         values.contains("codec_family") ? values.at("codec_family") : "";
     row.fec_family =
         values.contains("fec_family") ? values.at("fec_family") : "";
+    row.sync_family =
+        values.contains("sync_family") ? values.at("sync_family") : "";
     row.modem_family =
         values.contains("modem_family") ? values.at("modem_family") : "";
     row.prototype_limitations =

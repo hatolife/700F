@@ -62,9 +62,11 @@ policy that real 700F downselect remains prohibited.
 ## Runtime Compatibility
 
 ISSUE-0043 does not change `IMode`, `IModeFactory`, `ModeRegistry`,
-`EncodeResult`, or `DecodeResult`. Existing 700F-A `toy_audio_waveform`,
-700F-B/C surrogate, SSB, FreeDV emulator, and optional Codec2 runtime behavior
-is unchanged.
+`EncodeResult`, or `DecodeResult`. At the ISSUE-0043 boundary merge, existing
+700F-A `toy_audio_waveform`, 700F-B/C surrogate, SSB, FreeDV emulator, and
+optional Codec2 runtime behavior was unchanged. ISSUE-0042 later moves only
+700F-A onto the minimal QPSK-like baseband prototype while leaving B/C
+surrogate rows unchanged.
 
 ## Reporting Expectations
 

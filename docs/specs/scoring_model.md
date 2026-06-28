@@ -24,7 +24,8 @@ of truth:
   `performance_validity=limited`, `downselect_validity=invalid`,
   `prototype_symbol_error_rate`, `prototype_frame_status`,
   `prototype_sync_status`, `prototype_baseband_sample_count`, and
-  `prototype_limitations`;
+  `prototype_limitations`. ISSUE-0042 700F-A rows use
+  `sync_family=none` and `modem_family=minimal_qpsk`;
 - future ASR WER, STOI, ESTOI, and subjective notes use `optional_metrics` keys
   `asr_wer`, `stoi`, `estoi`, and `subjective_note`.
 
@@ -49,13 +50,15 @@ records. Such entries have real performance score `0.0`; completed surrogate row
 increase surrogate/readiness counters but do not contribute to real performance score,
 BER/FER availability, or real downselect feasibility.
 
-ISSUE-0039 700F-A rows use `implementation_status = waveform_prototype`. They may
-complete encode/channel/decode/metrics, but `performance_valid=false` and
+Historical ISSUE-0039 700F-A rows use
+`implementation_status = waveform_prototype`. They may complete
+encode/channel/decode/metrics, but `performance_valid=false` and
 `downselect_valid=false` keep them out of real performance scoring and real
 downselect feasibility.
 
-ISSUE-0044 reserves `implementation_status = real_modem_prototype` for future
-limited modem diagnostics. These rows must use `performance_valid=false`,
+ISSUE-0042 700F-A rows use
+`implementation_status = real_modem_prototype` for limited modem diagnostics.
+These rows must use `performance_valid=false`,
 `performance_validity=limited`, `downselect_valid=false`, and
 `downselect_validity=invalid`. They may increase prototype diagnostic counters, but
 they are not real performance evidence and cannot enable candidate downselect.

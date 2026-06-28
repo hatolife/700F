@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0042 `sync_family` descriptor snapshots and 700F-A
+  `minimal_qpsk` real-modem-prototype defaults while keeping scoring
+  performance-limited and downselect-invalid.
 - Add ISSUE-0044 prototype modem classification and diagnostic fields while keeping
   waveform and real modem prototypes out of real performance scoring.
 - Add ISSUE-0032 surrogate guardrail fields and keep synthetic surrogate readiness

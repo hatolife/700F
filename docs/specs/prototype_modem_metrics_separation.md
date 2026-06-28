@@ -53,6 +53,7 @@ Descriptor snapshots also carry:
 - `codec_family`
 - `fec_family`
 - `modem_family`
+- `sync_family`
 
 These fields are engineering diagnostics only. They must not be mixed into BER/FER,
 dropout, latency, RF bandwidth, real performance score, or real downselect feasibility.
@@ -79,7 +80,9 @@ present.
 
 `real_modem_prototype` specifically renders as limited diagnostic evidence with
 `performance_validity=limited`, `downselect_valid=false`, and
-`downselect_validity=invalid`.
+`downselect_validity=invalid`. ISSUE-0042 700F-A rows additionally render
+`performance_valid=limited` in warning text, `sync_family=none`, and
+`modem_family=minimal_qpsk`.
 
 ## Current Guardrail
 

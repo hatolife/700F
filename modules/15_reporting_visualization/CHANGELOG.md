@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0042 700F-A minimal QPSK report loading/rendering fields, including
+  `sync_family=none`, `modem_family=minimal_qpsk`, and
+  `performance_valid=limited` warning text with real downselect still blocked.
 - Add ISSUE-0044 report warnings and artifact loading for real modem prototype
   diagnostics with real downselect kept blocked.
 - Add ISSUE-0032 surrogate row loading and Markdown warnings with real-performance

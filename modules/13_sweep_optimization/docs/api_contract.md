@@ -29,8 +29,17 @@ Campaign helpers keep the existing `modes x channel_conditions x seeds` expansio
 the CLI uses the same runner/artifact contract.
 
 ISSUE-0032 appends surrogate guardrail fields to each `SweepRunRecord` and aggregate
-JSON/CSV row. 700F candidate rows complete as `surrogate_completed` with
+JSON/CSV row. 700F-B/C candidate rows complete as `surrogate_completed` with
 `implementation_status = surrogate`, `not_real_modem = true`,
 `downselect_valid = false`, `not_downselect_valid = true`, and
 `performance_valid = false`; any readiness value is labeled
 `surrogate_readiness_score_synthetic`.
+
+ISSUE-0042 appends real-prototype guardrail and diagnostic fields for 700F-A:
+`implementation_classification`, `performance_validity`,
+`downselect_validity`, `sync_family`, `prototype_warning`,
+`prototype_symbol_error_rate`, `prototype_frame_status`,
+`prototype_sync_status`, and `prototype_baseband_sample_count`. 700F-A rows
+complete as `real_modem_prototype_completed` with
+`implementation_status = real_modem_prototype`, `modem_family = minimal_qpsk`,
+and `downselect_valid = false`.

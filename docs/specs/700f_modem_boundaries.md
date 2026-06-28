@@ -101,7 +101,8 @@ Required fields:
 
 ## Family Fields
 
-- `modem_family`: first implementation should use `minimal_qpsk_baseband`.
+- `modem_family`: ISSUE-0042 uses `minimal_qpsk` for the first minimal
+  QPSK-like baseband prototype.
 - `fec_family`: first implementation may use `none` or `placeholder`.
 - `sync_family`: first implementation may use `none`, `pilot_placeholder`, or
   `symbol_clock_placeholder`.

@@ -120,13 +120,17 @@ bridge. It registers SSB reference factories, 700D/700E emulator factories, and
 completed with `surrogate_completed` notes plus `implementation_status = surrogate`,
 `not_real_modem = true`, `downselect_valid = false`,
 `not_downselect_valid = true`, and `performance_valid = false`.
-ISSUE-0039 changes only 700F-A to a minimal waveform-capable prototype. 700F-A
-rows run through encode/channel/decode and complete with
-`waveform_prototype_completed`, `implementation_status = waveform_prototype`,
-`prototype = true`, `not_final_modem = true`, `waveform_capable = true`,
-`codec_family = synthetic`, `fec_family = none`,
-`modem_family = toy_audio_waveform`, `downselect_valid = false`, and
-`performance_valid = false`.
+ISSUE-0039 changed only 700F-A to a minimal waveform-capable prototype.
+ISSUE-0042 supersedes that runtime with a minimal QPSK-like baseband prototype.
+700F-A rows run through encode/channel/decode and complete with
+`real_modem_prototype_completed`,
+`implementation_status = real_modem_prototype`,
+`implementation_classification = real_modem_prototype`, `prototype = true`,
+`not_final_modem = true`, `waveform_capable = true`,
+`codec_family = synthetic`, `fec_family = none`, `sync_family = none`,
+`modem_family = minimal_qpsk`, `downselect_valid = false`,
+`performance_valid = false`, `performance_validity = limited`, and
+`downselect_validity = invalid`.
 ISSUE-0033 moves the 700D/700E emulator rows from descriptor-only completion into
 deterministic `emulated_surrogate` runtime completion. These rows are marked
 completed with an
@@ -135,19 +139,24 @@ completed with an
 `performance_valid=false`, `emulator_model_name`, `emulator_model_version`, and
 `emulator_limitations`. They do not claim official FreeDV behavior or valid
 performance evidence. 700F-B/C surrogate rows do not claim waveform encode/decode
-or real performance metrics. The 700F-A prototype claims only toy waveform
-capability and remains non-final, performance-invalid, and downselect-invalid.
+or real performance metrics. The 700F-A prototype claims only limited QPSK
+baseband diagnostics and remains non-final, performance-limited, and
+downselect-invalid.
 Official FreeDV 700D/700E entries remain skipped in
 default Codec2-disabled smoke runs with an
 `official_freedv_codec2_unavailable` reason that records
 `official=true`, `codec2_enabled=false`, `codec2_available=false`,
 `roundtrip_available=false`, `not_emulator=true`, and `not_surrogate=true`.
 
-ISSUE-0032 and ISSUE-0039 append these aggregate row fields to JSON/CSV outputs while keeping
+ISSUE-0032, ISSUE-0039, and ISSUE-0042 append these aggregate row fields to JSON/CSV outputs while keeping
 existing columns stable: `implementation_status`, `not_real_modem`,
 `downselect_valid`, `not_downselect_valid`, `performance_valid`,
-`prototype`, `not_final_modem`, `waveform_capable`, `codec_family`,
-`fec_family`, `modem_family`, `prototype_limitations`,
+`implementation_classification`, `performance_validity`,
+`downselect_validity`, `prototype`, `not_final_modem`, `waveform_capable`,
+`codec_family`, `fec_family`, `sync_family`, `modem_family`,
+`prototype_limitations`, `prototype_warning`,
+`prototype_symbol_error_rate`, `prototype_frame_status`,
+`prototype_sync_status`, `prototype_baseband_sample_count`,
 `surrogate_model_name`, `surrogate_model_version`, `surrogate_limitations`,
 `surrogate_readiness_score_synthetic`, and `synthetic_metrics_label`.
 

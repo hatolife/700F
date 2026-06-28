@@ -48,3 +48,10 @@ ISSUE-0032 adds append-only reporting/scoring fields for surrogate rows:
 ISSUE-0043 keeps real-modem-prototype diagnostics separate from final scoring:
 prototype frame status defaults to downselect-invalid and performance-limited
 until a later audit authorizes final modem evidence.
+
+ISSUE-0042 adds a narrow 700F-A helper surface in
+`include/f700f/candidate_profiles.hpp` for creating a minimal QPSK-like
+`ModemInputFrame`, `SymbolBlock`, `BasebandFrame`, and `ModemOutputFrame`.
+Only `freedv700f_a_balanced` uses this real-modem-prototype path; 700F-B/C
+remain surrogate rows. The helper surface is prototype-only and does not
+authorize final FEC, OFDM, synchronization, Codec2 payloads, or real downselect.

@@ -265,7 +265,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   std::size_t skipped = 0;
   std::size_t failed = 0;
   std::size_t surrogate_completed = 0;
-  std::size_t waveform_prototype_completed = 0;
+  std::size_t real_modem_prototype_completed = 0;
   std::size_t emulated_surrogate_completed = 0;
   std::size_t official_completed = 0;
   std::size_t official_skipped = 0;
@@ -288,21 +288,33 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
       assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Encode).ok);
       assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Decode).ok);
       assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Metrics).ok);
-      assert(first.records[i].error_summary.find("waveform_prototype_completed") !=
+      assert(first.records[i].error_summary.find("real_modem_prototype_completed") !=
              std::string::npos);
-      assert(first.records[i].implementation_status == "waveform_prototype");
+      assert(first.records[i].implementation_status == "real_modem_prototype");
+      assert(first.records[i].implementation_classification ==
+             "real_modem_prototype");
       assert(first.records[i].prototype);
       assert(first.records[i].not_final_modem);
       assert(first.records[i].waveform_capable);
       assert(!first.records[i].downselect_valid);
       assert(first.records[i].not_downselect_valid);
       assert(!first.records[i].performance_valid);
+      assert(first.records[i].performance_validity == "limited");
+      assert(first.records[i].downselect_validity == "invalid");
       assert(first.records[i].codec_family == "synthetic");
       assert(first.records[i].fec_family == "none");
-      assert(first.records[i].modem_family == "toy_audio_waveform");
+      assert(first.records[i].sync_family == "none");
+      assert(first.records[i].modem_family == "minimal_qpsk");
+      assert(first.records[i].prototype_warning.find("REAL MODEM PROTOTYPE WARNING") !=
+             std::string::npos);
+      assert(first.records[i].prototype_warning.find("performance_valid=limited") !=
+             std::string::npos);
+      assert(first.records[i].prototype_frame_status == "completed");
+      assert(first.records[i].prototype_sync_status == "none");
+      assert(first.records[i].prototype_baseband_sample_count > 0);
       assert(first.records[i].prototype_limitations.find("not final modem") !=
              std::string::npos);
-      ++waveform_prototype_completed;
+      ++real_modem_prototype_completed;
     }
     if (first.records[i].mode_id == "freedv700f_b_robust" ||
         first.records[i].mode_id == "freedv700f_c_quality") {
@@ -389,7 +401,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(completed > 0);
   assert(skipped > 0);
   assert(failed == 0);
-  assert(waveform_prototype_completed == 3);
+  assert(real_modem_prototype_completed == 3);
   assert(surrogate_completed == 6);
   assert(emulated_surrogate_completed == 6);
   assert((official_skipped == 6 && official_completed == 0) ||
@@ -408,17 +420,31 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   const std::string json_text((std::istreambuf_iterator<char>(json)),
                               std::istreambuf_iterator<char>());
   assert(json_text.find("surrogate_completed") != std::string::npos);
-  assert(json_text.find("waveform_prototype_completed") != std::string::npos);
-  assert(json_text.find("\"implementation_status\": \"waveform_prototype\"") !=
+  assert(json_text.find("real_modem_prototype_completed") != std::string::npos);
+  assert(json_text.find("\"implementation_status\": \"real_modem_prototype\"") !=
+         std::string::npos);
+  assert(json_text.find("\"implementation_classification\": \"real_modem_prototype\"") !=
          std::string::npos);
   assert(json_text.find("\"prototype\": true") != std::string::npos);
   assert(json_text.find("\"not_final_modem\": true") != std::string::npos);
   assert(json_text.find("\"waveform_capable\": true") != std::string::npos);
+  assert(json_text.find("\"performance_validity\": \"limited\"") !=
+         std::string::npos);
+  assert(json_text.find("\"downselect_validity\": \"invalid\"") !=
+         std::string::npos);
   assert(json_text.find("\"codec_family\": \"synthetic\"") != std::string::npos);
   assert(json_text.find("\"fec_family\": \"none\"") != std::string::npos);
-  assert(json_text.find("\"modem_family\": \"toy_audio_waveform\"") !=
+  assert(json_text.find("\"sync_family\": \"none\"") != std::string::npos);
+  assert(json_text.find("\"modem_family\": \"minimal_qpsk\"") !=
+         std::string::npos);
+  assert(json_text.find("\"prototype_frame_status\": \"completed\"") !=
+         std::string::npos);
+  assert(json_text.find("\"prototype_sync_status\": \"none\"") !=
+         std::string::npos);
+  assert(json_text.find("\"prototype_baseband_sample_count\": ") !=
          std::string::npos);
   assert(json_text.find("prototype_limitations") != std::string::npos);
+  assert(json_text.find("REAL MODEM PROTOTYPE WARNING") != std::string::npos);
   assert(json_text.find("\"implementation_status\": \"surrogate\"") !=
          std::string::npos);
   assert(json_text.find("\"not_real_modem\": true") != std::string::npos);
@@ -447,12 +473,19 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   const std::string csv_text((std::istreambuf_iterator<char>(csv)),
                              std::istreambuf_iterator<char>());
   assert(csv_text.find("surrogate_completed") != std::string::npos);
-  assert(csv_text.find("waveform_prototype_completed") != std::string::npos);
+  assert(csv_text.find("real_modem_prototype_completed") != std::string::npos);
+  assert(csv_text.find("implementation_classification") != std::string::npos);
+  assert(csv_text.find("performance_validity") != std::string::npos);
+  assert(csv_text.find("downselect_validity") != std::string::npos);
   assert(csv_text.find("prototype") != std::string::npos);
   assert(csv_text.find("not_final_modem") != std::string::npos);
   assert(csv_text.find("waveform_capable") != std::string::npos);
   assert(csv_text.find("codec_family") != std::string::npos);
+  assert(csv_text.find("sync_family") != std::string::npos);
   assert(csv_text.find("modem_family") != std::string::npos);
+  assert(csv_text.find("prototype_frame_status") != std::string::npos);
+  assert(csv_text.find("prototype_sync_status") != std::string::npos);
+  assert(csv_text.find("prototype_baseband_sample_count") != std::string::npos);
   assert(csv_text.find("not_real_modem") != std::string::npos);
   assert(csv_text.find("downselect_valid") != std::string::npos);
   assert(csv_text.find("not_downselect_valid") != std::string::npos);
