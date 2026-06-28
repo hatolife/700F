@@ -25,31 +25,45 @@ std::string sample_sweep_json() {
   "records": [
     {"run_id": "m2-ssb", "status": "completed", "mode_id": "ssb_standard_3k", "condition_id": "identity", "seed": 1, "skipped_reason": null, "error_summary": null, "simulation_digest": "abc"},
     {"run_id": "m2-official", "status": "skipped", "mode_id": "freedv700d_official", "condition_id": "identity", "seed": 1, "skipped_reason": "official_waveform_roundtrip_not_implemented", "error_summary": null, "simulation_digest": ""},
-    {"run_id": "m2-profile", "status": "completed", "mode_id": "freedv700f_a_balanced", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "profile_only_completed", "simulation_digest": "profile"},
+    {"run_id": "m2-surrogate", "status": "completed", "mode_id": "freedv700f_a_balanced", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "surrogate_completed: not_real_modem=true downselect_valid=false performance_valid=false", "simulation_digest": "surrogate", "implementation_status": "surrogate", "not_real_modem": true, "downselect_valid": false, "not_downselect_valid": true, "performance_valid": false, "surrogate_model_name": "700f_candidate_minimal_behavior", "surrogate_model_version": "ISSUE-0032-v1", "surrogate_limitations": "synthetic readiness only; not a real modem; BER/FER are not emitted as real values", "surrogate_readiness_score_synthetic": "0.625", "synthetic_metrics_label": "synthetic_surrogate_readiness_only"},
     {"run_id": "m2-descriptor", "status": "completed", "mode_id": "freedv700d_emulated", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "descriptor_only_completed", "simulation_digest": "descriptor"}
   ]
 })json";
 }
 
 std::string sample_sweep_csv() {
-  return "run_id,status,mode_id,condition_id,seed,simulation_ok,digest,skipped_reason,error_summary\n"
-         "m2-ssb,completed,ssb_standard_3k,identity,1,true,abc,,\n"
-         "m2-official,skipped,freedv700d_official,identity,1,false,,official_waveform_roundtrip_not_implemented,\n"
-         "m2-profile,completed,freedv700f_a_balanced,awgn-snr-6db,1,true,profile,,profile_only_completed\n"
-         "m2-descriptor,completed,freedv700d_emulated,awgn-snr-6db,1,true,descriptor,,descriptor_only_completed\n";
+  return "run_id,status,mode_id,condition_id,seed,simulation_ok,digest,skipped_reason,error_summary,implementation_status,not_real_modem,downselect_valid,not_downselect_valid,performance_valid,surrogate_model_name,surrogate_model_version,surrogate_limitations,surrogate_readiness_score_synthetic,synthetic_metrics_label\n"
+         "m2-ssb,completed,ssb_standard_3k,identity,1,true,abc,,,,,,,,,,,,\n"
+         "m2-official,skipped,freedv700d_official,identity,1,false,,official_waveform_roundtrip_not_implemented,,,,,,,,,,,\n"
+         "m2-surrogate,completed,freedv700f_a_balanced,awgn-snr-6db,1,true,surrogate,,surrogate_completed: not_real_modem=true downselect_valid=false performance_valid=false,surrogate,true,false,true,false,700f_candidate_minimal_behavior,ISSUE-0032-v1,synthetic readiness only; not a real modem; BER/FER are not emitted as real values,0.625,synthetic_surrogate_readiness_only\n"
+         "m2-descriptor,completed,freedv700d_emulated,awgn-snr-6db,1,true,descriptor,,descriptor_only_completed,,,,,,,,,,\n";
 }
 
 void sample_sweep_json_generates_markdown_with_all_row_types() {
   const auto loaded = f700f::reporting::load_report_input_json(sample_sweep_json());
   assert(loaded.results.size() == 4);
   assert(!loaded.real_downselect_possible);
+  assert(loaded.results[2].mode_descriptor.implementation_status == "surrogate");
+  assert(loaded.results[2].mode_descriptor.not_real_modem);
+  assert(!loaded.results[2].mode_descriptor.downselect_valid);
+  assert(loaded.results[2].mode_descriptor.not_downselect_valid);
+  assert(!loaded.results[2].mode_descriptor.performance_valid);
+  assert(loaded.results[2].optional_metrics.at(
+             "surrogate_readiness_score_synthetic") == "0.625");
+  assert(loaded.results[2].optional_metrics.at("synthetic_metrics_label")
+             .find("synthetic") != std::string::npos);
 
   const auto markdown = f700f::reporting::render_report_from_loaded_input(loaded);
   assert(contains(markdown, "# M2 Baseline Comparison Report"));
   assert(contains(markdown, "`freedv700d_official`"));
   assert(contains(markdown, "official_waveform_roundtrip_not_implemented"));
   assert(contains(markdown, "`freedv700f_a_balanced`"));
-  assert(contains(markdown, "profile_only"));
+  assert(contains(markdown, "surrogate"));
+  assert(contains(markdown, "SURROGATE WARNING"));
+  assert(contains(markdown, "not_real_modem=true"));
+  assert(contains(markdown, "downselect_valid=false"));
+  assert(contains(markdown, "performance_valid=false"));
+  assert(contains(markdown, "synthetic_surrogate_readiness_only"));
   assert(contains(markdown, "`freedv700d_emulated`"));
   assert(contains(markdown, "descriptor_only"));
   assert(contains(markdown, "Real downselect possible: no"));
@@ -58,9 +72,14 @@ void sample_sweep_json_generates_markdown_with_all_row_types() {
 void sample_sweep_csv_generates_markdown() {
   const auto loaded = f700f::reporting::load_report_input_csv(sample_sweep_csv());
   assert(loaded.results.size() == 4);
+  assert(loaded.results[2].mode_descriptor.implementation_status == "surrogate");
+  assert(loaded.results[2].mode_descriptor.not_real_modem);
+  assert(!loaded.results[2].mode_descriptor.downselect_valid);
+  assert(!loaded.results[2].mode_descriptor.performance_valid);
   const auto markdown = f700f::reporting::render_report_from_loaded_input(loaded);
   assert(contains(markdown, "`ssb_standard_3k`"));
   assert(contains(markdown, "`freedv700f_a_balanced`"));
+  assert(contains(markdown, "surrogate"));
   assert(contains(markdown, "Real downselect possible: no"));
 }
 

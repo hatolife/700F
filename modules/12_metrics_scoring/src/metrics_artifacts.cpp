@@ -235,6 +235,40 @@ bool parse_bool(const std::string &value, bool fallback = false) {
   return fallback;
 }
 
+bool is_surrogate_status(const std::string &status) {
+  return status == "surrogate";
+}
+
+bool is_non_performance_status(const std::string &status) {
+  return status == "surrogate" || status == "profile_only" ||
+         status == "descriptor_only" || status == "descriptor-only";
+}
+
+void apply_surrogate_snapshot_defaults(
+    f700f::metrics::ModeDescriptorSnapshot &snapshot) {
+  if (is_non_performance_status(snapshot.implementation_status)) {
+    snapshot.downselect_valid = false;
+    snapshot.not_downselect_valid = true;
+    snapshot.performance_valid = false;
+  }
+
+  if (!is_surrogate_status(snapshot.implementation_status)) {
+    return;
+  }
+
+  snapshot.not_real_modem = true;
+  if (snapshot.surrogate_model_name.empty()) {
+    snapshot.surrogate_model_name = "700f_candidate_minimal_behavior";
+  }
+  if (snapshot.surrogate_model_version.empty()) {
+    snapshot.surrogate_model_version = "ISSUE-0032-v1";
+  }
+  if (snapshot.surrogate_limitations.empty()) {
+    snapshot.surrogate_limitations =
+        "synthetic readiness only; not a real modem; BER/FER are not emitted as real values";
+  }
+}
+
 std::optional<double> parse_optional_double(const std::string &value) {
   const auto cleaned = to_lower(strip_quotes(value));
   if (cleaned.empty() || cleaned == "na" || cleaned == "n/a" ||
@@ -553,6 +587,7 @@ ModeDescriptorSnapshot make_mode_descriptor_snapshot(
   snapshot.official_baseline = descriptor.official_baseline;
   snapshot.emulator = descriptor.emulator;
   snapshot.implementation_status = descriptor.implementation_status;
+  apply_surrogate_snapshot_defaults(snapshot);
   snapshot.supports_audio_input = descriptor.capabilities.audio_input;
   snapshot.supports_audio_output = descriptor.capabilities.audio_output;
   snapshot.supports_complex_input = descriptor.capabilities.complex_input;
@@ -611,6 +646,24 @@ std::string json_mode_snapshot(const ModeDescriptorSnapshot &snapshot) {
   out.push_back(',');
   append_json_key_value(out, "implementation_status",
                         snapshot.implementation_status);
+  out.push_back(',');
+  out += "\"not_real_modem\":" + bool_to_json(snapshot.not_real_modem);
+  out.push_back(',');
+  out += "\"downselect_valid\":" + bool_to_json(snapshot.downselect_valid);
+  out.push_back(',');
+  out += "\"not_downselect_valid\":" +
+         bool_to_json(snapshot.not_downselect_valid);
+  out.push_back(',');
+  out += "\"performance_valid\":" + bool_to_json(snapshot.performance_valid);
+  out.push_back(',');
+  append_json_key_value(out, "surrogate_model_name",
+                        snapshot.surrogate_model_name);
+  out.push_back(',');
+  append_json_key_value(out, "surrogate_model_version",
+                        snapshot.surrogate_model_version);
+  out.push_back(',');
+  append_json_key_value(out, "surrogate_limitations",
+                        snapshot.surrogate_limitations);
   out.push_back(',');
   out += std::string("\"supports_audio_input\":") + bool_to_json(snapshot.supports_audio_input);
   out.push_back(',');
@@ -900,6 +953,34 @@ ResultArtifact from_json(const std::string &json_payload) {
         it != descriptor_map.end()) {
       result.mode_descriptor.implementation_status = it->second;
     }
+    if (const auto it = descriptor_map.find("not_real_modem");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.not_real_modem = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("downselect_valid");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.downselect_valid = parse_bool(it->second, true);
+    }
+    if (const auto it = descriptor_map.find("not_downselect_valid");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.not_downselect_valid = parse_bool(it->second);
+    }
+    if (const auto it = descriptor_map.find("performance_valid");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.performance_valid = parse_bool(it->second, true);
+    }
+    if (const auto it = descriptor_map.find("surrogate_model_name");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.surrogate_model_name = it->second;
+    }
+    if (const auto it = descriptor_map.find("surrogate_model_version");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.surrogate_model_version = it->second;
+    }
+    if (const auto it = descriptor_map.find("surrogate_limitations");
+        it != descriptor_map.end()) {
+      result.mode_descriptor.surrogate_limitations = it->second;
+    }
     if (const auto it = descriptor_map.find("supports_audio_input");
         it != descriptor_map.end()) {
       result.mode_descriptor.supports_audio_input = parse_bool(it->second);
@@ -920,6 +1001,7 @@ ResultArtifact from_json(const std::string &json_payload) {
         it != descriptor_map.end()) {
       result.mode_descriptor.supports_bit_payload = parse_bool(it->second);
     }
+    apply_surrogate_snapshot_defaults(result.mode_descriptor);
   }
 
   return result;
@@ -1048,6 +1130,43 @@ ResultArtifact from_csv_row(const std::string &header_line,
           it_status != descriptor_map.end()) {
         result.mode_descriptor.implementation_status = it_status->second;
       }
+      if (const auto it_not_real = descriptor_map.find("not_real_modem");
+          it_not_real != descriptor_map.end()) {
+        result.mode_descriptor.not_real_modem = parse_bool(it_not_real->second);
+      }
+      if (const auto it_downselect = descriptor_map.find("downselect_valid");
+          it_downselect != descriptor_map.end()) {
+        result.mode_descriptor.downselect_valid =
+            parse_bool(it_downselect->second, true);
+      }
+      if (const auto it_not_downselect =
+              descriptor_map.find("not_downselect_valid");
+          it_not_downselect != descriptor_map.end()) {
+        result.mode_descriptor.not_downselect_valid =
+            parse_bool(it_not_downselect->second);
+      }
+      if (const auto it_performance = descriptor_map.find("performance_valid");
+          it_performance != descriptor_map.end()) {
+        result.mode_descriptor.performance_valid =
+            parse_bool(it_performance->second, true);
+      }
+      if (const auto it_surrogate_name =
+              descriptor_map.find("surrogate_model_name");
+          it_surrogate_name != descriptor_map.end()) {
+        result.mode_descriptor.surrogate_model_name = it_surrogate_name->second;
+      }
+      if (const auto it_surrogate_version =
+              descriptor_map.find("surrogate_model_version");
+          it_surrogate_version != descriptor_map.end()) {
+        result.mode_descriptor.surrogate_model_version =
+            it_surrogate_version->second;
+      }
+      if (const auto it_surrogate_limitations =
+              descriptor_map.find("surrogate_limitations");
+          it_surrogate_limitations != descriptor_map.end()) {
+        result.mode_descriptor.surrogate_limitations =
+            it_surrogate_limitations->second;
+      }
       if (const auto it_official = descriptor_map.find("official_baseline");
           it_official != descriptor_map.end()) {
         result.mode_descriptor.official_baseline = parse_bool(it_official->second);
@@ -1081,6 +1200,7 @@ ResultArtifact from_csv_row(const std::string &header_line,
           it_bits != descriptor_map.end()) {
         result.mode_descriptor.supports_bit_payload = parse_bool(it_bits->second);
       }
+      apply_surrogate_snapshot_defaults(result.mode_descriptor);
     } else if (starts_with(name, "opt.")) {
       result.optional_metrics[name.substr(4)] = value;
     }

@@ -52,6 +52,16 @@ struct SweepRunRecord {
   SimulationResult simulation;
   std::string skipped_reason;
   std::string error_summary;
+  std::string implementation_status;
+  bool not_real_modem = false;
+  bool downselect_valid = true;
+  bool not_downselect_valid = false;
+  bool performance_valid = true;
+  std::string surrogate_model_name;
+  std::string surrogate_model_version;
+  std::string surrogate_limitations;
+  std::string surrogate_readiness_score_synthetic;
+  std::string synthetic_metrics_label;
 };
 
 struct SweepArtifact {

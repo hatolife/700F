@@ -25,7 +25,7 @@ ModeDescriptor make_common_descriptor() {
   descriptor.pilot_strategy = "candidate-scattered-and-continual-pilots";
   descriptor.official_baseline = false;
   descriptor.emulator = false;
-  descriptor.implementation_status = "profile_only";
+  descriptor.implementation_status = "surrogate";
   descriptor.capabilities.audio_input = true;
   descriptor.capabilities.audio_output = true;
   descriptor.capabilities.complex_input = true;
@@ -109,7 +109,9 @@ public:
       return result;
     }
     result.error = descriptor_.mode_id +
-                   " ISSUE-0018 profile_only encode not implemented";
+                   " ISSUE-0032 surrogate encode not implemented; "
+                   "not_real_modem=true downselect_valid=false "
+                   "performance_valid=false";
     return result;
   }
 
@@ -122,7 +124,9 @@ public:
       return result;
     }
     result.error = descriptor_.mode_id +
-                   " ISSUE-0018 profile_only decode not implemented";
+                   " ISSUE-0032 surrogate decode not implemented; "
+                   "not_real_modem=true downselect_valid=false "
+                   "performance_valid=false";
     return result;
   }
 

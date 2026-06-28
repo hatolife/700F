@@ -28,6 +28,13 @@ struct ModeDescriptorSnapshot {
   bool official_baseline = false;
   bool emulator = false;
   std::string implementation_status;
+  bool not_real_modem = false;
+  bool downselect_valid = true;
+  bool not_downselect_valid = false;
+  bool performance_valid = true;
+  std::string surrogate_model_name;
+  std::string surrogate_model_version;
+  std::string surrogate_limitations;
   bool supports_audio_input = false;
   bool supports_audio_output = false;
   bool supports_complex_input = false;

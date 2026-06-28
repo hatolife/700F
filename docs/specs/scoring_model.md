@@ -13,7 +13,10 @@ of truth:
 - dropout uses `dropout_rate`;
 - latency uses `latency_estimate_s`;
 - RF bandwidth uses `mode_descriptor.rf_bandwidth_hz`;
-- BER/FER availability uses `ber`, `fer`, and `supports_bit_payload`;
+- BER/FER availability uses `ber`, `fer`, `supports_bit_payload`, and
+  `performance_valid`;
+- ISSUE-0032 surrogate readiness uses optional metrics
+  `surrogate_readiness_score_synthetic` and `synthetic_metrics_label`;
 - future ASR WER, STOI, ESTOI, and subjective notes use `optional_metrics` keys
   `asr_wer`, `stoi`, `estoi`, and `subjective_note`.
 
@@ -32,10 +35,11 @@ Each result record has one inferred scoring status:
 | skipped | `skipped_reason` present | availability/configuration evidence only |
 | failed | `error_summary` present and not skipped | attempted-run evidence with penalty |
 
-Profile-only 700F candidates are represented by snapshots whose
-`implementation_status` is `profile_only`. A profile-only snapshot can appear in score
-output without any result records. Such entries have score `0.0` until later
-implementation issues produce completed runs.
+700F candidates are represented by snapshots whose `implementation_status` is
+`surrogate`. A surrogate snapshot can appear in score output without any result
+records. Such entries have real performance score `0.0`; completed surrogate rows
+increase surrogate/readiness counters but do not contribute to real performance score,
+BER/FER availability, or real downselect feasibility.
 
 ## Interim Score
 
@@ -45,11 +49,13 @@ For each mode, the scorer computes:
 
 - completed run ratio;
 - completed, failed, skipped, official-unavailable, and profile-only counts;
+- surrogate count, performance-valid count, performance-invalid count;
 - BER/FER available, unavailable, and audio-only N/A counts;
 - future metric slot counts for ASR WER, STOI, ESTOI, and subjective notes;
 - mean dropout rate, mean latency, max RF bandwidth;
 - skipped, failed, dropout, latency, and bandwidth penalties;
 - a clamped score in `[0.0, 100.0]`.
+- a separate surrogate readiness score when synthetic surrogate metrics are present.
 
 The scoring constants are intentionally simple and deterministic:
 
@@ -79,15 +85,23 @@ score = clamp_0_100(evidence
                     - bandwidth_penalty)
 ```
 
-This rewards completed runs, keeps failed attempts distinguishable from unavailable
-records, and prevents skipped/profile-only entries from masquerading as performance
-evidence.
+This rewards completed real-performance runs, keeps failed attempts distinguishable
+from unavailable records, and prevents skipped/profile-only/surrogate entries from
+masquerading as performance evidence.
+
+ISSUE-0032 uses real performance score as the primary `score`. Completed surrogate
+rows with `performance_valid = false` receive real performance score `0.0` and may
+carry a separate `surrogate_readiness_score`; that readiness score is synthetic and
+must not be used as RF/audio performance evidence.
 
 ## Comparison Policy
 
 Reports should sort by score descending with `mode_id` as the deterministic tie-breaker.
 Human reports must display counters and penalties next to the score so a lower score can
 be traced to availability, failure, dropout, latency, or bandwidth.
+
+Human reports must also display surrogate warnings and keep real performance score
+separate from synthetic surrogate readiness score.
 
 SSB/audio-only modes may legitimately carry BER/FER as `N/A`; this is counted as
 audio-only N/A rather than an unavailable digital metric. Digital modes with bit-payload

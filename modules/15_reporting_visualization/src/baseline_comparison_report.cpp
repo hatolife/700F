@@ -81,6 +81,9 @@ std::string descriptor_status(const f700f::metrics::M2ModeScore &score) {
   if (snapshot.implementation_status == "profile_only") {
     return "profile_only";
   }
+  if (snapshot.implementation_status == "surrogate") {
+    return "surrogate";
+  }
   if (!snapshot.implementation_status.empty()) {
     return snapshot.implementation_status;
   }
@@ -103,6 +106,10 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
   if (score.official_unavailable_count > 0) {
     return "official adapter unavailable";
   }
+  if (score.surrogate) {
+    return "SURROGATE WARNING: not_real_modem=true downselect_valid=false "
+           "performance_valid=false";
+  }
   if (score.profile_only) {
     return "profile_only";
   }
@@ -118,14 +125,20 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
 void append_mode_rows(std::ostringstream &out,
                       const f700f::metrics::M2ScoreReport &score_report) {
   out << "| Mode | Score | Completed | Failed | Skipped | Official unavailable | "
-         "Profile-only | Status | Notes |\n";
-  out << "|---|---:|---:|---:|---:|---:|---:|---|---|\n";
+         "Profile-only | Surrogate | Performance valid | Performance invalid | "
+         "Real score | Surrogate readiness | Status | Notes |\n";
+  out << "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|\n";
   for (const auto &score : score_report.mode_scores) {
     out << "| `" << markdown_escape_cell(score.mode_id) << "` | "
         << format_double(score.score) << " | " << score.completed_count << " | "
         << score.failed_count << " | " << score.skipped_count << " | "
         << score.official_unavailable_count << " | " << score.profile_only_count
-        << " | " << descriptor_status(score) << " | "
+        << " | " << score.surrogate_count << " | "
+        << score.performance_valid_count << " | "
+        << score.performance_invalid_count << " | "
+        << format_double(score.real_performance_score) << " | "
+        << format_double(score.surrogate_readiness_score) << " | "
+        << descriptor_status(score) << " | "
         << markdown_escape_cell(reason_for_mode(score)) << " |\n";
   }
 }
@@ -174,8 +187,25 @@ std::vector<std::string> candidate_summary_lines(
   std::vector<std::string> lines;
   for (const auto &score : score_report.mode_scores) {
     if (contains_token(score.mode_id, "700f")) {
-      lines.push_back("`" + score.mode_id + "` " + descriptor_status(score) +
-                      " score " + format_double(score.score));
+      std::string line = "`" + score.mode_id + "` " + descriptor_status(score) +
+                         " real score " +
+                         format_double(score.real_performance_score) +
+                         " surrogate readiness " +
+                         format_double(score.surrogate_readiness_score);
+      if (score.surrogate && score.profile_snapshot.has_value()) {
+        const auto &snapshot = *score.profile_snapshot;
+        line += " not_real_modem=";
+        line += snapshot.not_real_modem ? "true" : "false";
+        line += " downselect_valid=";
+        line += snapshot.downselect_valid ? "true" : "false";
+        line += " performance_valid=";
+        line += snapshot.performance_valid ? "true" : "false";
+        line += " synthetic_surrogate_readiness_only";
+        if (!snapshot.surrogate_model_name.empty()) {
+          line += " model=" + snapshot.surrogate_model_name;
+        }
+      }
+      lines.push_back(line);
     }
   }
   return lines;

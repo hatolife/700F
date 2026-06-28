@@ -16,9 +16,9 @@ In this phase, candidate runtimes must:
 - expose `ModeDescriptor` metadata for metrics, sweep, and reporting snapshots;
 - set `official_baseline = false`;
 - set `emulator = false`;
-- set `implementation_status = "profile_only"`;
+- set `implementation_status = "surrogate"`;
 - return `ok == false` from encode/decode with an error that includes the mode id,
-  `ISSUE-0018`, and `profile_only`.
+  `ISSUE-0032`, `surrogate`, and `not_real_modem`.
 
 This keeps candidates selectable by infrastructure without allowing accidental claims
 that a 700F modem implementation exists.
@@ -32,7 +32,7 @@ Result artifacts and reports must keep these categories distinct:
 | SSB references | `ssb_standard_3k`, `ssb_narrow_1k9` | false | true | Local reference-mode approximations for comparison. |
 | Parameterized FreeDV emulators | `freedv700d_emulated`, `freedv700e_emulated` | false | true | Descriptor-only 700D/700E approximations, not official waveforms. |
 | Official FreeDV adapters | `freedv700d_official`, `freedv700e_official` | true | false | Guarded Codec2/FreeDV adapter descriptors; runtime availability depends on Codec2 integration. |
-| 700F candidates | `freedv700f_a_balanced`, `freedv700f_b_robust`, `freedv700f_c_quality` | false | false | Experimental M2 700F candidate profiles; profile-only until later implementation issues land. |
+| 700F candidates | `freedv700f_a_balanced`, `freedv700f_b_robust`, `freedv700f_c_quality` | false | false | Experimental M2 700F candidate profiles; ISSUE-0032 surrogate rows until later implementation issues land. |
 
 Reports must not collapse `emulator == false` into an official claim. Official status
 comes only from `official_baseline == true`.
@@ -53,7 +53,10 @@ future issue.
 
 ## M2 Implementation Split
 
-ISSUE-0018 ends at profile descriptors and profile-only runtime stubs.
+ISSUE-0018 ended at profile descriptors and profile-only runtime stubs. ISSUE-0032
+updates those descriptors to explicit surrogate status for sweep/report readiness,
+with `not_real_modem = true`, `downselect_valid = false`, and
+`performance_valid = false`.
 
 The following issues own implementation work:
 
@@ -88,4 +91,6 @@ one stable report without ranking failed profile-only stubs as performance evide
 ISSUE-0018 candidate profiles are not interoperable FreeDV modes. They do not encode,
 decode, synchronize, apply FEC, or validate Codec2 parameters. The occupied-bandwidth
 target is a descriptor-level design target until waveform tests in ISSUE-0020 measure an
-actual signal.
+actual signal. ISSUE-0032 surrogate rows remain synthetic readiness evidence only;
+they do not provide BER/FER, waveform, codec, FEC, sync, RF, or audio performance
+evidence.

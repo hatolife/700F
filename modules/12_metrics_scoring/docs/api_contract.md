@@ -20,3 +20,10 @@ ISSUE-0024 adds `f700f/scoring_model.hpp`.
 
 The scorer infers completed/skipped/failed state from `skipped_reason` and
 `error_summary`; callers do not pass a separate status enum.
+
+ISSUE-0032 extends descriptor snapshots append-only with surrogate guardrail fields:
+`not_real_modem`, `downselect_valid`, `not_downselect_valid`, `performance_valid`,
+`surrogate_model_name`, `surrogate_model_version`, and `surrogate_limitations`.
+Completed surrogate rows can carry `surrogate_readiness_score_synthetic`, but real
+performance score remains separate and excludes rows whose `performance_valid` is
+false.

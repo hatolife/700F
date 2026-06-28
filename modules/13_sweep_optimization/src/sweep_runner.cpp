@@ -182,16 +182,44 @@ bool contains_token(const std::string &value, const std::string &token) {
   return value.find(token) != std::string::npos;
 }
 
+bool is_surrogate_mode(const ModeDescriptor &descriptor) {
+  return contains_token(descriptor.implementation_status, "surrogate");
+}
+
 bool is_metadata_only_mode(const ModeDescriptor &descriptor) {
-  return contains_token(descriptor.implementation_status, "profile_only") ||
+  return is_surrogate_mode(descriptor) ||
+         contains_token(descriptor.implementation_status, "profile_only") ||
          contains_token(descriptor.implementation_status, "descriptor-only");
 }
 
 std::string metadata_only_note(const ModeDescriptor &descriptor) {
+  if (is_surrogate_mode(descriptor)) {
+    return "surrogate_completed: not_real_modem=true downselect_valid=false "
+           "not_downselect_valid=true performance_valid=false "
+           "synthetic_metrics_label=synthetic_surrogate_readiness_only";
+  }
   if (contains_token(descriptor.implementation_status, "profile_only")) {
     return "profile_only_completed: waveform encode/decode not run";
   }
   return "descriptor_only_completed: waveform encode/decode not run";
+}
+
+void apply_surrogate_metadata(SweepRunRecord &record,
+                              const ModeDescriptor &descriptor) {
+  record.implementation_status = descriptor.implementation_status;
+  if (!is_surrogate_mode(descriptor)) {
+    return;
+  }
+  record.not_real_modem = true;
+  record.downselect_valid = false;
+  record.not_downselect_valid = true;
+  record.performance_valid = false;
+  record.surrogate_model_name = "700f_candidate_minimal_behavior";
+  record.surrogate_model_version = "ISSUE-0032-v1";
+  record.surrogate_limitations =
+      "synthetic readiness only; not a real modem; BER/FER are not emitted as real values";
+  record.surrogate_readiness_score_synthetic = "0.625";
+  record.synthetic_metrics_label = "synthetic_surrogate_readiness_only";
 }
 
 bool is_official_freedv_mode(const ModeId &mode_id) {
@@ -675,6 +703,7 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
 
         const auto simulation_config =
             make_simulation_config(config, record, condition);
+        apply_surrogate_metadata(record, descriptor_it->second);
         if (is_metadata_only_mode(descriptor_it->second)) {
           record.simulation = make_metadata_only_simulation_result(
               simulation_config, descriptor_it->second);
@@ -742,8 +771,29 @@ std::string sweep_result_to_json(const SweepResult &result) {
       out << '"' << escape_json(record.error_summary) << '"';
     }
     out << ", \"simulation_digest\": \""
-        << escape_json(record.simulation.deterministic_digest) << "\", \"audio_export_path\": \""
-        << escape_json(record.audio_export_path) << "\"}";
+        << escape_json(record.simulation.deterministic_digest)
+        << "\", \"audio_export_path\": \""
+        << escape_json(record.audio_export_path)
+        << "\", \"implementation_status\": \""
+        << escape_json(record.implementation_status)
+        << "\", \"not_real_modem\": "
+        << (record.not_real_modem ? "true" : "false")
+        << ", \"downselect_valid\": "
+        << (record.downselect_valid ? "true" : "false")
+        << ", \"not_downselect_valid\": "
+        << (record.not_downselect_valid ? "true" : "false")
+        << ", \"performance_valid\": "
+        << (record.performance_valid ? "true" : "false")
+        << ", \"surrogate_model_name\": \""
+        << escape_json(record.surrogate_model_name)
+        << "\", \"surrogate_model_version\": \""
+        << escape_json(record.surrogate_model_version)
+        << "\", \"surrogate_limitations\": \""
+        << escape_json(record.surrogate_limitations)
+        << "\", \"surrogate_readiness_score_synthetic\": \""
+        << escape_json(record.surrogate_readiness_score_synthetic)
+        << "\", \"synthetic_metrics_label\": \""
+        << escape_json(record.synthetic_metrics_label) << "\"}";
     out << (i + 1 == result.records.size() ? "\n" : ",\n");
   }
   out << "  ]\n";
@@ -754,7 +804,10 @@ std::string sweep_result_to_json(const SweepResult &result) {
 std::string sweep_result_to_csv(const SweepResult &result) {
   std::ostringstream out;
   out << "run_id,status,mode_id,condition_id,seed,simulation_ok,digest,"
-         "audio_export_path,skipped_reason,error_summary\n";
+         "audio_export_path,skipped_reason,error_summary,implementation_status,"
+         "not_real_modem,downselect_valid,not_downselect_valid,performance_valid,"
+         "surrogate_model_name,surrogate_model_version,surrogate_limitations,"
+         "surrogate_readiness_score_synthetic,synthetic_metrics_label\n";
   for (const auto &record : result.records) {
     out << csv_quote(record.run_id) << ','
         << sweep_run_status_name(record.status) << ','
@@ -764,7 +817,17 @@ std::string sweep_result_to_csv(const SweepResult &result) {
         << csv_quote(record.simulation.deterministic_digest) << ','
         << csv_quote(record.audio_export_path) << ','
         << csv_quote(record.skipped_reason) << ','
-        << csv_quote(record.error_summary) << '\n';
+        << csv_quote(record.error_summary) << ','
+        << csv_quote(record.implementation_status) << ','
+        << (record.not_real_modem ? "true" : "false") << ','
+        << (record.downselect_valid ? "true" : "false") << ','
+        << (record.not_downselect_valid ? "true" : "false") << ','
+        << (record.performance_valid ? "true" : "false") << ','
+        << csv_quote(record.surrogate_model_name) << ','
+        << csv_quote(record.surrogate_model_version) << ','
+        << csv_quote(record.surrogate_limitations) << ','
+        << csv_quote(record.surrogate_readiness_score_synthetic) << ','
+        << csv_quote(record.synthetic_metrics_label) << '\n';
   }
   return out.str();
 }

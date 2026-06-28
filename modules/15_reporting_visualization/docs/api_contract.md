@@ -14,8 +14,9 @@ Public entry points:
   timestamped Markdown filename.
 
 The renderer does not own scoring policy. `f700f::metrics::M2ScoreReport` remains the
-source of truth for mode ordering, score values, counters, penalties, profile-only
-status, skipped counts, and official-unavailable counts.
+source of truth for mode ordering, score values, counters, penalties, surrogate
+status/readiness, profile-only compatibility status, skipped counts, and
+official-unavailable counts.
 
 ## Report Artifact Loader And CLI
 
@@ -30,5 +31,7 @@ Public entry points:
 - `render_report_from_loaded_input(loaded)`: scores loaded rows and renders Markdown.
 
 The loader maps sweep rows into reporting/scoring artifacts and labels
-`profile_only`, `descriptor_only`, skipped, and failed rows as non-performance
-evidence. The generated report states whether real downselect is possible.
+`surrogate`, `profile_only`, `descriptor_only`, skipped, and failed rows as
+non-performance evidence. The generated report states whether real downselect is
+possible, prints a surrogate warning for 700F surrogate rows, and keeps real
+performance score separate from synthetic surrogate readiness score.

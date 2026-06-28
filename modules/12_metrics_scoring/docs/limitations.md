@@ -4,5 +4,6 @@
   downselect.
 - ASR WER, STOI, ESTOI, and subjective notes are represented as slots and counts only;
   they do not affect score until future metric implementations are validated.
-- Profile-only 700F candidates may appear in score output with score `0.0`; they are
-  not performance evidence until later implementation issues produce completed runs.
+- ISSUE-0032 700F surrogate rows may appear in score output with real performance
+  score `0.0` and a separate synthetic readiness score; they are not real performance
+  evidence until later implementation issues produce waveform-capable runs.

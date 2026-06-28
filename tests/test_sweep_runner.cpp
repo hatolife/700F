@@ -264,7 +264,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   std::size_t completed = 0;
   std::size_t skipped = 0;
   std::size_t failed = 0;
-  std::size_t profile_only_completed = 0;
+  std::size_t surrogate_completed = 0;
   std::size_t descriptor_only_completed = 0;
   std::size_t official_skipped = 0;
   std::size_t unknown_skipped = 0;
@@ -282,9 +282,20 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
     }
     if (first.records[i].mode_id.find("freedv700f_") == 0) {
       assert(first.records[i].status == f700f::SweepRunStatus::Completed);
-      assert(first.records[i].error_summary.find("profile_only_completed") !=
+      assert(first.records[i].error_summary.find("surrogate_completed") !=
              std::string::npos);
-      ++profile_only_completed;
+      assert(first.records[i].implementation_status == "surrogate");
+      assert(first.records[i].not_real_modem);
+      assert(!first.records[i].downselect_valid);
+      assert(first.records[i].not_downselect_valid);
+      assert(!first.records[i].performance_valid);
+      assert(!first.records[i].surrogate_model_name.empty());
+      assert(!first.records[i].surrogate_model_version.empty());
+      assert(first.records[i].surrogate_limitations.find("not a real modem") !=
+             std::string::npos);
+      assert(first.records[i].synthetic_metrics_label.find("synthetic") !=
+             std::string::npos);
+      ++surrogate_completed;
     }
     if (first.records[i].mode_id == "freedv700d_emulated" ||
         first.records[i].mode_id == "freedv700e_emulated") {
@@ -311,7 +322,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(completed > 0);
   assert(skipped > 0);
   assert(failed == 0);
-  assert(profile_only_completed == 9);
+  assert(surrogate_completed == 9);
   assert(descriptor_only_completed == 6);
   assert(official_skipped == 6);
   assert(unknown_skipped == 3);
@@ -327,7 +338,18 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
                      "m2-700f-candidate-smoke.json");
   const std::string json_text((std::istreambuf_iterator<char>(json)),
                               std::istreambuf_iterator<char>());
-  assert(json_text.find("profile_only_completed") != std::string::npos);
+  assert(json_text.find("surrogate_completed") != std::string::npos);
+  assert(json_text.find("\"implementation_status\": \"surrogate\"") !=
+         std::string::npos);
+  assert(json_text.find("\"not_real_modem\": true") != std::string::npos);
+  assert(json_text.find("\"downselect_valid\": false") != std::string::npos);
+  assert(json_text.find("\"not_downselect_valid\": true") != std::string::npos);
+  assert(json_text.find("\"performance_valid\": false") != std::string::npos);
+  assert(json_text.find("surrogate_model_name") != std::string::npos);
+  assert(json_text.find("surrogate_model_version") != std::string::npos);
+  assert(json_text.find("surrogate_limitations") != std::string::npos);
+  assert(json_text.find("surrogate_readiness_score_synthetic") !=
+         std::string::npos);
   assert(json_text.find("descriptor_only_completed") != std::string::npos);
   assert(json_text.find("official_waveform_roundtrip_not_implemented") !=
          std::string::npos);
@@ -339,7 +361,13 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
                     "m2-700f-candidate-smoke.csv");
   const std::string csv_text((std::istreambuf_iterator<char>(csv)),
                              std::istreambuf_iterator<char>());
-  assert(csv_text.find("profile_only_completed") != std::string::npos);
+  assert(csv_text.find("surrogate_completed") != std::string::npos);
+  assert(csv_text.find("not_real_modem") != std::string::npos);
+  assert(csv_text.find("downselect_valid") != std::string::npos);
+  assert(csv_text.find("not_downselect_valid") != std::string::npos);
+  assert(csv_text.find("performance_valid") != std::string::npos);
+  assert(csv_text.find("surrogate_readiness_score_synthetic") !=
+         std::string::npos);
   assert(csv_text.find("descriptor_only_completed") != std::string::npos);
 }
 

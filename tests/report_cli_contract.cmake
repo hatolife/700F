@@ -12,7 +12,7 @@ file(WRITE "${sample_json}" [=[
   "records": [
     {"run_id": "m2-ssb", "status": "completed", "mode_id": "ssb_standard_3k", "condition_id": "identity", "seed": 1, "skipped_reason": null, "error_summary": null, "simulation_digest": "abc"},
     {"run_id": "m2-official", "status": "skipped", "mode_id": "freedv700d_official", "condition_id": "identity", "seed": 1, "skipped_reason": "official_waveform_roundtrip_not_implemented", "error_summary": null, "simulation_digest": ""},
-    {"run_id": "m2-profile", "status": "completed", "mode_id": "freedv700f_a_balanced", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "profile_only_completed", "simulation_digest": "profile"},
+    {"run_id": "m2-surrogate", "status": "completed", "mode_id": "freedv700f_a_balanced", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "surrogate_completed: not_real_modem=true downselect_valid=false performance_valid=false", "simulation_digest": "surrogate", "implementation_status": "surrogate", "not_real_modem": true, "downselect_valid": false, "not_downselect_valid": true, "performance_valid": false, "surrogate_model_name": "700f_candidate_minimal_behavior", "surrogate_model_version": "ISSUE-0032-v1", "surrogate_limitations": "synthetic readiness only; not a real modem; BER/FER are not emitted as real values", "surrogate_readiness_score_synthetic": "0.625", "synthetic_metrics_label": "synthetic_surrogate_readiness_only"},
     {"run_id": "m2-descriptor", "status": "completed", "mode_id": "freedv700d_emulated", "condition_id": "awgn-snr-6db", "seed": 1, "skipped_reason": null, "error_summary": "descriptor_only_completed", "simulation_digest": "descriptor"}
   ]
 }
@@ -35,8 +35,23 @@ endif()
 if(NOT report_text MATCHES "Real downselect possible: no")
   message(FATAL_ERROR "sample report did not state downselect feasibility")
 endif()
-if(NOT report_text MATCHES "profile_only")
-  message(FATAL_ERROR "sample report did not include profile-only rows")
+if(NOT report_text MATCHES "surrogate")
+  message(FATAL_ERROR "sample report did not include surrogate rows")
+endif()
+if(NOT report_text MATCHES "SURROGATE WARNING")
+  message(FATAL_ERROR "sample report did not include surrogate warning")
+endif()
+if(NOT report_text MATCHES "not_real_modem=true")
+  message(FATAL_ERROR "sample report did not include not_real_modem guardrail")
+endif()
+if(NOT report_text MATCHES "downselect_valid=false")
+  message(FATAL_ERROR "sample report did not include downselect guardrail")
+endif()
+if(NOT report_text MATCHES "performance_valid=false")
+  message(FATAL_ERROR "sample report did not include performance guardrail")
+endif()
+if(NOT report_text MATCHES "synthetic_surrogate_readiness_only")
+  message(FATAL_ERROR "sample report did not label synthetic surrogate metrics")
 endif()
 if(NOT report_text MATCHES "descriptor_only")
   message(FATAL_ERROR "sample report did not include descriptor-only rows")
