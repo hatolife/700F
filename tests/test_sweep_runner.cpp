@@ -265,7 +265,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   std::size_t skipped = 0;
   std::size_t failed = 0;
   std::size_t surrogate_completed = 0;
-  std::size_t descriptor_only_completed = 0;
+  std::size_t emulated_surrogate_completed = 0;
   std::size_t official_skipped = 0;
   std::size_t unknown_skipped = 0;
   for (std::size_t i = 0; i < first.records.size(); ++i) {
@@ -300,9 +300,31 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
     if (first.records[i].mode_id == "freedv700d_emulated" ||
         first.records[i].mode_id == "freedv700e_emulated") {
       assert(first.records[i].status == f700f::SweepRunStatus::Completed);
-      assert(first.records[i].error_summary.find("descriptor_only_completed") !=
+      assert(first.records[i].simulation.ok);
+      assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Encode).ok);
+      assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Decode).ok);
+      assert(first.records[i].simulation.stage_status(f700f::PipelineStage::Metrics).ok);
+      assert(first.records[i].error_summary.find("emulated_surrogate_completed") !=
              std::string::npos);
-      ++descriptor_only_completed;
+      assert(first.records[i].error_summary.find("implementation_status=emulated_surrogate") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("official=false") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("not_official_freedv=true") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("downselect_valid=false") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("performance_valid=false") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("emulator_model_name=") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("emulator_model_version=") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("emulator_limitations=") !=
+             std::string::npos);
+      assert(first.records[i].error_summary.find("descriptor_only") ==
+             std::string::npos);
+      ++emulated_surrogate_completed;
     }
     if (first.records[i].mode_id == "freedv700d_official" ||
         first.records[i].mode_id == "freedv700e_official") {
@@ -323,7 +345,7 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(skipped > 0);
   assert(failed == 0);
   assert(surrogate_completed == 9);
-  assert(descriptor_only_completed == 6);
+  assert(emulated_surrogate_completed == 6);
   assert(official_skipped == 6);
   assert(unknown_skipped == 3);
 
@@ -350,7 +372,11 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(json_text.find("surrogate_limitations") != std::string::npos);
   assert(json_text.find("surrogate_readiness_score_synthetic") !=
          std::string::npos);
-  assert(json_text.find("descriptor_only_completed") != std::string::npos);
+  assert(json_text.find("emulated_surrogate_completed") != std::string::npos);
+  assert(json_text.find("not_official_freedv=true") != std::string::npos);
+  assert(json_text.find("performance_valid=false") != std::string::npos);
+  assert(json_text.find("emulator_limitations=") != std::string::npos);
+  assert(json_text.find("descriptor_only_completed") == std::string::npos);
   assert(json_text.find("official_waveform_roundtrip_not_implemented") !=
          std::string::npos);
   assert(json_text.find("unknown.mode.for-skip-test") != std::string::npos);
@@ -368,7 +394,30 @@ void m2_700f_candidate_smoke_campaign_records_skips_and_artifacts() {
   assert(csv_text.find("performance_valid") != std::string::npos);
   assert(csv_text.find("surrogate_readiness_score_synthetic") !=
          std::string::npos);
-  assert(csv_text.find("descriptor_only_completed") != std::string::npos);
+  assert(csv_text.find("emulated_surrogate_completed") != std::string::npos);
+  assert(csv_text.find("not_official_freedv=true") != std::string::npos);
+  assert(csv_text.find("performance_valid=false") != std::string::npos);
+}
+
+void m2_emulated_surrogate_unknown_channel_fails_clearly() {
+  auto runner = make_runner();
+  f700f::register_m2_campaign_mode_factories(runner);
+  auto config = f700f::make_m2_700f_candidate_smoke_sweep_config(
+      "build/test-artifacts/m2-emulated-surrogate-unknown-channel");
+  config.run_id_prefix = "m2-emulated-surrogate-unknown-channel";
+  config.modes = {{.mode_id = "freedv700d_emulated"}};
+  config.channel_conditions = {
+      {.condition_id = "unknown-channel",
+       .channel_chain = {{.channel_id = "unknown.channel"}}}};
+  config.seeds = {1};
+
+  const auto result = runner.run(config);
+  assert(result.ok);
+  assert(result.records.size() == 1);
+  assert(result.records[0].status == f700f::SweepRunStatus::Failed);
+  assert(result.records[0].audio_export_path == "N/A");
+  assert(result.records[0].error_summary.find(
+             "channel id not registered: unknown.channel") != std::string::npos);
 }
 
 void m2_700f_candidate_full_campaign_uses_full_matrix() {
@@ -486,6 +535,7 @@ int main() {
   invalid_channel_matrix_parameters_are_rejected();
   m2_channel_matrix_empty_seed_list_rejected();
   m2_700f_candidate_smoke_campaign_records_skips_and_artifacts();
+  m2_emulated_surrogate_unknown_channel_fails_clearly();
   m2_700f_candidate_full_campaign_uses_full_matrix();
   m2_smoke_ssb_rows_expose_audio_export_path();
   m2_smoke_ssb_rows_disabled_export_are_na();

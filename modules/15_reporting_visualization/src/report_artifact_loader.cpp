@@ -38,12 +38,23 @@ struct SweepRow {
   std::string synthetic_metrics_label;
 };
 
+constexpr const char *kSurrogateModelName =
+    "f700f-minimal-freedv700d700e-surrogate";
+constexpr const char *kSurrogateModelVersion = "ISSUE-0033-v1";
+constexpr const char *kSurrogateLimitations =
+    "deterministic surrogate only; not official FreeDV performance";
+
 bool starts_with(std::string_view value, std::string_view prefix) {
   return value.size() >= prefix.size() && value.substr(0, prefix.size()) == prefix;
 }
 
 bool contains(std::string_view value, std::string_view token) {
   return value.find(token) != std::string_view::npos;
+}
+
+bool is_emulated_surrogate_row(const SweepRow &row) {
+  return contains(row.error_summary, "emulated_surrogate") ||
+         contains(row.error_summary, "implementation_status=emulated_surrogate");
 }
 
 std::string trim(std::string value) {
@@ -303,6 +314,32 @@ std::map<std::string, std::string> csv_row_map(
   return values;
 }
 
+std::map<std::string, std::string> parse_semicolon_key_values(
+    const std::string &text) {
+  std::map<std::string, std::string> values;
+  std::size_t begin = 0;
+  while (begin < text.size()) {
+    const auto end = text.find(';', begin);
+    auto part = trim(text.substr(begin, end == std::string::npos
+                                           ? std::string::npos
+                                           : end - begin));
+    const auto colon = part.find(':');
+    if (colon != std::string::npos) {
+      part = trim(part.substr(colon + 1));
+    }
+    const auto equals = part.find('=');
+    if (equals != std::string::npos) {
+      values.emplace(trim(part.substr(0, equals)),
+                     trim(part.substr(equals + 1)));
+    }
+    if (end == std::string::npos) {
+      break;
+    }
+    begin = end + 1;
+  }
+  return values;
+}
+
 f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
     const SweepRow &row) {
   f700f::metrics::ModeDescriptorSnapshot descriptor;
@@ -337,9 +374,9 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
   descriptor.supports_complex_output = true;
   descriptor.supports_bit_payload = true;
 
+  const bool row_marks_emulated_surrogate = is_emulated_surrogate_row(row);
   const bool row_marks_surrogate =
       row.implementation_status == "surrogate" ||
-      contains(row.error_summary, "surrogate") ||
       starts_with(row.mode_id, "freedv700f_");
   const bool row_marks_profile_only =
       contains(row.error_summary, "profile_only") ||
@@ -370,6 +407,13 @@ f700f::metrics::ModeDescriptorSnapshot descriptor_for_mode(
         row.surrogate_limitations.empty()
             ? "synthetic readiness only; not a real modem; BER/FER are not emitted as real values"
             : row.surrogate_limitations;
+  } else if (row_marks_emulated_surrogate) {
+    descriptor.emulator = true;
+    descriptor.implementation_status = "emulated_surrogate";
+    descriptor.not_real_modem = true;
+    descriptor.downselect_valid = false;
+    descriptor.not_downselect_valid = true;
+    descriptor.performance_valid = false;
   } else if (row_marks_profile_only) {
     descriptor.implementation_status = "profile_only";
     descriptor.downselect_valid = false;
@@ -428,6 +472,30 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
     result.optional_metrics["surrogate_limitations"] =
         result.mode_descriptor.surrogate_limitations;
   }
+  if (is_emulated_surrogate_row(row)) {
+    const auto values = parse_semicolon_key_values(row.error_summary);
+    const auto lookup = [&](const std::string &key, const std::string &fallback) {
+      const auto it = values.find(key);
+      return it == values.end() || it->second.empty() ? fallback : it->second;
+    };
+    result.optional_metrics["official"] = lookup("official", "false");
+    result.optional_metrics["not_official_freedv"] =
+        lookup("not_official_freedv", "true");
+    result.optional_metrics["downselect_valid"] =
+        lookup("downselect_valid", "false");
+    result.optional_metrics["performance_valid"] =
+        lookup("performance_valid", "false");
+    result.optional_metrics["emulator_model_name"] =
+        lookup("emulator_model_name", kSurrogateModelName);
+    result.optional_metrics["emulator_model_version"] =
+        lookup("emulator_model_version", kSurrogateModelVersion);
+    result.optional_metrics["emulator_limitations"] =
+        lookup("emulator_limitations", kSurrogateLimitations);
+    result.warnings.push_back(
+        "not_official_freedv=true; performance_valid=false; "
+        "downselect_valid=false; emulator_limitations=" +
+        result.optional_metrics["emulator_limitations"]);
+  }
 
   if (row.status == "skipped") {
     result.skipped_reason =
@@ -450,6 +518,7 @@ void finalize_context(LoadedReportInput &loaded,
   bool saw_profile_only = false;
   bool saw_surrogate = false;
   bool saw_descriptor_only = false;
+  bool saw_emulated_surrogate = false;
   bool saw_skipped = false;
   bool saw_failed = false;
 
@@ -458,12 +527,13 @@ void finalize_context(LoadedReportInput &loaded,
     channels.insert(row.condition_id);
     seeds.insert(row.seed);
     saw_surrogate = saw_surrogate || row.implementation_status == "surrogate" ||
-                    contains(row.error_summary, "surrogate") ||
                     starts_with(row.mode_id, "freedv700f_");
     saw_profile_only = saw_profile_only || contains(row.error_summary, "profile_only") ||
                        row.implementation_status == "profile_only";
     saw_descriptor_only = saw_descriptor_only ||
                           contains(row.error_summary, "descriptor_only");
+    saw_emulated_surrogate =
+        saw_emulated_surrogate || is_emulated_surrogate_row(row);
     saw_skipped = saw_skipped || row.status == "skipped";
     saw_failed = saw_failed || row.status == "failed";
   }
@@ -475,14 +545,16 @@ void finalize_context(LoadedReportInput &loaded,
       saw_failed ? "loaded with failed rows" : "loaded from artifact";
   loaded.real_downselect_possible =
       !saw_surrogate && !saw_profile_only && !saw_descriptor_only &&
-      !saw_skipped && !saw_failed && !rows.empty();
+      !saw_emulated_surrogate && !saw_skipped && !saw_failed &&
+      !rows.empty();
   loaded.context.real_downselect_possible = loaded.real_downselect_possible;
   loaded.context.downselect_feasibility_summary =
       loaded.real_downselect_possible
           ? "Real downselect possible: yes; all loaded rows contain completed "
             "performance evidence."
           : "Real downselect possible: no; surrogate, skipped, profile-only, "
-            "descriptor-only, or failed rows prevent real downselect.";
+            "descriptor-only, emulated-surrogate, or failed rows prevent real "
+            "downselect.";
   loaded.context.known_limitations.push_back(
       loaded.context.downselect_feasibility_summary);
   if (saw_surrogate) {
@@ -498,6 +570,14 @@ void finalize_context(LoadedReportInput &loaded,
   if (saw_descriptor_only) {
     loaded.context.known_limitations.push_back(
         "Descriptor-only rows are non-performance evidence.");
+  }
+  if (saw_emulated_surrogate) {
+    loaded.context.known_limitations.push_back(
+        "Emulated surrogate rows are non-official and non-performance "
+        "evidence: implementation_status=emulated_surrogate; "
+        "not_official_freedv=true; downselect_valid=false; "
+        "performance_valid=false; emulator_limitations=" +
+        std::string(kSurrogateLimitations));
   }
   for (const auto &row : rows) {
     if (!row.skipped_reason.empty()) {

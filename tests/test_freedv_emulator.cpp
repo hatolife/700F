@@ -4,8 +4,13 @@
 #include <cassert>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace {
+
+bool contains(const std::string &haystack, const std::string &needle) {
+  return haystack.find(needle) != std::string::npos;
+}
 
 void assert_descriptor_shape(const f700f::ModeDescriptor &descriptor,
                              const std::string &mode_id) {
@@ -20,7 +25,7 @@ void assert_descriptor_shape(const f700f::ModeDescriptor &descriptor,
   assert(!descriptor.modulation_family.empty());
   assert(!descriptor.fec_id.empty());
   assert(!descriptor.pilot_strategy.empty());
-  assert(!descriptor.implementation_status.empty());
+  assert(descriptor.implementation_status == "emulated_surrogate");
   assert(descriptor.emulator);
   assert(!descriptor.official_baseline);
 }
@@ -46,22 +51,74 @@ void registry_selects_both_modes_test() {
   assert(!mode_700e->official_baseline);
 }
 
-void encode_decode_report_unimplemented_test() {
+void emulator_metadata_is_explicit_test() {
+  assert(std::string(f700f::freedv_emulator_model_name()) ==
+         "f700f-minimal-freedv700d700e-surrogate");
+  assert(!std::string(f700f::freedv_emulator_model_version()).empty());
+  assert(contains(f700f::freedv_emulator_limitations(), "not official FreeDV"));
+  assert(contains(f700f::freedv_emulator_limitations(), "performance_valid=false"));
+}
+
+f700f::AudioBlock make_audio() {
+  f700f::AudioBlock audio;
+  audio.sample_rate_hz = 8000;
+  audio.start_time_s = 0.25;
+  audio.mono = {0.0F, 0.25F, -0.25F, 0.5F, -0.5F, 0.125F};
+  return audio;
+}
+
+bool same_iq(const f700f::ComplexBlock &lhs, const f700f::ComplexBlock &rhs) {
+  if (lhs.sample_rate_hz != rhs.sample_rate_hz ||
+      lhs.center_frequency_hz != rhs.center_frequency_hz ||
+      lhs.start_time_s != rhs.start_time_s || lhs.iq.size() != rhs.iq.size()) {
+    return false;
+  }
+  for (std::size_t i = 0; i < lhs.iq.size(); ++i) {
+    if (lhs.iq[i].re != rhs.iq[i].re || lhs.iq[i].im != rhs.iq[i].im) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void encode_decode_are_minimal_deterministic_surrogates_test(
+    const std::string &mode_id) {
   f700f::ModeRegistry registry;
   f700f::register_freedv_emulator_modes(registry);
-  auto mode = registry.create("freedv700d_emulated");
+  auto mode = registry.create(mode_id);
   assert(mode != nullptr);
   assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
 
-  const auto encoded = mode->encode({});
-  assert(!encoded.ok);
-  assert(encoded.error.find("ISSUE-0013") != std::string::npos);
-  assert(encoded.error.find("not implemented") != std::string::npos);
+  const auto audio = make_audio();
+  const auto encoded = mode->encode(audio);
+  assert(encoded.ok);
+  assert(encoded.error.empty());
+  assert(encoded.symbols.sample_rate_hz == audio.sample_rate_hz);
+  assert(encoded.symbols.start_time_s == audio.start_time_s);
+  assert(encoded.symbols.iq.size() == audio.mono.size());
+  assert(!encoded.bits.bits.empty());
 
-  const auto decoded = mode->decode({});
-  assert(!decoded.ok);
-  assert(decoded.error.find("ISSUE-0013") != std::string::npos);
-  assert(decoded.error.find("not implemented") != std::string::npos);
+  const auto decoded = mode->decode(encoded.symbols);
+  assert(decoded.ok);
+  assert(decoded.error.empty());
+  assert(decoded.audio.sample_rate_hz == audio.sample_rate_hz);
+  assert(decoded.audio.start_time_s == audio.start_time_s);
+  assert(decoded.audio.mono.size() == audio.mono.size());
+
+  mode->reset();
+  assert(mode->configure({.sample_rate_hz = mode->descriptor().sample_rate_hz}));
+  const auto encoded_again = mode->encode(audio);
+  const auto decoded_again = mode->decode(encoded_again.symbols);
+  assert(encoded_again.ok);
+  assert(decoded_again.ok);
+  assert(same_iq(encoded_again.symbols, encoded.symbols));
+  assert(encoded_again.bits.bits == encoded.bits.bits);
+  assert(decoded_again.audio.mono == decoded.audio.mono);
+}
+
+void encode_decode_are_minimal_deterministic_surrogates_test() {
+  encode_decode_are_minimal_deterministic_surrogates_test("freedv700d_emulated");
+  encode_decode_are_minimal_deterministic_surrogates_test("freedv700e_emulated");
 }
 
 } // namespace
@@ -69,6 +126,7 @@ void encode_decode_report_unimplemented_test() {
 int main() {
   descriptors_are_obtainable_test();
   registry_selects_both_modes_test();
-  encode_decode_report_unimplemented_test();
+  emulator_metadata_is_explicit_test();
+  encode_decode_are_minimal_deterministic_surrogates_test();
   return 0;
 }

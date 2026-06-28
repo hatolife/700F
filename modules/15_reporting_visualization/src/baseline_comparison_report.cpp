@@ -84,6 +84,9 @@ std::string descriptor_status(const f700f::metrics::M2ModeScore &score) {
   if (snapshot.implementation_status == "surrogate") {
     return "surrogate";
   }
+  if (snapshot.implementation_status == "emulated_surrogate") {
+    return "emulated_surrogate";
+  }
   if (!snapshot.implementation_status.empty()) {
     return snapshot.implementation_status;
   }
@@ -113,6 +116,9 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
   if (score.profile_only) {
     return "profile_only";
   }
+  if (score.performance_invalid_count > 0) {
+    return "performance invalid; not_official_freedv=true";
+  }
   if (score.skipped_count > 0) {
     return "skipped";
   }
@@ -125,15 +131,17 @@ std::string reason_for_mode(const f700f::metrics::M2ModeScore &score) {
 void append_mode_rows(std::ostringstream &out,
                       const f700f::metrics::M2ScoreReport &score_report) {
   out << "| Mode | Score | Completed | Failed | Skipped | Official unavailable | "
-         "Profile-only | Surrogate | Performance valid | Performance invalid | "
-         "Real score | Surrogate readiness | Status | Notes |\n";
-  out << "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|\n";
+         "Profile-only | 700F surrogate | Emulated surrogate | "
+         "Performance valid | Performance invalid | Real score | "
+         "Surrogate readiness | Status | Notes |\n";
+  out << "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|\n";
   for (const auto &score : score_report.mode_scores) {
     out << "| `" << markdown_escape_cell(score.mode_id) << "` | "
         << format_double(score.score) << " | " << score.completed_count << " | "
         << score.failed_count << " | " << score.skipped_count << " | "
         << score.official_unavailable_count << " | " << score.profile_only_count
         << " | " << score.surrogate_count << " | "
+        << score.emulated_surrogate_count << " | "
         << score.performance_valid_count << " | "
         << score.performance_invalid_count << " | "
         << format_double(score.real_performance_score) << " | "

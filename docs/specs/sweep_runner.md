@@ -115,15 +115,21 @@ The campaign details are specified in `docs/specs/m2_sweep_campaign.md`, with
 TOML-friendly shapes under `configs/sweeps/`.
 
 ISSUE-0028 adds `register_m2_campaign_mode_factories()` for the default M2 smoke
-bridge. It registers SSB reference factories, descriptor-only 700D/700E emulator
-factories, and 700F-A/B/C candidate factories. ISSUE-0032 marks 700F candidate
-records completed with `surrogate_completed` notes plus
-`implementation_status = surrogate`, `not_real_modem = true`,
-`downselect_valid = false`, `not_downselect_valid = true`, and
-`performance_valid = false`. Descriptor-only emulator records remain completed with
-`descriptor_only_completed` notes. Neither surrogate nor descriptor-only rows claim
-waveform encode/decode or real performance metrics. Official FreeDV 700D/700E
-entries remain skipped in default Codec2-disabled smoke runs with an
+bridge. It registers SSB reference factories, 700D/700E emulator factories, and
+700F-A/B/C candidate factories. ISSUE-0032 marks 700F candidate records completed
+with `surrogate_completed` notes plus `implementation_status = surrogate`,
+`not_real_modem = true`, `downselect_valid = false`,
+`not_downselect_valid = true`, and `performance_valid = false`.
+ISSUE-0033 moves the 700D/700E emulator rows from descriptor-only completion into
+deterministic `emulated_surrogate` runtime completion. These rows are marked
+completed with an
+`emulated_surrogate_completed` note in JSON/CSV summaries, including
+`official=false`, `not_official_freedv=true`, `downselect_valid=false`,
+`performance_valid=false`, `emulator_model_name`, `emulator_model_version`, and
+`emulator_limitations`. They do not claim official FreeDV behavior or valid
+performance evidence. 700F surrogate rows do not claim waveform encode/decode or
+real performance metrics. Official FreeDV 700D/700E entries remain skipped in
+default Codec2-disabled smoke runs with an
 `official_waveform_roundtrip_not_implemented` reason.
 
 ISSUE-0032 appends these aggregate row fields to JSON/CSV outputs while keeping

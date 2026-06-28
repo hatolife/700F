@@ -30,6 +30,10 @@ bool is_surrogate(const ModeDescriptorSnapshot &snapshot) {
          !snapshot.surrogate_model_name.empty();
 }
 
+bool is_emulated_surrogate(const ModeDescriptorSnapshot &snapshot) {
+  return snapshot.implementation_status == "emulated_surrogate";
+}
+
 bool is_descriptor_only(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.implementation_status == "descriptor_only" ||
          snapshot.implementation_status == "descriptor-only";
@@ -37,7 +41,8 @@ bool is_descriptor_only(const ModeDescriptorSnapshot &snapshot) {
 
 bool is_performance_valid(const ModeDescriptorSnapshot &snapshot) {
   return snapshot.performance_valid && !is_profile_only(snapshot) &&
-         !is_surrogate(snapshot) && !is_descriptor_only(snapshot);
+         !is_surrogate(snapshot) && !is_emulated_surrogate(snapshot) &&
+         !is_descriptor_only(snapshot);
 }
 
 bool has_optional_slot(const ResultArtifact &result, const std::string &key) {
@@ -60,6 +65,16 @@ std::optional<double> optional_metric_as_double(const ResultArtifact &result,
   } catch (const std::exception &) {
     return std::nullopt;
   }
+}
+
+bool optional_metric_is_false(const ResultArtifact &result, const std::string &key) {
+  const auto it = result.optional_metrics.find(key);
+  return it != result.optional_metrics.end() && it->second == "false";
+}
+
+bool result_performance_valid(const ResultArtifact &result) {
+  return is_performance_valid(result.mode_descriptor) &&
+         !optional_metric_is_false(result, "performance_valid");
 }
 
 double clamp_score(double score) {
@@ -105,7 +120,7 @@ void ensure_profile_snapshot(M2ModeScore &score,
 
 void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   ensure_profile_snapshot(score, result.mode_descriptor);
-  const bool performance_valid = is_performance_valid(result.mode_descriptor);
+  const bool performance_valid = result_performance_valid(result);
   ++score.record_count;
   score.mean_dropout_rate += result.dropout_rate;
   score.mean_latency_s += result.latency_estimate_s;
@@ -140,6 +155,9 @@ void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
       score.surrogate_readiness_score +=
           std::clamp(*readiness, 0.0, 1.0) * 100.0;
     }
+  }
+  if (is_emulated_surrogate(result.mode_descriptor)) {
+    ++score.emulated_surrogate_count;
   }
 
   if (performance_valid) {
@@ -181,8 +199,12 @@ void finalize_score(M2ModeScore &score, const M2ScorePolicy &policy) {
   const auto record_count = static_cast<double>(score.record_count);
   score.mean_dropout_rate /= record_count;
   score.mean_latency_s /= record_count;
+  const auto valid_completed_count =
+      score.completed_count > score.performance_invalid_count
+          ? score.completed_count - score.performance_invalid_count
+          : 0;
   score.completed_run_ratio =
-      static_cast<double>(score.completed_count) / record_count;
+      static_cast<double>(valid_completed_count) / record_count;
 
   const double failed_ratio = static_cast<double>(score.failed_count) / record_count;
   const double skipped_ratio =
@@ -288,6 +310,8 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
         << score.official_unavailable_count << ",";
     out << "\"profile_only_count\":" << score.profile_only_count << ",";
     out << "\"surrogate_count\":" << score.surrogate_count << ",";
+    out << "\"emulated_surrogate_count\":" << score.emulated_surrogate_count
+        << ",";
     out << "\"performance_valid_count\":" << score.performance_valid_count << ",";
     out << "\"performance_invalid_count\":" << score.performance_invalid_count
         << ",";

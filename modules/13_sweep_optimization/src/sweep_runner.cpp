@@ -183,13 +183,17 @@ bool contains_token(const std::string &value, const std::string &token) {
 }
 
 bool is_surrogate_mode(const ModeDescriptor &descriptor) {
-  return contains_token(descriptor.implementation_status, "surrogate");
+  return descriptor.implementation_status == "surrogate";
 }
 
 bool is_metadata_only_mode(const ModeDescriptor &descriptor) {
   return is_surrogate_mode(descriptor) ||
          contains_token(descriptor.implementation_status, "profile_only") ||
          contains_token(descriptor.implementation_status, "descriptor-only");
+}
+
+bool is_emulated_surrogate_mode(const ModeDescriptor &descriptor) {
+  return descriptor.implementation_status == "emulated_surrogate";
 }
 
 std::string metadata_only_note(const ModeDescriptor &descriptor) {
@@ -220,6 +224,17 @@ void apply_surrogate_metadata(SweepRunRecord &record,
       "synthetic readiness only; not a real modem; BER/FER are not emitted as real values";
   record.surrogate_readiness_score_synthetic = "0.625";
   record.synthetic_metrics_label = "synthetic_surrogate_readiness_only";
+}
+
+std::string emulated_surrogate_note() {
+  return std::string("emulated_surrogate_completed: "
+                     "implementation_status=emulated_surrogate; "
+                     "official=false; not_official_freedv=true; "
+                     "downselect_valid=false; performance_valid=false; "
+                     "emulator_model_name=") +
+         freedv_emulator_model_name() + "; emulator_model_version=" +
+         freedv_emulator_model_version() + "; emulator_limitations=" +
+         freedv_emulator_limitations();
 }
 
 bool is_official_freedv_mode(const ModeId &mode_id) {
@@ -716,8 +731,14 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
 
         record.simulation = simulation_runner_.run(simulation_config);
         record.audio_export_path = record.simulation.audio_export_path;
+        if (record.audio_export_path.empty()) {
+          record.audio_export_path = "N/A";
+        }
         if (record.simulation.ok) {
           record.status = SweepRunStatus::Completed;
+          if (is_emulated_surrogate_mode(descriptor_it->second)) {
+            record.error_summary = emulated_surrogate_note();
+          }
         } else {
           record.status = SweepRunStatus::Failed;
           record.error_summary = record.simulation.error;

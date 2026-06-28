@@ -89,11 +89,19 @@ void markdown_includes_scores_statuses_and_raw_metric_summary() {
   skipped.mode_descriptor.emulator = false;
   skipped.mode_descriptor.implementation_status = "unavailable";
   skipped.skipped_reason = "official adapter unavailable: Codec2 disabled";
+  auto surrogate = make_result("freedv700d_emulated");
+  surrogate.mode_descriptor.implementation_status = "emulated_surrogate";
+  surrogate.mode_descriptor.official_baseline = false;
+  surrogate.optional_metrics["not_official_freedv"] = "true";
+  surrogate.optional_metrics["downselect_valid"] = "false";
+  surrogate.optional_metrics["performance_valid"] = "false";
+  surrogate.optional_metrics["emulator_limitations"] =
+      "deterministic surrogate only, not official FreeDV performance";
 
   const auto profile = f700f::metrics::make_mode_descriptor_snapshot(
       f700f::freedv700f_a_balanced_descriptor());
   const auto score_report =
-      f700f::metrics::score_m2_results({skipped, completed}, {profile});
+      f700f::metrics::score_m2_results({skipped, completed, surrogate}, {profile});
   const auto markdown = f700f::reporting::render_m2_baseline_comparison_report(
       make_context(), score_report);
 
@@ -106,6 +114,10 @@ void markdown_includes_scores_statuses_and_raw_metric_summary() {
   assert(contains(markdown, "| Mode | Score | Completed | Failed | Skipped |"));
   assert(contains(markdown, "`freedv700d_official`"));
   assert(contains(markdown, "official adapter unavailable"));
+  assert(contains(markdown, "`freedv700d_emulated`"));
+  assert(contains(markdown, "emulated_surrogate"));
+  assert(contains(markdown, "performance invalid"));
+  assert(contains(markdown, "not_official_freedv=true"));
   assert(contains(markdown, "Official FreeDV status"));
   assert(contains(markdown, "unavailable/skipped: 1"));
   assert(contains(markdown, "SSB reference status"));
