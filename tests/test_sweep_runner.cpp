@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <filesystem>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -27,6 +28,9 @@ f700f::SweepRunner make_runner() {
   f700f::SweepRunner runner;
   runner.register_mode_factory(f700f::make_dummy_mode_factory("dummy.mode"));
   runner.register_channel_factory(f700f::make_identity_channel_factory());
+  runner.register_channel_factory(f700f::make_awgn_channel_factory());
+  runner.register_channel_factory(f700f::make_frequency_offset_channel_factory());
+  runner.register_channel_factory(f700f::make_simple_gain_fading_channel_factory());
   runner.register_metric(f700f::make_dummy_metric());
   return runner;
 }
@@ -132,6 +136,89 @@ void ci_smoke_sweep_completes_quickly() {
   assert(result.records[2].status == f700f::SweepRunStatus::Skipped);
 }
 
+void m2_channel_matrix_smoke_has_required_conditions() {
+  const auto config = f700f::make_m2_channel_matrix_smoke_sweep_config(
+      "build/test-artifacts/m2-channel-matrix-smoke");
+  assert(config.run_id_prefix == "m2-channel-matrix-smoke");
+  assert(config.seeds == std::vector<f700f::Seed>{1});
+  assert(config.channel_conditions.size() == 3);
+  assert(config.channel_conditions[0].condition_id == "identity");
+  assert(config.channel_conditions[1].condition_id == "awgn-snr-6db");
+  assert(config.channel_conditions[1].channel_chain.size() == 1);
+  assert(config.channel_conditions[1].channel_chain[0].channel_id == "awgn");
+  assert(config.channel_conditions[1].channel_chain[0].parameters[0].value == "6.0");
+  assert(config.channel_conditions[2].condition_id == "awgn-snr-0db");
+  assert(config.channel_conditions[2].channel_chain.size() == 1);
+  assert(config.channel_conditions[2].channel_chain[0].channel_id == "awgn");
+  assert(config.channel_conditions[2].channel_chain[0].parameters[0].value == "0.0");
+}
+
+void m2_channel_matrix_full_has_unique_cartesian_conditions() {
+  const auto config = f700f::make_m2_channel_matrix_full_sweep_config(
+      "build/test-artifacts/m2-channel-matrix-full");
+  assert(config.run_id_prefix == "m2-channel-matrix-full");
+  assert(config.seeds == std::vector<f700f::Seed>({1, 2, 3}));
+  assert(config.channel_conditions.size() == 72);
+
+  std::set<std::string> ids;
+  bool saw_first = false;
+  bool saw_last = false;
+  for (const auto &condition : config.channel_conditions) {
+    assert(ids.insert(condition.condition_id).second);
+    if (condition.condition_id == "awgn-snr--2db-fo-0hz-fading-none") {
+      saw_first = true;
+      assert(condition.channel_chain.size() == 2);
+    }
+    if (condition.condition_id == "awgn-snr-8db-fo-200hz-fading-medium") {
+      saw_last = true;
+      assert(condition.channel_chain.size() == 3);
+    }
+  }
+  assert(saw_first);
+  assert(saw_last);
+}
+
+void duplicate_condition_ids_are_rejected() {
+  auto runner = make_runner();
+  auto config = make_sweep_config();
+  config.channel_conditions.push_back(config.channel_conditions.front());
+  const auto result = runner.run(config);
+  assert(!result.ok);
+  assert(result.records.empty());
+  assert(result.error.find("duplicate channel condition id") != std::string::npos);
+}
+
+void invalid_channel_matrix_parameters_are_rejected() {
+  auto runner = make_runner();
+  auto config = make_sweep_config();
+  config.channel_conditions = {
+      {.condition_id = "invalid-snr",
+       .channel_chain = {{.channel_id = "awgn",
+                          .parameters = {{"snr_db", "not-a-number"}}}}},
+      {.condition_id = "invalid-frequency-offset",
+       .channel_chain = {{.channel_id = "frequency_offset",
+                          .parameters = {{"freq_offset_hz", "-50.0"}}}}}};
+
+  const auto result = runner.run(config);
+  assert(result.ok);
+  assert(result.records.size() == 2);
+  assert(result.records[0].status == f700f::SweepRunStatus::Failed);
+  assert(result.records[0].error_summary.find("snr_db") != std::string::npos);
+  assert(result.records[1].status == f700f::SweepRunStatus::Failed);
+  assert(result.records[1].error_summary.find("freq_offset_hz") != std::string::npos);
+}
+
+void m2_channel_matrix_empty_seed_list_rejected() {
+  auto runner = make_runner();
+  auto config = f700f::make_m2_channel_matrix_smoke_sweep_config(
+      "build/test-artifacts/m2-channel-matrix-smoke");
+  config.modes = {{.mode_id = "dummy.mode"}};
+  config.seeds.clear();
+  const auto result = runner.run(config);
+  assert(!result.ok);
+  assert(result.error.find("seed") != std::string::npos);
+}
+
 } // namespace
 
 int main() {
@@ -143,5 +230,10 @@ int main() {
   json_and_csv_generated();
   stable_ordering_for_same_config();
   ci_smoke_sweep_completes_quickly();
+  m2_channel_matrix_smoke_has_required_conditions();
+  m2_channel_matrix_full_has_unique_cartesian_conditions();
+  duplicate_condition_ids_are_rejected();
+  invalid_channel_matrix_parameters_are_rejected();
+  m2_channel_matrix_empty_seed_list_rejected();
   return 0;
 }

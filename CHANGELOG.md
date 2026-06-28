@@ -3,6 +3,8 @@
 ## v0.2.0 - 2026-06-28
 - Add ISSUE-0024 interim M2 scoring model and comparison policy for result artifacts,
   official-unavailable records, audio-only N/A BER/FER, and 700F profile snapshots.
+- Add ISSUE-0025 M2 smoke/full channel condition matrices and sweep-runner validation
+  for duplicate condition ids, malformed SNR/frequency offsets, and empty seed lists.
 - Record M2-A ISSUE-0018 integration and split requested scoring/channel/sweep/report
   work into follow-up issues because existing ISSUE-0019 through ISSUE-0022 are already
   assigned to FEC/OFDM/sync/AI triage.
