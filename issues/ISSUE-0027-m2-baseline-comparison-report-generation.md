@@ -1,7 +1,7 @@
 # ISSUE-0027: M2 baseline comparison report generation
 
 ## Status
-open
+complete
 
 ## Scope
 module:15
@@ -33,17 +33,35 @@ P0
 Generate Markdown baseline comparison reports from M2 sweep/scoring artifacts.
 
 ## Acceptance criteria
-- [ ] Report spec exists.
-- [ ] Report includes run id, commit hash, config path, mode list, channel list, seeds, skipped/unavailable modes, score table, raw metrics summary, known limitations, official FreeDV status, SSB reference status, 700F candidate summary, and next recommendation placeholder.
-- [ ] Empty or minimal result inputs are handled deterministically.
-- [ ] Skipped modes and 700F candidate profiles are displayed.
-- [ ] Timestamped output filename is supported.
+- [x] Report spec exists.
+- [x] Report includes run id, commit hash, config path, mode list, channel list, seeds, skipped/unavailable modes, score table, raw metrics summary, known limitations, official FreeDV status, SSB reference status, 700F candidate summary, and next recommendation placeholder.
+- [x] Empty or minimal result inputs are handled deterministically.
+- [x] Skipped modes and 700F candidate profiles are displayed.
+- [x] Timestamped output filename is supported.
 
 ## Test plan
 - ./tools/run_ci_local.sh
 
 ## TDD record
-- Red test added: to be completed by issue owner before implementation.
+- Red test added: `tests/test_baseline_comparison_report.cpp` was added before
+  implementation and initially failed at configure because the Module 15 report
+  generator source/header did not exist.
+- Green test: `baseline_comparison_report_contract` now passes and covers
+  deterministic Markdown output for empty/minimal score inputs, skipped official
+  baselines, profile-only 700F candidates, unavailable official FreeDV status,
+  timestamped filenames, and blocked/missing sweep execution context.
 
 ## Result
-Pending.
+Implemented Module 15 M2 baseline comparison Markdown report generation from ISSUE-0024
+scoring output. Added report context metadata, deterministic rendering, skipped and
+official-unavailable mode summaries, profile-only 700F candidate display, raw metric
+summary tables, known limitations, next recommendation placeholder, and timestamped
+filename support.
+
+Local CI: `bash ./tools/run_ci_local.sh` passed on 2026-06-28 with 12/12 CTest tests,
+version check passed, and governance check passed. Build emitted clock-skew warnings but
+completed successfully.
+
+Remaining limitation: ISSUE-0027 does not execute sweeps or parse sweep artifacts from
+disk; missing or blocked sweep execution is represented through report context
+`sweep_status` until ISSUE-0026 provides merged sweep outputs.

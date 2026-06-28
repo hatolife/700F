@@ -18,7 +18,7 @@ compatibility_minor = 2
 12_metrics_scoring = "v0.2.0"
 13_sweep_optimization = "v0.2.0"
 14_ai_integration = "v0.0.1"
-15_reporting_visualization = "v0.1.0"
+15_reporting_visualization = "v0.2.0"
 16_golden_benchmark_integration_qa = "v0.1.0"
 
 [milestones.m1]
@@ -61,5 +61,6 @@ affected_modules = [
   "12_metrics_scoring",
   "13_sweep_optimization",
   "14_ai_integration",
+  "15_reporting_visualization",
   "16_golden_benchmark_integration_qa",
 ]

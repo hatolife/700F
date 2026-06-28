@@ -1,3 +1,8 @@
 # Module 15: Reporting and Visualization
 
-Bootstrap skeleton for `15_reporting_visualization`.
+Module 15 provides reporting surfaces for upstream simulation, sweep, metrics, and
+scoring artifacts.
+
+Current implemented surface:
+
+- ISSUE-0027 M2 baseline comparison Markdown renderer over Module 12 scoring output.
