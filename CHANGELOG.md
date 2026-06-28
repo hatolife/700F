@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Create M2-D follow-up issues and dispatch plan for SSB audio export, sweep CLI,
+  report JSON loader/CLI, surrogate 700F behavior, emulator behavior, official
+  FreeDV roundtrip research, and clock-skew warning investigation.
 - Complete ISSUE-0023 limited M2 audit with `M2_GO_WITH_LIMITATIONS`, allowing
   M2-D follow-up planning while keeping real candidate downselect prohibited.
 - Bridge ISSUE-0028 M2 campaign modes to registered SSB, emulator, and 700F

@@ -17,4 +17,5 @@
 | ISSUE-0006 | open | P0 | docs issues reports governance structure | Module 02 | see root ISSUE-0006 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0008 | open | P0 | common mode interface and data protocol v010 | Module 02 | see root ISSUE-0008 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0009 | open | P0 | deterministic simulation core | Module 02 | see root ISSUE-0009 | v0.1.0 target as applicable | 2026-06-27 |
+| ISSUE-0032 | planned | P0 | 700F candidate minimal behavior bridge | Module 02 + candidate modules | feature/ISSUE-0032-700f-candidate-minimal-behavior | v0.2.0 target | 2026-06-28 |
 

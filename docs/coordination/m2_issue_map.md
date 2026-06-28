@@ -21,6 +21,13 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0026 | M2 sweep campaign runner config | complete | Follow-up issue for requested sweep campaign path. |
 | ISSUE-0027 | M2 baseline comparison report generation | complete | Follow-up issue for requested comparison report path. |
 | ISSUE-0028 | M2-C campaign mode registry bridge | complete | M2 smoke modes register SSB/emulator/profile factories, produce completed metadata-only/profile-only rows, and keep official FreeDV explicit skips. |
+| ISSUE-0029 | M2-D SSB audio export | open | First-wave low-risk tooling/readiness issue. |
+| ISSUE-0030 | M2-D sweep CLI and config loader | open | First-wave low-risk tooling issue. |
+| ISSUE-0031 | M2-D report JSON loader and CLI | open | First-wave low-risk reporting issue. |
+| ISSUE-0032 | M2-D 700F candidate minimal behavior bridge | planned | Requires careful surrogate/not-downselect-valid labeling. |
+| ISSUE-0033 | M2-D 700D/700E emulator minimal behavior bridge | planned | Must not imply official FreeDV behavior. |
+| ISSUE-0034 | M2-D official FreeDV waveform roundtrip | planned | Heavy Codec2/FreeDV integration/research. |
+| ISSUE-0035 | Clock-skew warning investigation | planned | Low priority because CI succeeds. |
 
 ## Collision Rule
 
@@ -37,3 +44,9 @@ For the scoring/channel/report path, ISSUE-0024 through ISSUE-0028 are integrate
 ISSUE-0023 can start as a limited M2 audit of the current bridge outputs. It must
 not perform a real candidate downselect until waveform-capable 700F rows and
 official baseline roundtrip rows are available.
+
+## M2-D Direction
+
+ISSUE-0023 decided `M2_GO_WITH_LIMITATIONS`. Start ISSUE-0029 through ISSUE-0031
+first. Keep ISSUE-0032 through ISSUE-0035 planned until the first-wave tooling
+path is available or Manager explicitly reprioritizes.
