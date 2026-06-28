@@ -28,6 +28,7 @@ If a later manager instruction reuses an existing issue number for a different m
 | ISSUE-0033 | M2-D 700D/700E emulator minimal behavior bridge | complete | 700D/700E emulator rows complete as non-official emulated-surrogate evidence and remain downselect-invalid. |
 | ISSUE-0034 | M2-D official FreeDV waveform roundtrip | complete | Source-level Codec2/FreeDV API findings and upstream CLI 700D/700E roundtrip probe recorded; direct F700F runtime linkage remains follow-up work. |
 | ISSUE-0035 | Clock-skew warning investigation | complete | Documented as non-blocking when local CI, CTest, version, and governance checks pass. |
+| ISSUE-0036 | Codec2 runtime linkage and Mode-boundary official FreeDV roundtrip | planned | Follow-up for direct F700F Codec2 runtime linkage and guarded official waveform rows. |
 
 ## Collision Rule
 
@@ -53,5 +54,5 @@ path is available or Manager explicitly reprioritizes.
 
 ISSUE-0029 through ISSUE-0035 are integrated locally. ISSUE-0034 is complete as
 a guarded research checkpoint, with direct F700F Codec2 runtime linkage still
-deferred. Real candidate downselect remains prohibited until waveform-capable
-700F rows and official FreeDV runtime evidence exist.
+deferred to ISSUE-0036. Real candidate downselect remains prohibited until
+waveform-capable 700F rows and official FreeDV runtime evidence exist.

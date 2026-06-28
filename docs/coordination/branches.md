@@ -18,10 +18,11 @@
 | ISSUE-0029 | feature/ISSUE-0029-ssb-audio-export | Module 10 + Module 11 + Module 15 | ../700F-ISSUE-0029 | ready_m2d_first_wave | develop |
 | ISSUE-0030 | feature/ISSUE-0030-sweep-cli-config-loader | Module 13 + Manager | ../700F-ISSUE-0030 | ready_m2d_first_wave | develop |
 | ISSUE-0031 | feature/ISSUE-0031-report-json-loader-cli | Module 15 + Module 12 | ../700F-ISSUE-0031 | ready_m2d_first_wave | develop |
-| ISSUE-0032 | feature/ISSUE-0032-700f-candidate-minimal-behavior | Module 02 + candidate modules | ../700F-ISSUE-0032 | planned_after_m2d_tooling | develop |
-| ISSUE-0033 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0033 | planned_after_m2d_tooling | develop |
-| ISSUE-0034 | research/ISSUE-0034-official-freedv-waveform-roundtrip | Module 05 + Module 10 | ../700F-ISSUE-0034 | planned_research | develop |
-| ISSUE-0035 | chore/ISSUE-0035-clock-skew-warning-investigation | Module 01 + Manager | ../700F-ISSUE-0035 | low_priority_planned | develop |
+| ISSUE-0032 | feature/ISSUE-0032-700f-candidate-minimal-behavior | Module 02 + candidate modules | ../700F-ISSUE-0032 | merged-local | develop |
+| ISSUE-0033 | feature/ISSUE-0033-700d-700e-emulator-minimal-behavior | Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0033 | merged-local | develop |
+| ISSUE-0034 | research/ISSUE-0034-official-freedv-waveform-roundtrip | Module 05 + Module 10 | ../700F-ISSUE-0034 | merged-local | develop |
+| ISSUE-0035 | chore/ISSUE-0035-clock-skew-warning-investigation | Module 01 + Manager | ../700F-ISSUE-0035 | merged-local | develop |
+| ISSUE-0036 | feature/ISSUE-0036-codec2-runtime-linkage-mode-roundtrip | Module 05 + Module 10 + Module 11 + Module 13 | ../700F-ISSUE-0036 | planned_followup | develop |
 
 ## M1-A dispatch worktrees
 
@@ -52,7 +53,8 @@ Remote `develop` is not published. `origin` is configured, but previous push was
 | ISSUE-0029 | ../700F-ISSUE-0029 | GPT-5.3-Codex-Spark; fallback gpt-5.5-low | Start first wave from `develop`; SSB audio artifact export. |
 | ISSUE-0030 | ../700F-ISSUE-0030 | gpt-5.5-medium; fallback gpt-5.5-xhigh | Start first wave from `develop`; sweep CLI/config loading. |
 | ISSUE-0031 | ../700F-ISSUE-0031 | gpt-5.5-medium; fallback gpt-5.5-xhigh | Start first wave from `develop`; report JSON loader/CLI. |
-| ISSUE-0032 | ../700F-ISSUE-0032 | gpt-5.5-xhigh | Hold until first-wave tooling is available. |
-| ISSUE-0033 | ../700F-ISSUE-0033 | gpt-5.5-xhigh | Hold until reports can label emulator/surrogate rows. |
-| ISSUE-0034 | ../700F-ISSUE-0034 | gpt-5.5-xhigh | Heavy Codec2/FreeDV research; default build must remain OFF. |
-| ISSUE-0035 | ../700F-ISSUE-0035 | GPT-5.3-Codex-Spark | Low-priority clock-skew investigation. |
+| ISSUE-0032 | ../700F-ISSUE-0032 | gpt-5.5-xhigh | Merged locally in M2-E. |
+| ISSUE-0033 | ../700F-ISSUE-0033 | gpt-5.5-xhigh | Merged locally in M2-E. |
+| ISSUE-0034 | ../700F-ISSUE-0034 | gpt-5.5-xhigh | Merged locally in M2-E; direct runtime linkage remains ISSUE-0036. |
+| ISSUE-0035 | ../700F-ISSUE-0035 | GPT-5.3-Codex-Spark | Merged locally in M2-E. |
+| ISSUE-0036 | ../700F-ISSUE-0036 | gpt-5.5-xhigh | Start from local `develop`; optional Codec2 runtime path must keep default OFF green. |

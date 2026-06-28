@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2e-smoke-011-freedv700e-emulated-awgn-snr-0db-seed-1",
+  "seed": 1,
+  "mode_id": "freedv700e_emulated",
+  "deterministic_digest": "936230fa10aca4f7",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.146852}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

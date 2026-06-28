@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Integrate M2-E surrogate behavior and official FreeDV research follow-up:
+  ISSUE-0032 through ISSUE-0035 are local-complete, M2-E smoke completes 21 rows
+  with 6 explicit official skips, and ISSUE-0036 tracks direct Codec2 runtime
+  linkage.
 - Implement ISSUE-0032 700F surrogate behavior bridge: A/B/C candidates now complete
   as guarded surrogate rows with not-real-modem, not-downselect-valid, and
   performance-invalid labels while keeping synthetic readiness separate from real

@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m2e-smoke-008-freedv700d-emulated-awgn-snr-0db-seed-1,1,freedv700d_emulated,awgn,1b1faa1359d2679f,N/A,dummy.metric,0.146852,true

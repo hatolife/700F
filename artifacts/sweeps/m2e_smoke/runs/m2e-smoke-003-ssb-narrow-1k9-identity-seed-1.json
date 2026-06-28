@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m2e-smoke-003-ssb-narrow-1k9-identity-seed-1",
+  "seed": 1,
+  "mode_id": "ssb_narrow_1k9",
+  "deterministic_digest": "aa77a867d4a5665a",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.152013}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m2e-smoke-004-ssb-narrow-1k9-awgn-snr-6db-seed-1,1,ssb_narrow_1k9,awgn,eb1ec6c668b3a9ec,N/A,dummy.metric,0.157322,true

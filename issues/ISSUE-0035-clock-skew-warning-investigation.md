@@ -1,7 +1,7 @@
 # ISSUE-0035: clock-skew warning investigation
 
 ## Status
-in_progress
+complete
 
 ## Scope
 module:01,build
@@ -46,3 +46,5 @@ because build and tests pass.
 - Warnings are non-blocking and CI still passes (`100% tests`, version and
 governance checks passing).
 - Supporting note added: `docs/troubleshooting/clock_skew_warnings.md`.
+- Integrated locally into `develop` during M2-E. Clock-skew warnings remain
+  non-blocking when CMake build, CTest, version check, and governance check pass.
