@@ -1,4 +1,4 @@
-add_library(f700f_sweep_runner
+add_library(f700f_sweep_runner STATIC
   src/sweep_runner.cpp
 )
 

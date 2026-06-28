@@ -39,3 +39,5 @@ ON builds, but 700F candidate rows remain ISSUE-0032 synthetic surrogate rows.
 ## Follow-Up
 
 - ISSUE-0037: add non-default Codec2 ON CI or documented regression workflow.
+  Implemented as `tools/run_codec2_on_ci_local.sh` and the `linux-codec2-on`
+  GitHub Actions job. Default Codec2-off CI remains submodule-independent.

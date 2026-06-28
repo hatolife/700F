@@ -120,10 +120,10 @@ M2-F smoke comparison status:
 ## Remaining Runtime Work
 
 ISSUE-0036 completes the first direct F700F official Mode-boundary smoke path.
+ISSUE-0037 promotes that path into CI/local regression through
+`tools/run_codec2_on_ci_local.sh` and the `linux-codec2-on` GitHub Actions job.
 Remaining work is smaller and operational:
 
-- make Codec2-on build and official smoke coverage recurring without making the
-  default Codec2-off CI depend on optional runtime availability;
 - broaden waveform validation beyond smoke-length and nonempty output checks;
 - keep official baseline rows separate from real 700F candidate performance
   evidence until waveform-capable 700F rows exist.

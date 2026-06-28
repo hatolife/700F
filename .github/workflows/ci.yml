@@ -9,26 +9,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  linux:
-    name: Linux build and test
+  linux-codec2-off:
+    name: Linux build and test (Codec2 OFF)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify submodule initialization
-        shell: bash
-        run: |
-          if git submodule status --recursive | grep -q '^[-+]' ; then
-            echo 'One or more submodules are not initialized. Run "git submodule update --init --recursive".' >&2
-            exit 1
-          fi
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DF700F_ENABLE_CODEC2=OFF
       - name: Build
@@ -40,16 +31,31 @@ jobs:
       - name: Governance check
         run: python3 tools/check_governance.py
 
+  linux-codec2-on:
+    name: Linux build and test (Codec2 ON)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Codec2 ON local regression
+        shell: bash
+        run: bash ./tools/run_codec2_on_ci_local.sh
+
   windows:
-    name: Windows build and test (optional)
+    name: Windows build and test (Codec2 OFF, optional)
     runs-on: windows-latest
     timeout-minutes: 20
     continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

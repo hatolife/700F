@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Add ISSUE-0037 Codec2-on CI/regression coverage with a local wrapper and
+  separate Linux GitHub Actions job that initializes `external/codec2`, runs
+  `F700F_ENABLE_CODEC2=ON` CTest, validates official 700D/700E smoke completion,
+  and leaves default Codec2-off CI submodule-independent.
 - Complete ISSUE-0036 optional Codec2 runtime linkage: `F700F_ENABLE_CODEC2=ON`
   imports the pinned `external/codec2` runtime, links official FreeDV 700D/700E
   Mode factories, and completes guarded Mode-boundary smoke rows while the

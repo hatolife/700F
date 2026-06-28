@@ -1,4 +1,4 @@
-add_library(f700f_freedv_emulator
+add_library(f700f_freedv_emulator STATIC
   src/freedv_emulator.cpp
 )
 

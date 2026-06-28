@@ -1,4 +1,4 @@
-add_library(f700f_channel_model
+add_library(f700f_channel_model STATIC
   src/channel_model.cpp
 )
 
