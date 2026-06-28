@@ -36,7 +36,7 @@
 | ISSUE-0020 | open | P0 | module:07 | OFDM waveform candidate prototype | Module 07 + Module 09 | feature/ISSUE-0020-ofdm-waveform-candidate | v0.2.0 target | M2 | ISSUE-0018 | 2026-06-28 |
 | ISSUE-0021 | open | P0 | module:09 | sync and impairment estimator prototype | Module 09 + Module 07 | feature/ISSUE-0021-sync-impairment-estimator | v0.2.0 target | M2 | ISSUE-0018, ISSUE-0020 | 2026-06-28 |
 | ISSUE-0022 | open | P1 | module:14 | AI-assisted sweep triage | Module 14 + Module 13 | research/ISSUE-0022-ai-sweep-triage | v0.2.0 target | M2 | ISSUE-0015, ISSUE-0018 | 2026-06-28 |
-| ISSUE-0023 | open | P0 | qa | M2 audit and candidate downselect | Manager + QA | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 target | M2 | ISSUE-0018 through ISSUE-0022 | 2026-06-28 |
+| ISSUE-0023 | closed | P0 | qa | M2 limited audit and candidate downselect gate | Manager + QA | docs/ISSUE-0023-m2-audit-downselect | v0.2.0 | M2 | ISSUE-0018 through ISSUE-0028 | 2026-06-28 |
 | ISSUE-0024 | closed | P0 | module:12 | M2 scoring model and comparison policy | Module 12 + Module 13 | feature/ISSUE-0024-scoring-model | v0.2.0 | M2 | ISSUE-0018 | 2026-06-28 |
 | ISSUE-0025 | closed | P0 | module:08 | M2 expanded channel condition matrix | Module 08 + Module 13 | feature/ISSUE-0025-expanded-channel-matrix | v0.2.0 | M2 | ISSUE-0018, ISSUE-0010 | 2026-06-28 |
 | ISSUE-0026 | closed | P0 | module:13 | M2 sweep campaign runner config | Module 13 + Module 11 | feature/ISSUE-0026-m2-sweep-campaign-config | v0.2.0 | M2 | ISSUE-0018, ISSUE-0025 | 2026-06-28 |
@@ -115,3 +115,12 @@
 - ISSUE-0023 can start as a limited audit after ISSUE-0028 integration; full
   downselect remains blocked by waveform-capable 700F candidates and official
   baseline roundtrip work.
+
+## M2 limited audit decision
+
+- ISSUE-0023 completed with decision `M2_GO_WITH_LIMITATIONS`.
+- M2-D follow-up work may start.
+- Real candidate downselect remains prohibited because current 700F rows are
+  profile-only, 700D/700E emulator rows are descriptor-only, official FreeDV
+  waveform roundtrip is incomplete, SSB audio export is incomplete, and report
+  generation lacks a JSON loader/CLI.
