@@ -9,6 +9,8 @@ Current checks include:
 - aggregate JSON/CSV artifact emission;
 - M1 smoke helper shape;
 - ISSUE-0025 M2 smoke/full channel matrix helper shape;
+- ISSUE-0051 M3 channel impairment smoke helper shape, deterministic seed,
+  explicit official Codec2 skip reasons, and 700F downselect guardrails;
 - duplicate channel condition id rejection;
 - malformed SNR/frequency-offset rejection;
 - empty seed-list rejection.

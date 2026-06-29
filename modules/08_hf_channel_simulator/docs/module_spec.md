@@ -23,3 +23,10 @@ AWGN, frequency offset, and simple gain fading.
 
 - No multipath, no codec, and no stateful channel simulation beyond seed-backed random draws.
 - No plugin ABI is added in this issue.
+
+## M3 Regression Handoff
+
+ISSUE-0051 uses the existing AWGN, frequency offset, and simple gain fading
+primitives in `configs/sweeps/m3_channel_impairment_smoke.toml` and
+`configs/channels/m3_channel_impairment_smoke.toml`. The matrix is deliberately
+short and deterministic; it does not add new channel physics.

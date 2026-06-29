@@ -67,3 +67,28 @@ The sweep runner rejects:
 
 These checks are intentionally orchestration-level checks. Module 08 remains the source
 of truth for how AWGN, frequency offset, and simple gain fading transform samples.
+
+## M3 Channel Impairment Smoke
+
+ISSUE-0051 adds a short M3 smoke subset before OFDM/FEC/sync runtime behavior
+expands. It intentionally reuses existing Module 08 primitives and keeps the
+campaign small enough for routine CI.
+
+| Condition id | Channel chain | Parameters |
+|---|---|---|
+| `identity-baseline` | `identity` | none |
+| `awgn-snr-3db` | `awgn` | `snr_db=3.0` |
+| `frequency-offset-75hz` | `frequency_offset` | `freq_offset_hz=75.0` |
+| `awgn-snr-6db-fo-50hz-fading-weak` | `awgn`, `frequency_offset`, `simple_gain_fading` | `snr_db=6.0`, `freq_offset_hz=50.0`, `min_gain_db=-1.5`, `max_gain_db=1.5` |
+
+Seed: `70051`
+
+The C++ helper is `f700f::make_m3_channel_impairment_smoke_sweep_config()`.
+The standalone loadable campaign config is
+`configs/sweeps/m3_channel_impairment_smoke.toml`; the channel-only fragment is
+recorded in `configs/channels/m3_channel_impairment_smoke.toml`.
+
+The campaign uses the M2 baseline/candidate mode ordering so Codec2 OFF
+official FreeDV rows remain explicit skips with
+`official_freedv_codec2_unavailable`, and 700F prototype/surrogate rows remain
+downselect-invalid.

@@ -36,6 +36,34 @@ void smoke_config_loads_from_toml_shape() {
          "6.0");
 }
 
+void m3_impairment_smoke_config_loads_from_toml_shape() {
+  std::string error;
+  auto config = f700f::load_sweep_config_from_file(
+      repo_path("configs/sweeps/m3_channel_impairment_smoke.toml"), error);
+
+  assert(error.empty());
+  assert(config.run_id_prefix == "m3-channel-impairment-smoke");
+  assert(config.output_directory == "reports/sweeps/m3-channel-impairment-smoke");
+  assert(config.metric_ids == std::vector<std::string>{"dummy.metric"});
+  assert(config.seeds == std::vector<f700f::Seed>{70051});
+  assert(config.modes.size() == 9);
+  assert(config.modes[4].mode_id == "freedv700d_official");
+  assert(config.modes[4].skip_if_unavailable);
+  assert(config.modes[5].mode_id == "freedv700e_official");
+  assert(config.modes[5].skip_if_unavailable);
+  assert(config.channel_conditions.size() == 4);
+  assert(config.channel_conditions[1].condition_id == "awgn-snr-3db");
+  assert(config.channel_conditions[2].condition_id == "frequency-offset-75hz");
+  assert(config.channel_conditions[3].condition_id ==
+         "awgn-snr-6db-fo-50hz-fading-weak");
+  assert(config.channel_conditions[3].channel_chain.size() == 3);
+  assert(config.channel_conditions[3].channel_chain[0].channel_id == "awgn");
+  assert(config.channel_conditions[3].channel_chain[1].channel_id ==
+         "frequency_offset");
+  assert(config.channel_conditions[3].channel_chain[2].channel_id ==
+         "simple_gain_fading");
+}
+
 void missing_config_returns_clear_error() {
   std::string error;
   const auto config = f700f::load_sweep_config_from_file(
@@ -67,6 +95,7 @@ void overrides_apply_after_load() {
 
 int main() {
   smoke_config_loads_from_toml_shape();
+  m3_impairment_smoke_config_loads_from_toml_shape();
   missing_config_returns_clear_error();
   overrides_apply_after_load();
   return 0;

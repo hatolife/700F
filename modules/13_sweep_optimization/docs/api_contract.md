@@ -15,6 +15,9 @@ Module 13 exposes the C++ sweep surface in `include/f700f/sweep_runner.hpp`.
   config with M2 baseline/candidate mode ordering.
 - `make_m2_700f_candidate_full_sweep_config()` returns the ISSUE-0026 full campaign
   config with the same mode ordering over the full M2 channel matrix.
+- `make_m3_channel_impairment_smoke_sweep_config()` returns the ISSUE-0051 short
+  M3 impairment regression campaign over identity, AWGN, frequency offset, and a
+  combined weak-fading chain with deterministic seed `70051`.
 - `register_m2_campaign_mode_factories()` registers default M2 smoke-capable mode
   factories: SSB references, descriptor-only FreeDV emulators, and 700F
   surrogate candidate factories. Official FreeDV modes are intentionally not

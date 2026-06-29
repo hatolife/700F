@@ -13,5 +13,10 @@ expansion model. The smoke matrix contains identity, AWGN 6 dB, AWGN 0 dB, and s
 The full matrix contains 72 channel conditions from SNR, frequency-offset, and fading
 axes plus seeds 1, 2, and 3.
 
+ISSUE-0051 adds a short M3 channel impairment smoke campaign with four
+conditions: identity baseline, AWGN 3 dB, 75 Hz frequency offset, and a combined
+AWGN 6 dB plus 50 Hz frequency offset plus weak simple-gain fading chain. It
+uses deterministic seed 70051 and the existing nine-mode campaign ordering.
+
 Optimization search, TOML parsing, SSB fidelity, 700F waveform implementation, and
 official Codec2/FreeDV adapters remain out of scope here.

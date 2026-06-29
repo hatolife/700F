@@ -134,6 +134,8 @@ SweepConfig make_m2_700f_candidate_smoke_sweep_config(
     std::string output_directory);
 SweepConfig make_m2_700f_candidate_full_sweep_config(
     std::string output_directory);
+SweepConfig make_m3_channel_impairment_smoke_sweep_config(
+    std::string output_directory);
 void register_m2_campaign_mode_factories(SweepRunner &runner);
 
 } // namespace f700f

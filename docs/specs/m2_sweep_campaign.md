@@ -76,3 +76,16 @@ Result ordering is deterministic for the same config and seed order:
 
 The smoke test verifies JSON/CSV aggregate emission, unknown/unavailable mode skip
 reasons, and stable repeated-run ordering.
+
+## M3 Channel Impairment Smoke
+
+ISSUE-0051 adds `make_m3_channel_impairment_smoke_sweep_config()` as a short
+regression campaign over the same nine-mode ordering. It covers identity, AWGN,
+frequency offset, and a combined AWGN/frequency-offset/simple-fading chain with
+deterministic seed `70051`.
+
+The campaign produces 36 planned records before runtime availability filters:
+`9 modes x 4 channel conditions x 1 seed`. Under default Codec2 OFF builds, the
+official FreeDV 700D/700E rows are skipped with explicit Codec2-unavailable
+reasons. The 700F rows remain prototype/surrogate diagnostics only and must not
+enable real downselect.
