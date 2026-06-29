@@ -171,14 +171,16 @@ void append_mode_rows(std::ostringstream &out,
 void append_raw_metric_rows(std::ostringstream &out,
                             const f700f::metrics::M2ScoreReport &score_report) {
   out << "| Mode | Records | mean dropout | mean latency s | max RF bandwidth Hz | "
-         "BER available | FER available | BER unavailable | FER unavailable | "
-         "ASR WER slots | STOI slots | ESTOI slots | Subjective note slots |\n";
-  out << "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n";
+         "max occupied bandwidth estimate Hz | BER available | FER available | "
+         "BER unavailable | FER unavailable | ASR WER slots | STOI slots | "
+         "ESTOI slots | Subjective note slots |\n";
+  out << "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n";
   for (const auto &score : score_report.mode_scores) {
     out << "| `" << markdown_escape_cell(score.mode_id) << "` | "
         << score.record_count << " | " << format_double(score.mean_dropout_rate)
         << " | " << format_double(score.mean_latency_s) << " | "
         << format_double(score.max_rf_bandwidth_hz) << " | "
+        << format_double(score.max_occupied_bandwidth_estimate_hz) << " | "
         << score.ber_available_count << " | " << score.fer_available_count
         << " | " << score.ber_unavailable_count << " | "
         << score.fer_unavailable_count << " | " << score.asr_wer_slot_count
@@ -275,6 +277,23 @@ std::vector<std::string> candidate_summary_lines(
         }
         if (!score.prototype_sync_status.empty()) {
           line += " prototype_sync_status=" + score.prototype_sync_status;
+        }
+        if (score.occupied_bandwidth_estimate_hz.has_value()) {
+          const double target_hz = snapshot.rf_bandwidth_hz;
+          line += " occupied_bandwidth_estimate_hz=" +
+                  format_double(*score.occupied_bandwidth_estimate_hz);
+          line += " occupied_bandwidth_target_hz=" + format_double(target_hz);
+          line += " occupied_bandwidth_delta_hz=" +
+                  format_double(*score.occupied_bandwidth_estimate_hz -
+                                target_hz);
+          if (score.occupied_bandwidth_ratio.has_value()) {
+            line += " occupied_bandwidth_ratio=" +
+                    format_double(*score.occupied_bandwidth_ratio);
+          }
+          if (!score.occupied_bandwidth_status.empty()) {
+            line += " occupied_bandwidth_status=" +
+                    score.occupied_bandwidth_status;
+          }
         }
       }
       lines.push_back(line);

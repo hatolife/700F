@@ -48,6 +48,11 @@ struct SweepRow {
   std::string prototype_frame_status;
   std::string prototype_sync_status;
   std::string prototype_baseband_sample_count;
+  std::string occupied_bandwidth_estimate_hz;
+  std::string occupied_bandwidth_low_hz;
+  std::string occupied_bandwidth_high_hz;
+  std::string occupied_bandwidth_ratio;
+  std::string occupied_bandwidth_status;
   std::string surrogate_model_name;
   std::string surrogate_model_version;
   std::string surrogate_limitations;
@@ -553,6 +558,15 @@ f700f::metrics::ResultArtifact result_from_sweep_row(const SweepRow &row) {
   result.frame_count = row.status == "completed" ? 1 : 0;
   result.sample_count = row.status == "completed" ? 1 : 0;
   result.optional_metrics["sweep_status"] = row.status;
+  result.occupied_bandwidth_estimate_hz =
+      parse_optional_double_or_empty(row.occupied_bandwidth_estimate_hz);
+  result.occupied_bandwidth_low_hz =
+      parse_optional_double_or_empty(row.occupied_bandwidth_low_hz);
+  result.occupied_bandwidth_high_hz =
+      parse_optional_double_or_empty(row.occupied_bandwidth_high_hz);
+  result.occupied_bandwidth_ratio =
+      parse_optional_double_or_empty(row.occupied_bandwidth_ratio);
+  result.occupied_bandwidth_status = row.occupied_bandwidth_status;
   if (!row.simulation_digest.empty()) {
     result.optional_metrics["simulation_digest"] = row.simulation_digest;
   }
@@ -867,6 +881,16 @@ LoadedReportInput load_report_input_json(const std::string &json_payload) {
         extract_quoted_field(object, "prototype_sync_status");
     row.prototype_baseband_sample_count =
         extract_raw_field(object, "prototype_baseband_sample_count");
+    row.occupied_bandwidth_estimate_hz =
+        extract_raw_field(object, "occupied_bandwidth_estimate_hz");
+    row.occupied_bandwidth_low_hz =
+        extract_raw_field(object, "occupied_bandwidth_low_hz");
+    row.occupied_bandwidth_high_hz =
+        extract_raw_field(object, "occupied_bandwidth_high_hz");
+    row.occupied_bandwidth_ratio =
+        extract_raw_field(object, "occupied_bandwidth_ratio");
+    row.occupied_bandwidth_status =
+        extract_quoted_field(object, "occupied_bandwidth_status");
     row.surrogate_model_name =
         extract_quoted_field(object, "surrogate_model_name");
     row.surrogate_model_version =
@@ -969,6 +993,26 @@ LoadedReportInput load_report_input_csv(const std::string &csv_payload) {
     row.prototype_baseband_sample_count =
         values.contains("prototype_baseband_sample_count")
             ? values.at("prototype_baseband_sample_count")
+            : "";
+    row.occupied_bandwidth_estimate_hz =
+        values.contains("occupied_bandwidth_estimate_hz")
+            ? values.at("occupied_bandwidth_estimate_hz")
+            : "";
+    row.occupied_bandwidth_low_hz =
+        values.contains("occupied_bandwidth_low_hz")
+            ? values.at("occupied_bandwidth_low_hz")
+            : "";
+    row.occupied_bandwidth_high_hz =
+        values.contains("occupied_bandwidth_high_hz")
+            ? values.at("occupied_bandwidth_high_hz")
+            : "";
+    row.occupied_bandwidth_ratio =
+        values.contains("occupied_bandwidth_ratio")
+            ? values.at("occupied_bandwidth_ratio")
+            : "";
+    row.occupied_bandwidth_status =
+        values.contains("occupied_bandwidth_status")
+            ? values.at("occupied_bandwidth_status")
             : "";
     row.surrogate_model_name =
         values.contains("surrogate_model_name")

@@ -29,6 +29,8 @@ work. The normative v0.1.0 details are split by concern:
 - `docs/specs/700f_a_minimal_qpsk_baseband_prototype.md` defines the
   ISSUE-0042 700F-A minimal QPSK-like baseband prototype and its
   downselect-invalid metadata.
+- `docs/specs/occupied_bandwidth_validation.md` defines the ISSUE-0047
+  simulation-side occupied bandwidth validation harness and report fields.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.

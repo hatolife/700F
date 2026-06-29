@@ -36,3 +36,7 @@ The loader maps sweep rows into reporting/scoring artifacts and labels
 generated report states whether real downselect is possible, prints surrogate and
 prototype warnings for 700F rows, and keeps real performance score separate from
 synthetic surrogate readiness or limited prototype diagnostics.
+
+ISSUE-0047 report paths preserve occupied bandwidth estimate fields from
+artifact JSON/CSV and render prototype estimates with the descriptor target
+bandwidth comparison. The M3-A 700F-A target comparison is `1900 Hz`.

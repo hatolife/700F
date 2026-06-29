@@ -159,6 +159,11 @@ void markdown_includes_real_modem_prototype_warning_without_ranking() {
   prototype.prototype_sync_status = "pilot_placeholder";
   prototype.prototype_baseband_sample_count = 3840;
   prototype.prototype_limitations = "not final 700F performance";
+  prototype.occupied_bandwidth_estimate_hz = 1007.8125;
+  prototype.occupied_bandwidth_low_hz = -503.90625;
+  prototype.occupied_bandwidth_high_hz = 503.90625;
+  prototype.occupied_bandwidth_ratio = 0.99;
+  prototype.occupied_bandwidth_status = "measured";
 
   const auto score_report =
       f700f::metrics::score_m2_results({prototype}, {});
@@ -176,6 +181,9 @@ void markdown_includes_real_modem_prototype_warning_without_ranking() {
   assert(contains(markdown, "prototype_symbol_error_rate=0.25"));
   assert(contains(markdown, "prototype_frame_status=limited"));
   assert(contains(markdown, "prototype_sync_status=pilot_placeholder"));
+  assert(contains(markdown, "occupied_bandwidth_estimate_hz=1007.812"));
+  assert(contains(markdown, "occupied_bandwidth_target_hz=1900"));
+  assert(contains(markdown, "occupied_bandwidth_delta_hz=-892.188"));
   assert(contains(markdown, "real score 0"));
 }
 

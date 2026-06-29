@@ -3,11 +3,13 @@
 #include <f700f/candidate_profiles.hpp>
 #include <f700f/channel_model.hpp>
 #include <f700f/codec_adapter/freedv_official.hpp>
+#include <f700f/occupied_bandwidth.hpp>
 #include <f700f/reference_baselines/freedv_emulator.hpp>
 
 #include <algorithm>
 #include <array>
 #include <cerrno>
+#include <complex>
 #include <cstdint>
 #include <cmath>
 #include <cstdlib>
@@ -17,6 +19,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -280,6 +283,32 @@ std::string real_modem_prototype_note(
          "; prototype_limitations=ISSUE-0042 minimal QPSK-like baseband "
          "prototype, synthetic codec, no FEC, no final synchronization, "
          "not final modem, not official FreeDV, not valid for real downselect";
+}
+
+std::vector<std::complex<float>> complex_samples_for_bandwidth(
+    const ComplexBlock &block) {
+  std::vector<std::complex<float>> samples;
+  samples.reserve(block.iq.size());
+  for (const auto &sample : block.iq) {
+    samples.push_back({sample.re, sample.im});
+  }
+  return samples;
+}
+
+void apply_occupied_bandwidth_measurement(SweepRunRecord &record,
+                                          const ComplexBlock &block) {
+  const auto measurement = f700f::metrics::measure_occupied_bandwidth(
+      complex_samples_for_bandwidth(block),
+      static_cast<double>(block.sample_rate_hz));
+  record.occupied_bandwidth_estimate_hz =
+      std::to_string(measurement.occupied_bandwidth_hz);
+  record.occupied_bandwidth_low_hz =
+      std::to_string(measurement.low_frequency_hz);
+  record.occupied_bandwidth_high_hz =
+      std::to_string(measurement.high_frequency_hz);
+  record.occupied_bandwidth_ratio =
+      std::to_string(measurement.occupied_ratio);
+  record.occupied_bandwidth_status = measurement.status;
 }
 
 void apply_real_modem_prototype_metadata(SweepRunRecord &record,
@@ -839,6 +868,8 @@ SweepResult SweepRunner::run(const SweepConfig &config) const {
           if (is_real_modem_prototype_mode(descriptor_it->second)) {
             record.prototype_baseband_sample_count =
                 record.simulation.channel_output.iq.size();
+            apply_occupied_bandwidth_measurement(
+                record, record.simulation.channel_output);
             record.error_summary = real_modem_prototype_note(
                 record.prototype_baseband_sample_count);
           } else if (is_waveform_prototype_mode(descriptor_it->second)) {
@@ -951,7 +982,37 @@ std::string sweep_result_to_json(const SweepResult &result) {
         << escape_json(record.prototype_sync_status)
         << "\", \"prototype_baseband_sample_count\": "
         << record.prototype_baseband_sample_count
-        << ", \"surrogate_model_name\": \""
+        << ", \"occupied_bandwidth_estimate_hz\": ";
+    if (record.occupied_bandwidth_estimate_hz.empty() ||
+        record.occupied_bandwidth_estimate_hz == "N/A") {
+      out << "\"N/A\"";
+    } else {
+      out << record.occupied_bandwidth_estimate_hz;
+    }
+    out << ", \"occupied_bandwidth_low_hz\": ";
+    if (record.occupied_bandwidth_low_hz.empty() ||
+        record.occupied_bandwidth_low_hz == "N/A") {
+      out << "\"N/A\"";
+    } else {
+      out << record.occupied_bandwidth_low_hz;
+    }
+    out << ", \"occupied_bandwidth_high_hz\": ";
+    if (record.occupied_bandwidth_high_hz.empty() ||
+        record.occupied_bandwidth_high_hz == "N/A") {
+      out << "\"N/A\"";
+    } else {
+      out << record.occupied_bandwidth_high_hz;
+    }
+    out << ", \"occupied_bandwidth_ratio\": ";
+    if (record.occupied_bandwidth_ratio.empty() ||
+        record.occupied_bandwidth_ratio == "N/A") {
+      out << "\"N/A\"";
+    } else {
+      out << record.occupied_bandwidth_ratio;
+    }
+    out << ", \"occupied_bandwidth_status\": \""
+        << escape_json(record.occupied_bandwidth_status)
+        << "\", \"surrogate_model_name\": \""
         << escape_json(record.surrogate_model_name)
         << "\", \"surrogate_model_version\": \""
         << escape_json(record.surrogate_model_version)
@@ -979,6 +1040,9 @@ std::string sweep_result_to_csv(const SweepResult &result) {
          "prototype_limitations,prototype_warning,prototype_symbol_error_rate,"
          "prototype_frame_status,prototype_sync_status,"
          "prototype_baseband_sample_count,"
+         "occupied_bandwidth_estimate_hz,occupied_bandwidth_low_hz,"
+         "occupied_bandwidth_high_hz,occupied_bandwidth_ratio,"
+         "occupied_bandwidth_status,"
          "surrogate_model_name,surrogate_model_version,surrogate_limitations,"
          "surrogate_readiness_score_synthetic,synthetic_metrics_label\n";
   for (const auto &record : result.records) {
@@ -1012,6 +1076,11 @@ std::string sweep_result_to_csv(const SweepResult &result) {
         << csv_quote(record.prototype_frame_status) << ','
         << csv_quote(record.prototype_sync_status) << ','
         << record.prototype_baseband_sample_count << ','
+        << csv_quote(record.occupied_bandwidth_estimate_hz) << ','
+        << csv_quote(record.occupied_bandwidth_low_hz) << ','
+        << csv_quote(record.occupied_bandwidth_high_hz) << ','
+        << csv_quote(record.occupied_bandwidth_ratio) << ','
+        << csv_quote(record.occupied_bandwidth_status) << ','
         << csv_quote(record.surrogate_model_name) << ','
         << csv_quote(record.surrogate_model_version) << ','
         << csv_quote(record.surrogate_limitations) << ','

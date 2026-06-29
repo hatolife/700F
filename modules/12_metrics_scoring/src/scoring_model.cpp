@@ -149,6 +149,17 @@ void add_result_to_score(M2ModeScore &score, const ResultArtifact &result) {
   score.mean_latency_s += result.latency_estimate_s;
   score.max_rf_bandwidth_hz =
       std::max(score.max_rf_bandwidth_hz, result.mode_descriptor.rf_bandwidth_hz);
+  if (result.occupied_bandwidth_estimate_hz.has_value()) {
+    score.max_occupied_bandwidth_estimate_hz =
+        std::max(score.max_occupied_bandwidth_estimate_hz,
+                 *result.occupied_bandwidth_estimate_hz);
+    score.occupied_bandwidth_estimate_hz =
+        result.occupied_bandwidth_estimate_hz;
+    score.occupied_bandwidth_low_hz = result.occupied_bandwidth_low_hz;
+    score.occupied_bandwidth_high_hz = result.occupied_bandwidth_high_hz;
+    score.occupied_bandwidth_ratio = result.occupied_bandwidth_ratio;
+    score.occupied_bandwidth_status = result.occupied_bandwidth_status;
+  }
 
   if (is_completed(result)) {
     ++score.completed_count;
@@ -377,6 +388,8 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
     out << "\"mean_dropout_rate\":" << score.mean_dropout_rate << ",";
     out << "\"mean_latency_s\":" << score.mean_latency_s << ",";
     out << "\"max_rf_bandwidth_hz\":" << score.max_rf_bandwidth_hz << ",";
+    out << "\"max_occupied_bandwidth_estimate_hz\":"
+        << score.max_occupied_bandwidth_estimate_hz << ",";
     out << "\"skipped_penalty_total\":" << score.skipped_penalty_total << ",";
     out << "\"failed_penalty_total\":" << score.failed_penalty_total << ",";
     out << "\"dropout_penalty\":" << score.dropout_penalty << ",";
@@ -399,6 +412,32 @@ std::string m2_score_report_to_json(const M2ScoreReport &report) {
         << score.prototype_baseband_sample_count << ",";
     out << "\"prototype_limitations\":\""
         << escape_json(score.prototype_limitations) << "\",";
+    if (score.occupied_bandwidth_estimate_hz.has_value()) {
+      out << "\"occupied_bandwidth_estimate_hz\":"
+          << *score.occupied_bandwidth_estimate_hz << ",";
+    } else {
+      out << "\"occupied_bandwidth_estimate_hz\":\"N/A\",";
+    }
+    if (score.occupied_bandwidth_low_hz.has_value()) {
+      out << "\"occupied_bandwidth_low_hz\":"
+          << *score.occupied_bandwidth_low_hz << ",";
+    } else {
+      out << "\"occupied_bandwidth_low_hz\":\"N/A\",";
+    }
+    if (score.occupied_bandwidth_high_hz.has_value()) {
+      out << "\"occupied_bandwidth_high_hz\":"
+          << *score.occupied_bandwidth_high_hz << ",";
+    } else {
+      out << "\"occupied_bandwidth_high_hz\":\"N/A\",";
+    }
+    if (score.occupied_bandwidth_ratio.has_value()) {
+      out << "\"occupied_bandwidth_ratio\":"
+          << *score.occupied_bandwidth_ratio << ",";
+    } else {
+      out << "\"occupied_bandwidth_ratio\":\"N/A\",";
+    }
+    out << "\"occupied_bandwidth_status\":\""
+        << escape_json(score.occupied_bandwidth_status) << "\",";
     out << "\"profile_only\":" << (score.profile_only ? "true" : "false")
         << ",";
     out << "\"surrogate\":" << (score.surrogate ? "true" : "false");
