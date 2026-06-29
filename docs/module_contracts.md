@@ -75,3 +75,12 @@ The contract distinguishes:
 Placeholder FEC and UEP metadata must remain downselect-invalid and
 performance-limited. It must not feed real BER/FER scoring or candidate
 ranking.
+
+## M3 OFDM Carrier Layout Boundary
+
+ISSUE-0046 adds Module 07-owned OFDM planning helpers under
+`modules/07_ofdm_modem_waveform/include/f700f/ofdm_modem_waveform/`. These
+helpers define prototype carrier-layout metadata and validation plus an empty
+`BasebandFrame` metadata factory. They do not replace the 700F-A minimal QPSK
+runtime, do not implement an OFDM modulator/demodulator, and keep future FEC and
+sync state as placeholders.

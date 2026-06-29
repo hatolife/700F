@@ -53,3 +53,10 @@ ISSUE-0049 defines `fec_family = "none"` as no protection policy,
 and future explicit FEC family ids as real-FEC scope that requires separate
 implementation and tests. Placeholder FEC/UEP metadata is not performance-valid
 evidence and does not authorize 700F downselect.
+
+ISSUE-0046 adds a Module 07 source-level OFDM carrier-layout prototype
+descriptor and empty baseband-frame metadata factory for M3 planning. The
+descriptor records the 1.9 kHz occupied-bandwidth target, data/pilot/guard
+carrier placeholders, and placeholder FEC/sync families while preserving
+`downselect_valid = false` and leaving the ISSUE-0042 minimal QPSK runtime path
+unchanged.

@@ -136,6 +136,7 @@ target_link_libraries(test_700f_candidate_profiles
     f700f_metrics
     f700f_sweep_runner)
 enable_testing()
+add_subdirectory(modules/07_ofdm_modem_waveform)
 add_test(NAME f700f_info_version COMMAND f700f-info)
 add_test(NAME f700f_report_help COMMAND f700f-report --help)
 set_tests_properties(f700f_report_help PROPERTIES

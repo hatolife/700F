@@ -4,6 +4,8 @@
 
 - Issue: ISSUE-0045
 - Follow-up: ISSUE-0046
+- Implementation note: ISSUE-0046 adds the first Module 07 prototype descriptor
+  and validation helpers.
 
 ## Purpose
 
@@ -37,6 +39,11 @@ The first implementation should reject:
 
 The M3 target remains 1.9 kHz occupied bandwidth as a planning and measurement
 target. ISSUE-0046 records the target; ISSUE-0047 validates estimates.
+
+The initial descriptor records a 19-carrier placeholder layout with 100 Hz
+carrier spacing, 15 data carrier placeholders, 2 pilot placeholders, and 2 guard
+placeholders. This is planning metadata only; ISSUE-0047 remains responsible for
+measurement validation.
 
 ## Non-Final Status
 

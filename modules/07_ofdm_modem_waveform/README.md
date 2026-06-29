@@ -6,6 +6,8 @@ Current implemented scope:
 
 - ISSUE-0042 minimal QPSK-like baseband prototype for
   `freedv700f_a_balanced`.
+- ISSUE-0046 OFDM carrier-layout prototype metadata and validation helpers for
+  M3 planning.
 - Explicit non-final guardrails: no OFDM, no FEC, no final synchronization, no
   Codec2 payload integration, and no real downselect-valid performance
   evidence.
