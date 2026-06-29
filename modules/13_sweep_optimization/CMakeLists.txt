@@ -16,4 +16,5 @@ target_link_libraries(f700f_sweep_runner
     f700f_candidate_profiles
     f700f_codec_adapter
     f700f_freedv_emulator
+    f700f_metrics
 )

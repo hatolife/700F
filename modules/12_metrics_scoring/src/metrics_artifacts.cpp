@@ -872,6 +872,21 @@ std::string to_json(const ResultArtifact &result) {
   append_json_key_value(out, "prototype_limitations",
                         result.prototype_limitations);
   out.push_back(',');
+  out += "\"occupied_bandwidth_estimate_hz\":" +
+         optional_to_json(result.occupied_bandwidth_estimate_hz);
+  out.push_back(',');
+  out += "\"occupied_bandwidth_low_hz\":" +
+         optional_to_json(result.occupied_bandwidth_low_hz);
+  out.push_back(',');
+  out += "\"occupied_bandwidth_high_hz\":" +
+         optional_to_json(result.occupied_bandwidth_high_hz);
+  out.push_back(',');
+  out += "\"occupied_bandwidth_ratio\":" +
+         optional_to_json(result.occupied_bandwidth_ratio);
+  out.push_back(',');
+  append_json_key_value(out, "occupied_bandwidth_status",
+                        result.occupied_bandwidth_status);
+  out.push_back(',');
   out += "\"optional_metrics\":";
   out += json_string_map(result.optional_metrics);
   out.push_back('}');
@@ -887,7 +902,9 @@ std::vector<std::string> required_csv_columns() {
       "audio_export_path", "warnings", "skipped_reason", "error_summary",
       "prototype_symbol_error_rate", "prototype_frame_status",
       "prototype_sync_status", "prototype_baseband_sample_count",
-      "prototype_limitations"};
+      "prototype_limitations", "occupied_bandwidth_estimate_hz",
+      "occupied_bandwidth_low_hz", "occupied_bandwidth_high_hz",
+      "occupied_bandwidth_ratio", "occupied_bandwidth_status"};
 }
 
 std::string to_csv_header(const std::vector<std::string> &extra_columns) {
@@ -942,6 +959,23 @@ std::string to_csv_row(const ResultArtifact &result,
   fields.push_back(csv_quote(result.prototype_sync_status));
   fields.push_back(std::to_string(result.prototype_baseband_sample_count));
   fields.push_back(csv_quote(result.prototype_limitations));
+  fields.push_back(csv_quote(result.occupied_bandwidth_estimate_hz
+                                 ? to_string_with_precision(
+                                       *result.occupied_bandwidth_estimate_hz)
+                                 : "N/A"));
+  fields.push_back(csv_quote(result.occupied_bandwidth_low_hz
+                                 ? to_string_with_precision(
+                                       *result.occupied_bandwidth_low_hz)
+                                 : "N/A"));
+  fields.push_back(csv_quote(result.occupied_bandwidth_high_hz
+                                 ? to_string_with_precision(
+                                       *result.occupied_bandwidth_high_hz)
+                                 : "N/A"));
+  fields.push_back(csv_quote(result.occupied_bandwidth_ratio
+                                 ? to_string_with_precision(
+                                       *result.occupied_bandwidth_ratio)
+                                 : "N/A"));
+  fields.push_back(csv_quote(result.occupied_bandwidth_status));
   for (const auto &col : extra_columns) {
     if (starts_with(col, "opt.")) {
       const auto key = col.substr(4);
@@ -1013,6 +1047,17 @@ ResultArtifact from_json(const std::string &json_payload) {
   result.prototype_limitations =
       extract_quoted_field_after(json_payload, "prototype_limitations",
                                  "prototype_baseband_sample_count");
+  result.occupied_bandwidth_estimate_hz = parse_optional_double(
+      extract_raw_numeric_or_null(json_payload,
+                                  "occupied_bandwidth_estimate_hz"));
+  result.occupied_bandwidth_low_hz = parse_optional_double(
+      extract_raw_numeric_or_null(json_payload, "occupied_bandwidth_low_hz"));
+  result.occupied_bandwidth_high_hz = parse_optional_double(
+      extract_raw_numeric_or_null(json_payload, "occupied_bandwidth_high_hz"));
+  result.occupied_bandwidth_ratio = parse_optional_double(
+      extract_raw_numeric_or_null(json_payload, "occupied_bandwidth_ratio"));
+  result.occupied_bandwidth_status =
+      extract_quoted_field(json_payload, "occupied_bandwidth_status");
 
   const auto channel_blob = find_object_for_key(json_payload, "channel_parameters");
   result.channel_parameters = parse_string_map(channel_blob);
@@ -1261,6 +1306,16 @@ ResultArtifact from_csv_row(const std::string &header_line,
       result.prototype_baseband_sample_count = parse_u64(value);
     } else if (name == "prototype_limitations") {
       result.prototype_limitations = value;
+    } else if (name == "occupied_bandwidth_estimate_hz") {
+      result.occupied_bandwidth_estimate_hz = parse_optional_double(value);
+    } else if (name == "occupied_bandwidth_low_hz") {
+      result.occupied_bandwidth_low_hz = parse_optional_double(value);
+    } else if (name == "occupied_bandwidth_high_hz") {
+      result.occupied_bandwidth_high_hz = parse_optional_double(value);
+    } else if (name == "occupied_bandwidth_ratio") {
+      result.occupied_bandwidth_ratio = parse_optional_double(value);
+    } else if (name == "occupied_bandwidth_status") {
+      result.occupied_bandwidth_status = value;
     } else if (name == "channel_parameters") {
       result.channel_parameters = parse_string_map(value);
     } else if (name == "mode_descriptor_snapshot") {

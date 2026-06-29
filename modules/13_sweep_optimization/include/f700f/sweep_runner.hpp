@@ -73,6 +73,11 @@ struct SweepRunRecord {
   std::string prototype_frame_status;
   std::string prototype_sync_status;
   std::uint64_t prototype_baseband_sample_count = 0;
+  std::string occupied_bandwidth_estimate_hz;
+  std::string occupied_bandwidth_low_hz;
+  std::string occupied_bandwidth_high_hz;
+  std::string occupied_bandwidth_ratio;
+  std::string occupied_bandwidth_status;
   std::string surrogate_model_name;
   std::string surrogate_model_version;
   std::string surrogate_limitations;

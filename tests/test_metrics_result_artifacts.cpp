@@ -2,6 +2,7 @@
 #include <f700f/types.hpp>
 
 #include <cassert>
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -340,6 +341,49 @@ void test_real_modem_prototype_diagnostics_survive_result_serialization() {
   assert(parsed.prototype_baseband_sample_count == 1920);
 }
 
+void test_occupied_bandwidth_fields_survive_result_serialization() {
+  auto artifact = digital_like_result();
+  artifact.mode_descriptor.mode_id = "freedv700f_a_balanced";
+  artifact.mode_descriptor.implementation_status = "real_modem_prototype";
+  artifact.mode_descriptor.downselect_valid = false;
+  artifact.mode_descriptor.performance_valid = false;
+  artifact.mode_descriptor.performance_validity = "limited";
+  artifact.mode_descriptor.downselect_validity = "invalid";
+  artifact.occupied_bandwidth_estimate_hz = 1007.8125;
+  artifact.occupied_bandwidth_low_hz = -503.90625;
+  artifact.occupied_bandwidth_high_hz = 503.90625;
+  artifact.occupied_bandwidth_ratio = 0.99;
+  artifact.occupied_bandwidth_status = "measured";
+
+  const auto json = f700f::metrics::to_json(artifact);
+  assert(json.find("\"occupied_bandwidth_estimate_hz\":1007.8125") !=
+         std::string::npos);
+  assert(json.find("\"occupied_bandwidth_status\":\"measured\"") !=
+         std::string::npos);
+
+  auto parsed = f700f::metrics::from_json(json);
+  assert(parsed.occupied_bandwidth_estimate_hz.has_value());
+  assert(parsed.occupied_bandwidth_estimate_hz.value() == 1007.8125);
+  assert(parsed.occupied_bandwidth_low_hz.has_value());
+  assert(parsed.occupied_bandwidth_low_hz.value() == -503.90625);
+  assert(parsed.occupied_bandwidth_high_hz.has_value());
+  assert(parsed.occupied_bandwidth_high_hz.value() == 503.90625);
+  assert(parsed.occupied_bandwidth_ratio.has_value());
+  assert(parsed.occupied_bandwidth_ratio.value() == 0.99);
+  assert(parsed.occupied_bandwidth_status == "measured");
+  assert(!parsed.mode_descriptor.downselect_valid);
+
+  const auto extras = f700f::metrics::metric_column_names(artifact);
+  const auto header = f700f::metrics::to_csv_header(extras);
+  const auto row = f700f::metrics::to_csv_row(artifact, extras);
+  parsed = f700f::metrics::from_csv_row(header, row);
+  assert(parsed.occupied_bandwidth_estimate_hz.has_value());
+  assert(std::abs(parsed.occupied_bandwidth_estimate_hz.value() - 1007.8125) <
+         0.01);
+  assert(parsed.occupied_bandwidth_status == "measured");
+  assert(!parsed.mode_descriptor.downselect_valid);
+}
+
 }  // namespace
 
 int main() {
@@ -352,5 +396,6 @@ int main() {
   test_unknown_optional_metrics_survive();
   test_surrogate_guardrails_survive_result_serialization();
   test_real_modem_prototype_diagnostics_survive_result_serialization();
+  test_occupied_bandwidth_fields_survive_result_serialization();
   return 0;
 }

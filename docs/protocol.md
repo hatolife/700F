@@ -32,6 +32,11 @@ work. The normative v0.1.0 details are split by concern:
 - `docs/specs/700f_fec_uep_policy_plan.md` defines the ISSUE-0049 no-FEC,
   placeholder-FEC, and future real-FEC vocabulary plus metadata-only UEP policy
   reporting rules for M3.
+- `docs/specs/700f_ofdm_carrier_layout_plan.md` defines the ISSUE-0046 OFDM
+  carrier-layout prototype boundary and 1.9 kHz occupied-bandwidth target
+  metadata.
+- `docs/specs/occupied_bandwidth_validation.md` defines the ISSUE-0047
+  simulation-side occupied bandwidth validation harness and report fields.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.
@@ -60,3 +65,7 @@ descriptor records the 1.9 kHz occupied-bandwidth target, data/pilot/guard
 carrier placeholders, and placeholder FEC/sync families while preserving
 `downselect_valid = false` and leaving the ISSUE-0042 minimal QPSK runtime path
 unchanged.
+
+ISSUE-0047 adds simulation-side occupied bandwidth estimate fields for result,
+sweep, scoring, and report paths. The initial estimate is engineering
+diagnostic evidence only and does not authorize real 700F downselect.

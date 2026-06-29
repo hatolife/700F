@@ -10,3 +10,6 @@
 - ISSUE-0044 waveform and real modem prototype rows may appear with prototype
   diagnostics, but they remain excluded from real performance scoring and cannot
   enable downselect until a later audit authorizes performance-valid evidence.
+- ISSUE-0047 occupied bandwidth estimates are simple deterministic DFT
+  diagnostics for simulation regression. They are not regulatory measurements
+  and do not make prototype rows performance-valid or downselect-valid.

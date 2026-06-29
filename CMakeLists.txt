@@ -11,6 +11,7 @@ add_library(f700f_candidate_profiles STATIC src/candidate_profiles.cpp)
 target_link_libraries(f700f_candidate_profiles PUBLIC f700f_core)
 add_library(f700f_metrics OBJECT
   modules/12_metrics_scoring/src/metrics_artifacts.cpp
+  modules/12_metrics_scoring/src/occupied_bandwidth.cpp
   modules/12_metrics_scoring/src/scoring_model.cpp)
 target_include_directories(f700f_metrics PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -84,6 +85,13 @@ target_link_libraries(test_metrics_result_artifacts PRIVATE f700f_core)
 target_include_directories(test_metrics_result_artifacts PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(test_occupied_bandwidth
+  tests/test_occupied_bandwidth.cpp
+  $<TARGET_OBJECTS:f700f_metrics>)
+target_link_libraries(test_occupied_bandwidth PRIVATE f700f_core)
+target_include_directories(test_occupied_bandwidth PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/12_metrics_scoring/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(test_scoring_model
   tests/test_scoring_model.cpp
   $<TARGET_OBJECTS:f700f_metrics>)
@@ -146,6 +154,7 @@ set_tests_properties(f700f_report_missing_input PROPERTIES WILL_FAIL TRUE)
 add_test(NAME mode_interface_contract COMMAND test_mode_interface)
 add_test(NAME modem_frame_symbol_protocol_contract COMMAND test_modem_frame_symbol_protocol)
 add_test(NAME metrics_result_artifacts COMMAND test_metrics_result_artifacts)
+add_test(NAME occupied_bandwidth_contract COMMAND test_occupied_bandwidth)
 add_test(NAME scoring_model_contract COMMAND test_scoring_model)
 add_test(NAME baseline_comparison_report_contract COMMAND test_baseline_comparison_report)
 add_test(NAME report_artifact_loader_cli_contract COMMAND test_report_artifact_loader_cli)

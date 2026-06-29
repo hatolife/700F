@@ -11,6 +11,8 @@
   produce waveform-capable candidate runs.
 - ISSUE-0044 real modem prototype rows are displayed as limited diagnostics with
   warnings and continue to block real downselect.
+- ISSUE-0047 occupied bandwidth values are displayed as simulation diagnostics
+  only; the report does not treat them as final RF compliance evidence.
 - Descriptor-only emulator rows are also non-performance evidence and block real
   downselect.
 - Official FreeDV status is only as complete as the scored records provided by Module

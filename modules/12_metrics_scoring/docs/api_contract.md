@@ -36,3 +36,10 @@ prototype classification fields: `implementation_classification`,
 prototype rows are limited diagnostics only: `performance_valid=false`,
 `performance_validity=limited`, `downselect_valid=false`, and
 `downselect_validity=invalid`.
+
+ISSUE-0047 adds `f700f/occupied_bandwidth.hpp` with
+`measure_occupied_bandwidth(samples, sample_rate_hz, occupied_ratio)`. The
+utility returns a deterministic simulation-side occupied bandwidth estimate and
+safe statuses for empty or zero-energy signals. `ResultArtifact` and
+`M2ModeScore` carry append-only occupied bandwidth estimate, low/high
+frequency, ratio, and status fields as prototype diagnostics.

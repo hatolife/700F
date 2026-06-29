@@ -52,6 +52,7 @@ struct M2ModeScore {
   double mean_dropout_rate = 0.0;
   double mean_latency_s = 0.0;
   double max_rf_bandwidth_hz = 0.0;
+  double max_occupied_bandwidth_estimate_hz = 0.0;
   double skipped_penalty_total = 0.0;
   double failed_penalty_total = 0.0;
   double dropout_penalty = 0.0;
@@ -65,6 +66,11 @@ struct M2ModeScore {
   std::string prototype_sync_status;
   std::uint64_t prototype_baseband_sample_count = 0;
   std::string prototype_limitations;
+  std::optional<double> occupied_bandwidth_estimate_hz;
+  std::optional<double> occupied_bandwidth_low_hz;
+  std::optional<double> occupied_bandwidth_high_hz;
+  std::optional<double> occupied_bandwidth_ratio;
+  std::string occupied_bandwidth_status;
   bool profile_only = false;
   bool surrogate = false;
 };
