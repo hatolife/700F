@@ -198,6 +198,101 @@ void m2_channel_matrix_full_has_unique_cartesian_conditions() {
   assert(saw_last);
 }
 
+void m3_channel_impairment_smoke_has_required_short_matrix() {
+  const auto config = f700f::make_m3_channel_impairment_smoke_sweep_config(
+      "build/test-artifacts/m3-channel-impairment-smoke");
+  assert(config.run_id_prefix == "m3-channel-impairment-smoke");
+  assert(config.seeds == std::vector<f700f::Seed>{70051});
+  assert(config.channel_conditions.size() == 4);
+
+  assert(config.channel_conditions[0].condition_id == "identity-baseline");
+  assert(config.channel_conditions[0].channel_chain.size() == 1);
+  assert(config.channel_conditions[0].channel_chain[0].channel_id == "identity");
+
+  assert(config.channel_conditions[1].condition_id == "awgn-snr-3db");
+  assert(config.channel_conditions[1].channel_chain.size() == 1);
+  assert(config.channel_conditions[1].channel_chain[0].channel_id == "awgn");
+  assert(config.channel_conditions[1].channel_chain[0].parameters[0].key ==
+         "snr_db");
+  assert(config.channel_conditions[1].channel_chain[0].parameters[0].value ==
+         "3.0");
+
+  assert(config.channel_conditions[2].condition_id == "frequency-offset-75hz");
+  assert(config.channel_conditions[2].channel_chain.size() == 1);
+  assert(config.channel_conditions[2].channel_chain[0].channel_id ==
+         "frequency_offset");
+  assert(config.channel_conditions[2].channel_chain[0].parameters[0].key ==
+         "freq_offset_hz");
+  assert(config.channel_conditions[2].channel_chain[0].parameters[0].value ==
+         "75.0");
+
+  assert(config.channel_conditions[3].condition_id ==
+         "awgn-snr-6db-fo-50hz-fading-weak");
+  assert(config.channel_conditions[3].channel_chain.size() == 3);
+  assert(config.channel_conditions[3].channel_chain[0].channel_id == "awgn");
+  assert(config.channel_conditions[3].channel_chain[1].channel_id ==
+         "frequency_offset");
+  assert(config.channel_conditions[3].channel_chain[2].channel_id ==
+         "simple_gain_fading");
+}
+
+void m3_channel_impairment_smoke_records_skips_and_guardrails() {
+  auto runner = make_runner();
+  f700f::register_m2_campaign_mode_factories(runner);
+  auto config = f700f::make_m3_channel_impairment_smoke_sweep_config(
+      "build/test-artifacts/m3-channel-impairment-smoke");
+
+  const auto first = runner.run(config);
+  const auto second = runner.run(config);
+  assert(first.ok);
+  assert(second.ok);
+  assert(first.records.size() == config.modes.size() *
+                                     config.channel_conditions.size() *
+                                     config.seeds.size());
+  assert(first.records.size() == second.records.size());
+
+  std::size_t official_skipped = 0;
+  std::size_t official_completed = 0;
+  std::size_t prototype_rows = 0;
+  for (std::size_t i = 0; i < first.records.size(); ++i) {
+    assert(first.records[i].run_id == second.records[i].run_id);
+    assert(first.records[i].condition_id == second.records[i].condition_id);
+    assert(first.records[i].seed == 70051);
+    assert(first.records[i].seed == second.records[i].seed);
+    assert(first.records[i].simulation.deterministic_digest ==
+           second.records[i].simulation.deterministic_digest);
+
+    if (first.records[i].mode_id == "freedv700f_a_balanced") {
+      assert(first.records[i].status == f700f::SweepRunStatus::Completed);
+      assert(first.records[i].implementation_status == "real_modem_prototype");
+      assert(first.records[i].prototype);
+      assert(first.records[i].not_final_modem);
+      assert(!first.records[i].downselect_valid);
+      assert(first.records[i].downselect_validity == "invalid");
+      ++prototype_rows;
+    }
+
+    if (first.records[i].mode_id == "freedv700d_official" ||
+        first.records[i].mode_id == "freedv700e_official") {
+      if (first.records[i].status == f700f::SweepRunStatus::Skipped) {
+        assert(first.records[i].skipped_reason.find(
+                   "official_freedv_codec2_unavailable") !=
+               std::string::npos);
+        assert(first.records[i].skipped_reason.find(
+                   "codec2_available=false") != std::string::npos);
+        ++official_skipped;
+      } else {
+        assert(first.records[i].status == f700f::SweepRunStatus::Completed);
+        ++official_completed;
+      }
+    }
+  }
+
+  assert(prototype_rows == 4);
+  assert((official_skipped == 8 && official_completed == 0) ||
+         (official_skipped == 0 && official_completed == 8));
+}
+
 void duplicate_condition_ids_are_rejected() {
   auto runner = make_runner();
   auto config = make_sweep_config();
@@ -629,6 +724,8 @@ int main() {
   ci_smoke_sweep_completes_quickly();
   m2_channel_matrix_smoke_has_required_conditions();
   m2_channel_matrix_full_has_unique_cartesian_conditions();
+  m3_channel_impairment_smoke_has_required_short_matrix();
+  m3_channel_impairment_smoke_records_skips_and_guardrails();
   duplicate_condition_ids_are_rejected();
   invalid_channel_matrix_parameters_are_rejected();
   m2_channel_matrix_empty_seed_list_rejected();

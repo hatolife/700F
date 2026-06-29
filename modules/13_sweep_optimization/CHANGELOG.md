@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-29
+- Add ISSUE-0051 M3 channel impairment smoke campaign helper and TOML config
+  covering AWGN, frequency offset, and weak simple-gain fading with seed 70051.
 - Add ISSUE-0042 real-modem-prototype sweep row metadata for 700F-A minimal
   QPSK diagnostics while preserving 700F-B/C surrogate rows.
 

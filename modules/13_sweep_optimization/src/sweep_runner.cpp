@@ -1359,6 +1359,39 @@ SweepConfig make_m2_700f_candidate_full_sweep_config(
   return config;
 }
 
+SweepConfig make_m3_channel_impairment_smoke_sweep_config(
+    std::string output_directory) {
+  SweepConfig config;
+  config.run_id_prefix = "m3-channel-impairment-smoke";
+  config.output_directory = std::move(output_directory);
+  config.input = GeneratedToneConfig{.sample_rate_hz = 8000,
+                                     .sample_count = 32,
+                                     .frequency_hz = 1000.0F,
+                                     .amplitude = 0.25F};
+  config.metric_ids = {"dummy.metric"};
+  config.modes = make_m2_700f_candidate_modes();
+  config.channel_conditions = {
+      {.condition_id = "identity-baseline",
+       .channel_chain = {{.channel_id = "identity"}}},
+      {.condition_id = "awgn-snr-3db",
+       .channel_chain = {{.channel_id = "awgn",
+                          .parameters = {{"snr_db", "3.0"}}}}},
+      {.condition_id = "frequency-offset-75hz",
+       .channel_chain = {{.channel_id = "frequency_offset",
+                          .parameters = {{"freq_offset_hz", "75.0"}}}}},
+      {.condition_id = "awgn-snr-6db-fo-50hz-fading-weak",
+       .channel_chain = {
+           {.channel_id = "awgn",
+            .parameters = {{"snr_db", "6.0"}}},
+           {.channel_id = "frequency_offset",
+            .parameters = {{"freq_offset_hz", "50.0"}}},
+           {.channel_id = "simple_gain_fading",
+            .parameters = {{"min_gain_db", "-1.5"},
+                           {"max_gain_db", "1.5"}}}}}};
+  config.seeds = {70051};
+  return config;
+}
+
 void register_m2_campaign_mode_factories(SweepRunner &runner) {
   runner.register_mode_factory(make_ssb_standard_3k_mode_factory());
   runner.register_mode_factory(make_ssb_narrow_1k9_mode_factory());

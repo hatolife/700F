@@ -1,0 +1,44 @@
+# ISSUE-0051 M3 smoke channel matrix. This remains a planned shared fragment
+# shape; the loadable campaign config is configs/sweeps/m3_channel_impairment_smoke.toml.
+
+run_id_prefix = "m3-channel-impairment-smoke"
+output_directory = "reports/sweeps/m3-channel-impairment-smoke"
+export_audio = false
+metric_ids = ["dummy.metric"]
+seeds = [70051]
+
+[input.generated_tone]
+sample_rate_hz = 8000
+sample_count = 32
+frequency_hz = 1000.0
+amplitude = 0.25
+
+[[channel_conditions]]
+condition_id = "identity-baseline"
+[[channel_conditions.channel_chain]]
+channel_id = "identity"
+
+[[channel_conditions]]
+condition_id = "awgn-snr-3db"
+[[channel_conditions.channel_chain]]
+channel_id = "awgn"
+snr_db = "3.0"
+
+[[channel_conditions]]
+condition_id = "frequency-offset-75hz"
+[[channel_conditions.channel_chain]]
+channel_id = "frequency_offset"
+freq_offset_hz = "75.0"
+
+[[channel_conditions]]
+condition_id = "awgn-snr-6db-fo-50hz-fading-weak"
+[[channel_conditions.channel_chain]]
+channel_id = "awgn"
+snr_db = "6.0"
+[[channel_conditions.channel_chain]]
+channel_id = "frequency_offset"
+freq_offset_hz = "50.0"
+[[channel_conditions.channel_chain]]
+channel_id = "simple_gain_fading"
+min_gain_db = "-1.5"
+max_gain_db = "1.5"
