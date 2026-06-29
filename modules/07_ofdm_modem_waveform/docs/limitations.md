@@ -9,3 +9,7 @@
   `freedv700f_a_balanced`. It uses synthetic PCM-byte payloads, no FEC,
   `sync_family=none`, no Codec2 payload integration, no final synchronization,
   and no real downselect-valid performance evidence.
+- ISSUE-0046 adds OFDM carrier-layout metadata only. The 19-carrier, 100 Hz
+  spacing, 1.9 kHz occupied-bandwidth target layout is a prototype planning
+  descriptor with data, pilot, and guard placeholders; it is not a final
+  waveform design and does not validate occupied bandwidth.

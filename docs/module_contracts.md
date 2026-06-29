@@ -55,3 +55,10 @@ ISSUE-0042 adds a narrow 700F-A helper surface in
 Only `freedv700f_a_balanced` uses this real-modem-prototype path; 700F-B/C
 remain surrogate rows. The helper surface is prototype-only and does not
 authorize final FEC, OFDM, synchronization, Codec2 payloads, or real downselect.
+
+ISSUE-0046 adds Module 07-owned OFDM planning helpers under
+`modules/07_ofdm_modem_waveform/include/f700f/ofdm_modem_waveform/`. These
+helpers define prototype carrier-layout metadata and validation plus an empty
+`BasebandFrame` metadata factory. They do not replace the 700F-A minimal QPSK
+runtime, do not implement an OFDM modulator/demodulator, and keep future FEC and
+sync state as placeholders.
