@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Complete ISSUE-0045 M3 planning for OFDM/FEC/sync: add M3 milestone/specs,
+  dispatch plan, follow-up issues ISSUE-0046 through ISSUE-0053, and a
+  planning report while keeping real downselect prohibited.
 - Record M2-H Manager integration after ISSUE-0043, ISSUE-0044, and ISSUE-0042:
   default Codec2 OFF and optional Codec2 ON local CI passed, M2-H smoke/report
   artifacts were captured, 700F-A remains limited/downselect-invalid, and

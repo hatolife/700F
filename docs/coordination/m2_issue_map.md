@@ -94,3 +94,7 @@ smoke/report evidence is recorded under
 `reports/20260629_080853_m2h_700f_qpsk_comparison*.md`. ISSUE-0045 is now the
 next startable planning issue. It must not implement OFDM/FEC/sync or authorize
 real downselect.
+
+ISSUE-0045 completed M3 planning and created ISSUE-0046 through ISSUE-0053.
+M3-A may start with low-risk boundary/regression work only: ISSUE-0049,
+ISSUE-0046, ISSUE-0047, and ISSUE-0051. Real downselect remains prohibited.
