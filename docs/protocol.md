@@ -29,6 +29,9 @@ work. The normative v0.1.0 details are split by concern:
 - `docs/specs/700f_a_minimal_qpsk_baseband_prototype.md` defines the
   ISSUE-0042 700F-A minimal QPSK-like baseband prototype and its
   downselect-invalid metadata.
+- `docs/specs/700f_fec_uep_policy_plan.md` defines the ISSUE-0049 no-FEC,
+  placeholder-FEC, and future real-FEC vocabulary plus metadata-only UEP policy
+  reporting rules for M3.
 
 ISSUE-0008 is intentionally a protocol/interface issue. It does not implement 700F,
 Codec2, SSB, FreeDV 700D/700E, or the channel model.
@@ -44,3 +47,9 @@ ISSUE-0042 moves only `freedv700f_a_balanced` to
 `implementation_status = "real_modem_prototype"` with `modem_family =
 "minimal_qpsk"`, `sync_family = "none"`, limited prototype diagnostics, and
 `downselect_valid = false`. 700F-B/C remain surrogate rows.
+
+ISSUE-0049 defines `fec_family = "none"` as no protection policy,
+`fec_family = "placeholder"` as metadata-only FEC/UEP intent with no correction,
+and future explicit FEC family ids as real-FEC scope that requires separate
+implementation and tests. Placeholder FEC/UEP metadata is not performance-valid
+evidence and does not authorize 700F downselect.

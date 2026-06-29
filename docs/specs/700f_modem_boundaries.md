@@ -103,11 +103,27 @@ Required fields:
 
 - `modem_family`: ISSUE-0042 uses `minimal_qpsk` for the first minimal
   QPSK-like baseband prototype.
-- `fec_family`: first implementation may use `none` or `placeholder`.
+- `fec_family`: ISSUE-0049 defines `none` as no FEC/UEP policy,
+  `placeholder` as metadata-only future FEC/UEP intent with no correction, and
+  future explicit family ids as real-FEC scope requiring separate approval.
 - `sync_family`: first implementation may use `none`, `pilot_placeholder`, or
   `symbol_clock_placeholder`.
 - `codec_family`: first implementation may use `synthetic` until codec payload
   integration is separately approved.
+
+## FEC/UEP Metadata Boundary
+
+The existing `FecStatus` container is a status placeholder only. When
+`family = "placeholder"`, producers may report metadata-only policy intent, but
+must not imply an encoder, decoder, parity stream, interleaver, or corrected
+errors. Placeholder status should keep `enabled=false`, `decoded=false`,
+`corrected_errors=0`, and `erasures=0` unless a later real-FEC issue updates
+the source contract.
+
+UEP policy metadata, if added by future issues, should follow
+`docs/specs/700f_fec_uep_policy_plan.md`: policy ids, important/less-important
+bit classes, latency budget references, and report validity are descriptive
+until real FEC and codec bit mapping exist.
 
 ## Failure And Skip Semantics
 
@@ -128,3 +144,5 @@ baseband, and output containers. `SampleRate` and `SymbolRate` expose minimal
 positive-rate validation. `CarrierLayout`, `TimingSyncStatus`, `FecStatus`, and
 `CodecStatus` are explicit placeholders so ISSUE-0042 can propagate modem
 family metadata without silently implying final OFDM/FEC/sync/codec behavior.
+ISSUE-0049 further narrows `FecStatus` by distinguishing no-FEC,
+placeholder-FEC, and future real-FEC states; it does not add real FEC behavior.
