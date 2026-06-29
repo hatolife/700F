@@ -31,3 +31,9 @@ tasks. They should wait until the M3-A boundary and measurement work is merged.
 Every M3-A branch must keep default Codec2 OFF CI and optional Codec2 ON CI
 green. Every branch must preserve `downselect_valid=false` for 700F prototype
 rows.
+
+ISSUE-0049 is RFC-only unless it adds a tiny descriptor/test patch. It must
+define `fec_family=none` versus `fec_family=placeholder`, future real-FEC
+exclusion, UEP policy metadata, important/less-important bit classes,
+latency/interleaver references, and report representation before ISSUE-0046 or
+ISSUE-0050 rely on the vocabulary.

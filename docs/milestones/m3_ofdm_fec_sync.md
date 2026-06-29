@@ -22,7 +22,8 @@ evidence.
 
 - Move 700F-A toward OFDM/QPSK carrier-layout modeling.
 - Make the 1.9 kHz occupied bandwidth target measurable in simulation reports.
-- Add FEC placeholder and UEP policy boundaries that can later be replaced.
+- Add FEC placeholder and UEP policy boundaries that can later be replaced,
+  while keeping real FEC and candidate downselect prohibited.
 - Add sync placeholder boundaries for later timing/carrier recovery work.
 - Expand channel impairment regression before deeper modem changes.
 - Keep 700F-A `prototype=true`, `not_final_modem=true`, and
@@ -60,7 +61,8 @@ The first low-risk implementation/planning set is:
 - ISSUE-0047: occupied bandwidth validation harness.
 - ISSUE-0051: channel impairment regression expansion.
 
-ISSUE-0049 should merge first because it defines placeholder/policy vocabulary.
+ISSUE-0049 should merge first because it defines no-FEC, placeholder-FEC,
+future real-FEC, UEP bit-class, latency/interleaver, and reporting vocabulary.
 ISSUE-0046 then adds the carrier-layout boundary. ISSUE-0047 adds measurement.
 ISSUE-0051 connects the regression matrix last.
 

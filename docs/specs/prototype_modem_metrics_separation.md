@@ -58,6 +58,12 @@ Descriptor snapshots also carry:
 These fields are engineering diagnostics only. They must not be mixed into BER/FER,
 dropout, latency, RF bandwidth, real performance score, or real downselect feasibility.
 
+ISSUE-0049 permits future M3 artifacts to add metadata-only FEC/UEP report
+fields such as `uep_policy_id`, `uep_mapping_status`, bit-class summaries,
+`fec_latency_s`, `interleaver_policy_id`, and `interleaver_depth_frames`.
+Those fields remain prototype/planning diagnostics while `fec_family =
+"placeholder"` and must not make a row performance-valid.
+
 ## Scoring Policy
 
 The M2 scorer counts prototype rows separately:

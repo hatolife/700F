@@ -2,23 +2,66 @@
 
 ## Status
 
-- Issue: ISSUE-0045
-- Follow-up: ISSUE-0049
+- Issue: ISSUE-0049
+- Target milestone: M3-A
+- Status: RFC
+- Decision: define placeholder vocabulary and UEP policy metadata only. Real
+  FEC, interleavers, coding-rate choices, and candidate downselect remain out
+  of scope.
 
 ## Purpose
 
 Define the vocabulary and replacement boundary for future 700F FEC and unequal
-error protection work.
+error protection work. The policy lets M3 reports say exactly what protection
+metadata was present without implying that any error correction, interleaving,
+or final performance evidence exists.
 
-## States
+## FEC States
 
-M3 planning distinguishes:
+M3 distinguishes three protection states:
 
-- `fec_family=none`: no FEC is present.
-- `fec_family=placeholder`: metadata exists, but no real correction is applied.
-- real FEC family names: future scoped issues only.
+| State | `fec_family` | Meaning | Allowed in M3-A |
+|---|---|---|---|
+| no-FEC | `none` | No FEC encoder, decoder, parity, erasure recovery, interleaver coupling, or UEP policy is active for the frame. Current 700F-A minimal QPSK prototype rows use this state. | Yes |
+| placeholder-FEC | `placeholder` | FEC and UEP metadata may be carried through descriptors/reports, but no correction is applied and no parity bits are generated or consumed. | Yes, metadata only |
+| real-FEC | future explicit family names, for example `ldpc_candidate`, `golay_candidate`, or `reed_solomon_candidate` | A scoped implementation issue has selected a concrete coding family and tests encode/decode behavior. | No |
+
+`none` and `placeholder` are intentionally different. `none` means the path has
+no protection policy to report. `placeholder` means the path is reserving a
+future protection boundary and can report policy intent, latency assumptions,
+and bit-class mapping while still correcting zero errors.
+
+Placeholder-FEC must leave `enabled=false`, `decoded=false`,
+`corrected_errors=0`, and `erasures=0` in source-facing status fields unless a
+later real-FEC issue changes the contract. Any report that displays
+`fec_family=placeholder` must also display a limitation explaining that no real
+FEC was executed.
+
+Real-FEC family names are prohibited in M3-A unless a later issue explicitly
+adds the implementation, tests, documentation, and audit trail. Placeholder
+metadata must not pick or rank a final coding scheme.
 
 ## UEP Policy Direction
+
+UEP policy metadata is descriptive. It records how future encoders should treat
+different frame regions, but M3-A does not transform the payload or allocate
+parity.
+
+A future source descriptor or report object may carry these fields:
+
+| Field | Meaning |
+|---|---|
+| `uep_policy_id` | Stable policy label, such as `none`, `placeholder_default`, or a later issue-owned policy id. |
+| `uep_policy_version` | Policy schema or revision string for report reproducibility. |
+| `uep_classes` | Ordered bit-class records describing importance, source region, and intended protection priority. |
+| `uep_mapping_status` | `none`, `placeholder`, `mapped`, or `unavailable`. M3-A may use only `none` or `placeholder`. |
+| `fec_family` | `none`, `placeholder`, or a later real-FEC family id. |
+| `fec_policy_id` | Optional policy id connecting FEC metadata to a UEP policy. |
+| `latency_budget_s` | Total planned latency budget for FEC plus interleaving when known. |
+| `fec_latency_s` | FEC encode/decode buffering latency assumption, excluding interleaver depth. |
+| `interleaver_policy_id` | `none`, `placeholder`, or a later ISSUE-0050 policy id. |
+| `interleaver_depth_frames` | Planned or measured interleaver depth in frames. Placeholder metadata should use `0` or omit the field when no depth is committed. |
+| `report_validity` | `metadata_only`, `prototype_diagnostic`, or a later audit-approved validity class. Placeholder-FEC uses `metadata_only`. |
 
 Future UEP work should be able to classify payload regions such as:
 
@@ -28,15 +71,95 @@ Future UEP work should be able to classify payload regions such as:
 - payload/audio bits
 - parity or future FEC metadata
 
-ISSUE-0049 should document policy metadata without implementing the final code.
+Initial bit-class vocabulary:
+
+| Class | Intended contents | Placeholder behavior |
+|---|---|---|
+| `important_bits` | Bits whose corruption is expected to have high impact, such as future codec voicing, energy, mode, or frame-critical fields. | Class may be named and counted; no stronger protection is applied. |
+| `less_important_bits` | Bits expected to degrade quality more gracefully, such as future refinement or residual information. | Class may be named and counted; no weaker/stronger protection is applied. |
+| `header_bits` | Frame headers, mode ids, counters, or future synchronization-adjacent metadata. | May be represented for planning; no header FEC is implemented. |
+| `payload_audio_bits` | Codec payload bits after future Codec2 integration. | Current synthetic 700F-A payloads must not be treated as final codec bit classes. |
+| `parity_bits` | Future parity/check bits generated by real FEC. | Must be absent or count zero in placeholder-FEC. |
+| `reserved_bits` | Extension or alignment space. | May be documented as reserved; no final layout is implied. |
+
+When a policy reports both `important_bits` and `less_important_bits`, it must
+state that the mapping is future-facing unless real codec/FEC integration exists.
+The class names are not a final Codec2 bit-sensitivity downselect.
 
 ## Latency And Interleaver Relationship
 
-FEC and interleaving must record latency assumptions. ISSUE-0050 owns the
-interleaver placeholder; ISSUE-0049 should define how FEC metadata references
-that future boundary.
+FEC and interleaving must record latency assumptions separately:
+
+- `fec_latency_s` is the buffering or block latency assumed by the FEC encoder
+  and decoder.
+- `interleaver_latency_s` or `interleaver_depth_frames` belongs to ISSUE-0050.
+- `latency_budget_s` is the combined planning budget when a report wants one
+  number for scanning.
+
+ISSUE-0049 may name `interleaver_policy_id=placeholder` to show that future FEC
+expects an interleaver boundary, but it must not define the interleaver layout,
+permutation, depth, or channel-specific tuning. ISSUE-0050 owns the interleaver
+placeholder and any source/report fields beyond the reference id and latency
+budget relationship defined here.
+
+Placeholder-FEC should report zero measured FEC latency and either omit
+interleaver fields or mark them as `placeholder`/zero-depth. Real latency
+measurements require real encode/decode and interleaving behavior from future
+issues.
 
 ## Reporting
 
 Reports may show placeholder FEC status and UEP policy metadata. They must not
 treat placeholder FEC as performance-valid evidence.
+
+Recommended report representation:
+
+- `fec_family=none` for rows with no FEC policy.
+- `fec_family=placeholder` for rows carrying metadata-only FEC/UEP intent.
+- `fec_status=metadata_only` or equivalent limitation text for placeholder-FEC.
+- `uep_policy_id` and `uep_mapping_status` when policy metadata is present.
+- bit-class summaries as counts, names, or JSON arrays, not as final codec/FEC
+  conclusions.
+- `fec_latency_s`, `interleaver_policy_id`, and `interleaver_depth_frames` only
+  when the producer can state whether values are absent, placeholder, or
+  measured.
+
+Placeholder-FEC reports must preserve:
+
+- `prototype=true`
+- `not_final_modem=true`
+- `downselect_valid=false`
+- `downselect_validity=invalid`
+- `performance_validity=limited` or stricter
+- no superiority claim over SSB, 700D, or 700E
+
+Scoring must ignore placeholder-FEC and UEP metadata for real candidate ranking.
+The presence of UEP classes may support engineering diagnostics and planning,
+but it does not create BER/FER validity, official baseline comparability, or
+permission to downselect.
+
+## Ownership And Follow-Up
+
+Module 06 owns this vocabulary and future FEC/UEP implementation issues. Module
+02 owns source data-model changes if these fields become public containers.
+Module 12 and Module 15 own metrics/report ingestion and rendering once source
+artifacts carry the metadata.
+
+Follow-up boundaries:
+
+- ISSUE-0050 owns the frame interleaver placeholder.
+- Future real-FEC issues must add tests before source behavior changes.
+- Any public API change must update `docs/protocol.md`,
+  `docs/module_contracts.md`, and affected task docs.
+- Any final Codec2 bit-importance mapping requires a separate issue with codec
+  evidence; this RFC only names future classes.
+
+## Out Of Scope
+
+- Implementing FEC encode/decode.
+- Generating or consuming parity bits.
+- Selecting a final FEC family, coding rate, puncturing rule, or interleaver
+  depth.
+- Claiming UEP gains, BER/FER gains, SSB/700D/700E superiority, or final 700F
+  readiness.
+- Enabling real 700F candidate downselect.

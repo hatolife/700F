@@ -55,3 +55,23 @@ ISSUE-0042 adds a narrow 700F-A helper surface in
 Only `freedv700f_a_balanced` uses this real-modem-prototype path; 700F-B/C
 remain surrogate rows. The helper surface is prototype-only and does not
 authorize final FEC, OFDM, synchronization, Codec2 payloads, or real downselect.
+
+## M3 FEC/UEP Placeholder Boundary
+
+ISSUE-0049 assigns Module 06 ownership of the FEC placeholder and UEP policy
+vocabulary. Module 02 remains the owner for any future public source container
+changes, while Modules 12 and 15 own metrics/report ingestion and rendering when
+artifacts begin carrying the metadata.
+
+The contract distinguishes:
+
+- `fec_family = "none"`: no FEC or UEP policy is active.
+- `fec_family = "placeholder"`: metadata may describe future FEC/UEP intent,
+  important/less-important bit classes, and latency assumptions, but no parity,
+  correction, or erasure recovery is performed.
+- future real-FEC family ids: prohibited until a scoped issue adds
+  implementation, tests, docs, and audit evidence.
+
+Placeholder FEC and UEP metadata must remain downselect-invalid and
+performance-limited. It must not feed real BER/FER scoring or candidate
+ranking.
