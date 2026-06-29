@@ -1,6 +1,6 @@
 # ISSUE-0047: occupied bandwidth validation harness
 
-- Status: complete
+- Status: closed
 - Priority: P0
 - Owner: Module 12 + Module 15 + Module 07 + Module 13
 - Branch: feature/ISSUE-0047-occupied-bandwidth-validation

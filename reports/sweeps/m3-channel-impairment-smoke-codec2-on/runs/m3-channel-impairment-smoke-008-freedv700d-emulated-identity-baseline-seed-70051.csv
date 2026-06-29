@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-008-freedv700d-emulated-identity-baseline-seed-70051,70051,freedv700d_emulated,identity,2b01d3f701865e63,N/A,dummy.metric,0.127583,true

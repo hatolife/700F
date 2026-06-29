@@ -19,4 +19,4 @@
 | ISSUE-0014 | done | P0 | metrics and result artifact format | Module 12 | see root ISSUE-0014 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0024 | done | P0 | M2 scoring model and comparison policy | Module 12 | feature/ISSUE-0024-scoring-model | v0.2.0 | 2026-06-28 |
 | ISSUE-0044 | done | P0 | prototype modem metrics separation | Module 12 + Module 15 + Module 13 | feature/ISSUE-0044-prototype-modem-metrics-separation | v0.2.0 target | 2026-06-29 |
-| ISSUE-0047 | complete | P0 | occupied bandwidth validation harness | Module 12 + Module 15 + Module 07 + Module 13 | feature/ISSUE-0047-occupied-bandwidth-validation | v0.3.0 target | 2026-06-29 |
+| ISSUE-0047 | closed | P0 | occupied bandwidth validation harness | Module 12 + Module 15 + Module 07 + Module 13 | feature/ISSUE-0047-occupied-bandwidth-validation | v0.3.0 target | 2026-06-29 |

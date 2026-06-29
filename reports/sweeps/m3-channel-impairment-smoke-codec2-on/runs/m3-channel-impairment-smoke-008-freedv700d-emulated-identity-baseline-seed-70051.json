@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-008-freedv700d-emulated-identity-baseline-seed-70051",
+  "seed": 70051,
+  "mode_id": "freedv700d_emulated",
+  "deterministic_digest": "2b01d3f701865e63",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.127583}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

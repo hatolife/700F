@@ -54,7 +54,7 @@ evidence.
 
 ## M3-A Startable Set
 
-The first low-risk implementation/planning set is:
+The first low-risk implementation/planning set was:
 
 - ISSUE-0049: FEC placeholder and UEP policy RFC.
 - ISSUE-0046: OFDM carrier layout and baseband frame prototype.
@@ -66,8 +66,27 @@ future real-FEC, UEP bit-class, latency/interleaver, and reporting vocabulary.
 ISSUE-0046 then adds the carrier-layout boundary. ISSUE-0047 adds measurement.
 ISSUE-0051 connects the regression matrix last.
 
+## M3-A Integration Status
+
+M3-A is integrated into `develop`.
+
+- ISSUE-0049 merged as `2c8cef4`.
+- ISSUE-0046 merged as `3ca00da`.
+- ISSUE-0047 merged as `f5f3180`.
+- ISSUE-0051 merged as `7e095dd`.
+- Default Codec2 OFF CI passed after each merge.
+- Optional Codec2 ON CI passed after each merge.
+- M3-A smoke passed with `configs/sweeps/m3_channel_impairment_smoke.toml`.
+  Codec2 OFF completed 28 rows with 8 explicit official-baseline skips; Codec2
+  ON completed 36 rows with no skips.
+- 700F-A remains `real_modem_prototype`, `not_final_modem=true`, and
+  `downselect_valid=false`.
+- 700F-B and 700F-C remain surrogate rows.
+- Real 700F downselect remains prohibited.
+
 ## Later Gates
 
-ISSUE-0048, ISSUE-0050, ISSUE-0052, and ISSUE-0053 should wait until M3-A
-boundaries are merged and audited enough for the next step. None of them should
-authorize real downselect by default.
+ISSUE-0048, ISSUE-0050, ISSUE-0052, and ISSUE-0053 are the next startable
+M3-B/audit set. ISSUE-0052 should run after ISSUE-0048 and ISSUE-0050 if it
+needs those placeholder boundaries; ISSUE-0053 should run after ISSUE-0052.
+None of them should authorize real downselect by default.

@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-022-freedv700e-official-frequency-offset-75hz-seed-70051",
+  "seed": 70051,
+  "mode_id": "freedv700e_official",
+  "deterministic_digest": "7a4474ec7c2b6c39",
+  "audio_export_path": "N/A",
+  "channels": ["frequency_offset"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.151088}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

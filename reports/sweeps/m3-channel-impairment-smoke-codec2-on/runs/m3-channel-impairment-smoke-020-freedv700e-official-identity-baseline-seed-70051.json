@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-020-freedv700e-official-identity-baseline-seed-70051",
+  "seed": 70051,
+  "mode_id": "freedv700e_official",
+  "deterministic_digest": "5e65c96de764a711",
+  "audio_export_path": "N/A",
+  "channels": ["identity"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.150871}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

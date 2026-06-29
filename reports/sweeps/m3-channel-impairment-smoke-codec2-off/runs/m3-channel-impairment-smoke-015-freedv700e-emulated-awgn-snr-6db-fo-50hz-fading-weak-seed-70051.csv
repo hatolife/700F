@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-015-freedv700e-emulated-awgn-snr-6db-fo-50hz-fading-weak-seed-70051,70051,freedv700e_emulated,awgn|frequency_offset|simple_gain_fading,383702167deff832,N/A,dummy.metric,0.141924,true

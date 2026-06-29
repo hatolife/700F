@@ -23,8 +23,9 @@ dependencies, and acceptance criteria.
 
 ## Hold
 
-ISSUE-0048, ISSUE-0050, ISSUE-0052, and ISSUE-0053 are not M3-A first-wave
-tasks. They should wait until the M3-A boundary and measurement work is merged.
+ISSUE-0048, ISSUE-0050, ISSUE-0052, and ISSUE-0053 were held during the M3-A
+first wave. They are now the next startable M3-B/audit set after the M3-A
+boundary and measurement work merged.
 
 ## Guardrails
 
@@ -37,3 +38,15 @@ define `fec_family=none` versus `fec_family=placeholder`, future real-FEC
 exclusion, UEP policy metadata, important/less-important bit classes,
 latency/interleaver references, and report representation before ISSUE-0046 or
 ISSUE-0050 rely on the vocabulary.
+
+## Integration Result
+
+M3-A integrated into `develop` in the planned order:
+
+1. ISSUE-0049: merge `2c8cef4`.
+2. ISSUE-0046: merge `3ca00da`.
+3. ISSUE-0047: merge `f5f3180`.
+4. ISSUE-0051: merge `7e095dd`.
+
+Default Codec2 OFF and optional Codec2 ON local CI passed after each merge.
+M3-A smoke passed in both paths. Real downselect remains prohibited.

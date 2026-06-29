@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-024-freedv700f-a-balanced-identity-baseline-seed-70051,70051,freedv700f_a_balanced,identity,c68b91cdd3ae4d49,N/A,dummy.metric,8.65012e-06,true

@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-001-ssb-standard-3k-awgn-snr-3db-seed-70051,70051,ssb_standard_3k,awgn,45040f40629f6cb9,N/A,dummy.metric,0.130601,true

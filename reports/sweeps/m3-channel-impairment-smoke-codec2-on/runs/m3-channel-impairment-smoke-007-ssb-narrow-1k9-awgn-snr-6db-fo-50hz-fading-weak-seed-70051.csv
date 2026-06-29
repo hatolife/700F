@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-007-ssb-narrow-1k9-awgn-snr-6db-fo-50hz-fading-weak-seed-70051,70051,ssb_narrow_1k9,awgn|frequency_offset|simple_gain_fading,19c2572f9733d8cd,N/A,dummy.metric,0.153125,true

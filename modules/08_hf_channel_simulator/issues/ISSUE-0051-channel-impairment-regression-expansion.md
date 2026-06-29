@@ -1,6 +1,6 @@
 # ISSUE-0051: channel impairment regression expansion
 
-- Status: done
+- Status: closed
 - Priority: P0
 - Scope: module:08
 - Owner: Module 08 + Module 13 + Module 11 + Module 15

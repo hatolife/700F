@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-010-freedv700d-emulated-frequency-offset-75hz-seed-70051,70051,freedv700d_emulated,frequency_offset,a2cf0bd78c194861,N/A,dummy.metric,0.14699,true

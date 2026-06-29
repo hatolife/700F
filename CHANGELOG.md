@@ -1,6 +1,13 @@
 # Changelog
 
 ## v0.2.0 - 2026-06-28
+- Integrate M3-A low-risk groundwork: ISSUE-0049 FEC/UEP RFC, ISSUE-0046 OFDM
+  carrier layout boundary, ISSUE-0047 occupied bandwidth validation, and
+  ISSUE-0051 channel impairment regression, with default Codec2 OFF and optional
+  Codec2 ON local CI green after each merge.
+- Record M3-A smoke artifacts and reports for
+  `configs/sweeps/m3_channel_impairment_smoke.toml`; Codec2 OFF completed 28
+  rows with 8 explicit official-baseline skips, and Codec2 ON completed 36 rows.
 - Complete ISSUE-0045 M3 planning for OFDM/FEC/sync: add M3 milestone/specs,
   dispatch plan, follow-up issues ISSUE-0046 through ISSUE-0053, and a
   planning report while keeping real downselect prohibited.

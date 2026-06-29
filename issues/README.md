@@ -59,12 +59,12 @@
 | ISSUE-0043 | closed | P0 | module:02,07,11,13 | modem frame and symbol protocol | Module 02 + Module 07 + Module 11 + Module 13 | feature/ISSUE-0043-modem-frame-symbol-protocol | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041 | 2026-06-29 |
 | ISSUE-0044 | closed | P0 | module:12,15,13 | prototype modem metrics separation | Module 12 + Module 15 + Module 13 | feature/ISSUE-0044-prototype-modem-metrics-separation | v0.2.0 target | M2 real modem prototype follow-up | ISSUE-0041, ISSUE-0043 | 2026-06-29 |
 | ISSUE-0045 | closed | P1 | qa,project,module:06,07,09 | M3 planning for OFDM/FEC/sync | Manager + QA + Module 06 + Module 07 + Module 09 | docs/ISSUE-0045-m3-planning-ofdm-fec-sync | v0.3.0 target | M3 planning | ISSUE-0041, ISSUE-0042, ISSUE-0043, ISSUE-0044 | 2026-06-29 |
-| ISSUE-0046 | complete | P0 | module:07,02,11,13 | OFDM carrier layout and baseband frame prototype | Module 07 + Module 02 + Module 11 + Module 13 | feature/ISSUE-0046-ofdm-carrier-layout-baseband-frame | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0043, ISSUE-0042 | 2026-06-29 |
-| ISSUE-0047 | complete | P0 | module:12,15,07,13 | occupied bandwidth validation harness | Module 12 + Module 15 + Module 07 + Module 13 | feature/ISSUE-0047-occupied-bandwidth-validation | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0046 | 2026-06-29 |
+| ISSUE-0046 | closed | P0 | module:07,02,11,13 | OFDM carrier layout and baseband frame prototype | Module 07 + Module 02 + Module 11 + Module 13 | feature/ISSUE-0046-ofdm-carrier-layout-baseband-frame | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0043, ISSUE-0042 | 2026-06-29 |
+| ISSUE-0047 | closed | P0 | module:12,15,07,13 | occupied bandwidth validation harness | Module 12 + Module 15 + Module 07 + Module 13 | feature/ISSUE-0047-occupied-bandwidth-validation | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0046 | 2026-06-29 |
 | ISSUE-0048 | open | P1 | module:09,07,02 | QPSK timing/sync placeholder | Module 09 + Module 07 + Module 02 | feature/ISSUE-0048-qpsk-timing-sync-placeholder | v0.3.0 target | M3-B sync placeholder | ISSUE-0045, ISSUE-0046 | 2026-06-29 |
 | ISSUE-0049 | closed | P0 | module:06,02,12,15 | FEC placeholder and UEP policy RFC | Module 06 + Module 02 + Module 12 + Module 15 | docs/ISSUE-0049-fec-placeholder-uep-policy-rfc | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0044 | 2026-06-29 |
 | ISSUE-0050 | open | P1 | module:06,07,11 | frame interleaver placeholder | Module 06 + Module 07 + Module 11 | feature/ISSUE-0050-frame-interleaver-placeholder | v0.3.0 target | M3-B interleaver placeholder | ISSUE-0045, ISSUE-0049 | 2026-06-29 |
-| ISSUE-0051 | done | P0 | module:08,13,11,15 | channel impairment regression expansion | Module 08 + Module 13 + Module 11 + Module 15 | feature/ISSUE-0051-channel-impairment-regression | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0047 | 2026-06-29 |
+| ISSUE-0051 | closed | P0 | module:08,13,11,15 | channel impairment regression expansion | Module 08 + Module 13 + Module 11 + Module 15 | feature/ISSUE-0051-channel-impairment-regression | v0.3.0 target | M3-A low-risk groundwork | ISSUE-0045, ISSUE-0047 | 2026-06-29 |
 | ISSUE-0052 | open | P1 | module:13,15,12,16 | M3 smoke campaign and report | Module 13 + Module 15 + Module 12 + QA | feature/ISSUE-0052-m3-smoke-campaign-report | v0.3.0 target | M3-B smoke/report | ISSUE-0046, ISSUE-0047, ISSUE-0049, ISSUE-0051 | 2026-06-29 |
 | ISSUE-0053 | open | P0 | qa,project | M3 audit | Manager + QA | docs/ISSUE-0053-m3-audit | v0.3.0 target | M3 audit | ISSUE-0052 | 2026-06-29 |
 
@@ -196,9 +196,11 @@
 - ISSUE-0045 completed M3 OFDM/FEC/sync planning and created ISSUE-0046 through
   ISSUE-0053.
 - M3 target is `v0.3.0` on compatibility line `3`.
-- M3-A first-wave startable issues are ISSUE-0049, ISSUE-0046, ISSUE-0047, and
-  ISSUE-0051.
-- M3-B/audit issues ISSUE-0048, ISSUE-0050, ISSUE-0052, and ISSUE-0053 remain
-  held until M3-A boundaries land.
+- M3-A first-wave issues ISSUE-0049, ISSUE-0046, ISSUE-0047, and ISSUE-0051
+  are integrated into `develop`.
+- M3-A smoke passed in default Codec2 OFF and optional Codec2 ON paths using
+  `configs/sweeps/m3_channel_impairment_smoke.toml`.
+- M3-B/audit issues ISSUE-0048, ISSUE-0050, ISSUE-0052, and ISSUE-0053 are now
+  the next startable set, with ISSUE-0052 before ISSUE-0053.
 - Real 700F downselect remains prohibited.
 

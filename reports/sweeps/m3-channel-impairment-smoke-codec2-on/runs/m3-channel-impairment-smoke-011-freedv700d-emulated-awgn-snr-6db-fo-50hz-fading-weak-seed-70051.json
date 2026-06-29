@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-011-freedv700d-emulated-awgn-snr-6db-fo-50hz-fading-weak-seed-70051",
+  "seed": 70051,
+  "mode_id": "freedv700d_emulated",
+  "deterministic_digest": "c1791b11cc5fc68c",
+  "audio_export_path": "N/A",
+  "channels": ["awgn", "frequency_offset", "simple_gain_fading"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.141924}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

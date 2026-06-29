@@ -1,6 +1,6 @@
 # ISSUE-0046: OFDM carrier layout and baseband frame prototype
 
-- Status: complete
+- Status: closed
 - Priority: P0
 - Scope: module:07
 - Owner: Module 07 + Module 02 + Module 11 + Module 13

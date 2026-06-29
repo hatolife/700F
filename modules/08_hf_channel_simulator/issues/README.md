@@ -16,5 +16,5 @@
 |---|---|---|---|---|---|---|---|
 | ISSUE-0006 | open | P0 | docs issues reports governance structure | Module 08 | see root ISSUE-0006 | v0.1.0 target as applicable | 2026-06-27 |
 | ISSUE-0010 | done | P0 | channel model v010 | Module 08 | see root ISSUE-0010 | v0.1.0 target as applicable | 2026-06-27 |
-| ISSUE-0051 | done | P0 | channel impairment regression expansion | Module 08 + Module 13 + Module 11 + Module 15 | feature/ISSUE-0051-channel-impairment-regression | v0.3.0 target | 2026-06-29 |
+| ISSUE-0051 | closed | P0 | channel impairment regression expansion | Module 08 + Module 13 + Module 11 + Module 15 | feature/ISSUE-0051-channel-impairment-regression | v0.3.0 target | 2026-06-29 |
 

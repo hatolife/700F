@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-010-freedv700d-emulated-frequency-offset-75hz-seed-70051",
+  "seed": 70051,
+  "mode_id": "freedv700d_emulated",
+  "deterministic_digest": "a2cf0bd78c194861",
+  "audio_export_path": "N/A",
+  "channels": ["frequency_offset"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.14699}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

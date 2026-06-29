@@ -70,7 +70,7 @@ name = "M3 OFDM/FEC/Sync Prototype Groundwork"
 target_project = "v0.3.0"
 compatibility_minor = 3
 merge_target = "develop"
-status = "planned"
+status = "m3-a-integrated"
 issue_range = "ISSUE-0045..ISSUE-0053"
 affected_modules = [
   "02_core_data_model_protocol",

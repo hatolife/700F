@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-025-freedv700f-a-balanced-awgn-snr-3db-seed-70051",
+  "seed": 70051,
+  "mode_id": "freedv700f_a_balanced",
+  "deterministic_digest": "ee7ceca874266f4b",
+  "audio_export_path": "N/A",
+  "channels": ["awgn"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.185828}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}

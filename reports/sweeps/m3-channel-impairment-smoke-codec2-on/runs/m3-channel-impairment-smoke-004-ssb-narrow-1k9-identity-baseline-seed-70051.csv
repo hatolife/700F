@@ -1,0 +1,2 @@
+run_id,seed,mode_id,channels,digest,audio_export_path,metric_id,metric_value,ok
+m3-channel-impairment-smoke-004-ssb-narrow-1k9-identity-baseline-seed-70051,70051,ssb_narrow_1k9,identity,35764a653dda6058,N/A,dummy.metric,0.152013,true

@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run_id": "m3-channel-impairment-smoke-003-ssb-standard-3k-awgn-snr-6db-fo-50hz-fading-weak-seed-70051",
+  "seed": 70051,
+  "mode_id": "ssb_standard_3k",
+  "deterministic_digest": "26aa784963565ac5",
+  "audio_export_path": "N/A",
+  "channels": ["awgn", "frequency_offset", "simple_gain_fading"],
+  "metrics": [{"metric_id": "dummy.metric", "value": 0.133529}],
+  "stages": [{"stage": "input", "ok": true, "message": ""}, {"stage": "encode", "ok": true, "message": ""}, {"stage": "channel", "ok": true, "message": ""}, {"stage": "decode", "ok": true, "message": ""}, {"stage": "metrics", "ok": true, "message": ""}]
+}
